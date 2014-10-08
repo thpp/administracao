@@ -1,0 +1,20 @@
+package br.com.administracao.client;
+
+import java.util.List;
+
+import br.com.administracao.model.Projeto;
+
+public interface ProjetoService {
+	public static final String NAME = "global/AdministracaoService/ProjetoServiceImpl!br.com.administracao.client.ProjetoService";
+
+	public void inserir(Projeto projeto);
+
+	public Integer contar();
+
+	public List<Projeto> listar(int primeiro, int tamanho);
+
+	public void editar(Projeto projeto);
+
+	public void excluir(Long codigo);
+
+}

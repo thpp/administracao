@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.administracao</groupId>
+		<artifactId>Administracao</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>AdministracaoService</artifactId>
+	<packaging>war</packaging>
+
+	<!-- Codificação -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- Dependências -->
+	<dependencies>
+		<!-- Camada Model -->
+		<dependency>
+			<groupId>br.com.administracao</groupId>
+			<artifactId>AdministracaoModel</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Camada Persistence -->
+		<dependency>
+			<groupId>br.com.administracao</groupId>
+			<artifactId>AdministracaoPersistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Camada Client -->
+		<dependency>
+			<groupId>br.com.administracao</groupId>
+			<artifactId>AdministracaoClient</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Camada Client -->
+		<dependency>
+			<groupId>br.com.administracao</groupId>
+			<artifactId>AdministracaoUtil</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+
+
+	<!-- Configurações de Compilação e Execuçao -->
+	<build>
+		<finalName>AdministracaoService</finalName>
+		<plugins>
+			<!-- Compilador do Maven -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
