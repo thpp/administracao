@@ -10,19 +10,19 @@
 </h:head>
 <h:body>
 	<p:panel header="Teste">
-		
+
 		<p:messages id="msgGlobal" showSummary="true" showDetail="false"
-		closable="true" />
-	
+			closable="true" />
+
 		<h:form id="frmLogin">
-			<h:panelGrid id="pnlLogin" columns="3">
-				<p:outputLabel  value="Nome:" />
-				<p:inputText value="#{projetoBean.projeto.nome}"/>
+			<h:panelGrid id="pnlLogin" columns="5">
+				<p:outputLabel value="Nome:" />
+				<p:inputText value="#{projetoBean.projeto.nome}" />
 				<p:commandButton value="Entrar"
 					actionListener="#{projetoBean.salvar}" update=":msgGlobal" />
-			</h:panelGrid>			
+			</h:panelGrid>
 		</h:form>
 	</p:panel>
-	
+
 </h:body>
 </html>

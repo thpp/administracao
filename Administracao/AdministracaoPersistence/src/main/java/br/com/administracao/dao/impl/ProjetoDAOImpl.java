@@ -39,7 +39,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 			logger.info("Produto inserido com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar inserir um produto", ex);
+					"Ocorreu um erro ao tentar inserir um produto "+ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);

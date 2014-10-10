@@ -2,8 +2,11 @@ package br.com.administracao.client;
 
 import java.util.List;
 
+import javax.ejb.Remote;
+
 import br.com.administracao.model.Projeto;
 
+@Remote
 public interface ProjetoService {
 	public static final String NAME = "global/AdministracaoService/ProjetoServiceImpl!br.com.administracao.client.ProjetoService";
 

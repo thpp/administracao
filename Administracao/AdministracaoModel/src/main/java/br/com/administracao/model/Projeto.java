@@ -1,7 +1,10 @@
 package br.com.administracao.model;
 
-public class Projeto {
-	
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Projeto implements Serializable {
+		
 	private Long nro;
 	private String nome;
 	public Long getNro() {
