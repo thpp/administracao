@@ -9,7 +9,7 @@
 	
 	<!-- Arquivo Inicial -->
 	<welcome-file-list>
-		<welcome-file>pages/public/teste.xhtml</welcome-file>
+		<welcome-file>pages/public/login.xhtml</welcome-file>
 	</welcome-file-list>
 
 	<!-- Fase do Projeto -->

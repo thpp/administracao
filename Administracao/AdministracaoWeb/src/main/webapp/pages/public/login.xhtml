@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+		<title>Login Adm</title>
+	</h:head>
+	
+	<h:body>
+	
+	<h:form id="loginForm">
+		<p:dialog header="Administração" id="dialog"  draggable="false"
+                      closable="false" position="center" resizable="false" visible="true">
+            <p:messages id="mensagens" showDetail="true" showSummary="false" autoUpdate="true" />
+			<p:panelGrid columns="2">
+	              <h:outputLabel for="j_username" value="Login: " />
+	              <p:inputText id="j_username" required="true" size="21" value="#{loginBean.login}" requiredMessage="Digite o seu login."/>
+	
+	              <h:outputLabel for="j_password" value="Senha: " />
+	              <p:password id="j_password" required="true" size="21" value="#{loginBean.senha}" requiredMessage="Digite a sua senha."/>
+	
+	              <f:facet name="footer"  >
+	                  <p:row>
+	                      <div align="center">
+	                          <p:commandButton id="buttonLogin" action="#{loginBean.logar}"  value="Logar"/>
+	                      </div>	
+	                  </p:row>
+	              </f:facet>
+	          </p:panelGrid>                      
+        </p:dialog>
+      </h:form>
+	</h:body>
+</html>
