@@ -25,7 +25,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO s_projeto ");
 		sql.append("(nome) ");
-		sql.append("VALUES (?) ");
+		sql.append("VALUES (UPPER(?)) ");
 
 		Connection conexao = null;
 		PreparedStatement comando = null;
@@ -53,7 +53,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 	public void editar(Projeto projeto) throws PSTException {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE s_projeto ");
-		sql.append("SET nome = ?");
+		sql.append("SET nome = UPPER(?)");
 		sql.append("WHERE nro = ? ");
 
 		Connection conexao = null;
@@ -152,7 +152,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT p.nro, p.nome ");
 		sql.append("FROM s_projeto p ");
-		//sql.append("ORDER BY p.descricao ");
+		sql.append("WHERE p.nome LIKE UPPER(?)");
 		
 		
 		Connection conexao = null;
@@ -164,6 +164,8 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 		conexao = ConnectionFactory.getConnection();
 		
 		comando = conexao.prepareStatement(sql.toString());
+		
+		comando.setString(1, "%"+nome+"%");
 		
 		resultado = comando.executeQuery();
 

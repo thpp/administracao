@@ -15,28 +15,32 @@
             Cadastro de Projetos
         </ui:define>
 
-		<ui:define name="content">
-			
-			<f:event listener="#{MBProjeto.buscaLista}" type="preRenderView"/>
+		<ui:define name="content">			
 			
 			<p:panel style="background-color: buttonface">
-				<h:form id="form1">
-					<p:messages id="msgs" showDetail="true" />
+				<h:form id="form1">					
 					<p:panel header="Cadastro de Projtos">
+						<p:messages id="msgs" showDetail="true" >
+							<p:effect type="pulsate" event="load" delay="100" />
+						</p:messages>
 						<h:panelGrid id="cadastro" columns="2" style="margin-top:20px;">
 							
 							<p:outputLabel value="Código:" />
 							<p:outputLabel value="#{MBProjeto.projeto.nro}" />							
 							
 							<p:outputLabel value="Projeto:" />
-							<p:inputText value="#{MBProjeto.projeto.nome}" size="30" />
+							<p:inputText value="#{MBProjeto.projeto.nome}" style="text-transform:uppercase" size="30" />
 							
 							<h:inputHidden/>
 							<h:panelGrid columns="4" style="margin-top:10px;">
-								<p:commandButton value="Salvar" actionListener="#{MBProjeto.salvar}" update="msgs, tabela, cadastro" />
-								<p:commandButton value="Excluir" />
+								<p:commandButton value="Salvar" actionListener="#{MBProjeto.salvar}" update="msgs, tabela, cadastro" >
+									<p:confirm header="Atenção!" message="Deseja realmente salvar?" icon="ui-icon-alert" />
+								</p:commandButton>
+								<p:commandButton value="Excluir" actionListener="#{MBProjeto.excluir}" update="msgs, tabela, cadastro">
+									<p:confirm header="Atenção!" message="Deseja realmente excluir projeto?" icon="ui-icon-alert" />
+								</p:commandButton>
 								<p:commandButton value="Novo" actionListener="#{MBProjeto.novo}" update="msgs, cadastro" />
-								<p:commandButton value="Buscar" />
+								<p:commandButton value="Buscar" actionListener="#{MBProjeto.buscarPorNome}" update="form1" />
 							</h:panelGrid>
 							
 						</h:panelGrid>
@@ -54,8 +58,14 @@
 							</p:commandButton>
 						</p:column>
 					</p:dataTable>
+					
+					<p:confirmDialog global="true" showEffect="fade">
+        				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    				</p:confirmDialog>
+					
 				</h:form>
-			</p:panel>
+			</p:panel>								
 		</ui:define>
 
 	</ui:composition>

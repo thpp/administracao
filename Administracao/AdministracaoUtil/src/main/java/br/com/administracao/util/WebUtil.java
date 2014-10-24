@@ -28,6 +28,7 @@ public class WebUtil {
 				new FacesMessage(FacesMessage.SEVERITY_WARN, mensagem, null));
 	}
 	
+	//metodo responsavel por encontrar o servidor onde a regra de negocio esta disponivel em serviços	
 	public static Object getNamedObject(String name){
 		Properties properties = new Properties();
 		properties.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
