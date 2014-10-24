@@ -1,5 +1,9 @@
 @CHARSET "ISO-8859-1";
 
+.ui-widget {
+    font-size: 14px !important;
+}
+
 .texto_menu{
     font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;    
     font-weight: bold;

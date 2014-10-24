@@ -15,6 +15,8 @@ public interface ProjetoService {
 	public Integer contar();
 
 	public List<Projeto> listar(int primeiro, int tamanho);
+	
+	public List<Projeto> listar(String nome);
 
 	public void editar(Projeto projeto);
 

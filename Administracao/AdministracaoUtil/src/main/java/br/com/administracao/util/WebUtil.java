@@ -23,6 +23,11 @@ public class WebUtil {
 				new FacesMessage(FacesMessage.SEVERITY_INFO, mensagem, null));
 	}
 	
+	public static void adicionarMensagemAviso(String mensagem) {
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_WARN, mensagem, null));
+	}
+	
 	public static Object getNamedObject(String name){
 		Properties properties = new Properties();
 		properties.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");

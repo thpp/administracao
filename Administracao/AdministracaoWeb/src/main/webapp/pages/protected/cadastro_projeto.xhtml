@@ -16,14 +16,46 @@
         </ui:define>
 
 		<ui:define name="content">
+			
+			<f:event listener="#{MBProjeto.buscaLista}" type="preRenderView"/>
+			
 			<p:panel style="background-color: buttonface">
-        		<p:panel header="Cadastro de Projtos">
-        			<h:panelGrid columns="2">
-        				<p:outputLabel value="Projeto:" />
-        				<p:inputText  />
-        			</h:panelGrid>
-        		</p:panel>	
-        	</p:panel>	
+				<h:form id="form1">
+					<p:messages id="msgs" showDetail="true" />
+					<p:panel header="Cadastro de Projtos">
+						<h:panelGrid id="cadastro" columns="2" style="margin-top:20px;">
+							
+							<p:outputLabel value="Código:" />
+							<p:outputLabel value="#{MBProjeto.projeto.nro}" />							
+							
+							<p:outputLabel value="Projeto:" />
+							<p:inputText value="#{MBProjeto.projeto.nome}" size="30" />
+							
+							<h:inputHidden/>
+							<h:panelGrid columns="4" style="margin-top:10px;">
+								<p:commandButton value="Salvar" actionListener="#{MBProjeto.salvar}" update="msgs, tabela, cadastro" />
+								<p:commandButton value="Excluir" />
+								<p:commandButton value="Novo" actionListener="#{MBProjeto.novo}" update="msgs, cadastro" />
+								<p:commandButton value="Buscar" />
+							</h:panelGrid>
+							
+						</h:panelGrid>
+							
+					</p:panel>
+	
+					<p:dataTable id="tabela" var="p" value="#{MBProjeto.listaProjetos}" style="margin-top: 20px;">
+						<p:column headerText="Nome Projeto" style="text-align: center">
+							<h:outputText value="#{p.nome}" />
+						</p:column>
+	
+						<p:column style="width:32px;text-align: center">
+							<p:commandButton update=":form1" icon="ui-icon-pencil" title="Editar Projeto">
+								<f:setPropertyActionListener value="#{p}" target="#{MBProjeto.projeto}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</p:panel>
 		</ui:define>
 
 	</ui:composition>

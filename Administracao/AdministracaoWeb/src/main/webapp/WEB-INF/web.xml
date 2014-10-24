@@ -37,7 +37,19 @@
 
 	<!-- Tempo da Sessão -->
 	<session-config>
-		<session-timeout>1</session-timeout>
+		<session-timeout>
+			10
+		</session-timeout>
 	</session-config>
+	
+	<!-- Tratamento de erros -->
+	<error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/pages/public/semsessao.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.faces.view.facelets.TagAttributeException</exception-type>
+        <location>/pages/public/semsessao.xhtml</location>
+    </error-page>
 
 </web-app>
