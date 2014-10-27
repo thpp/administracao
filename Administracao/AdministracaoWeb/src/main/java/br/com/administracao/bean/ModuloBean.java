@@ -47,7 +47,7 @@ public class ModuloBean implements Serializable {
 
 	public void novo() {
 		modulo = new Modulo();
-		//buscarProjetos();
+		buscarProjetos();
 	}
 
 	public void buscarProjetos() {

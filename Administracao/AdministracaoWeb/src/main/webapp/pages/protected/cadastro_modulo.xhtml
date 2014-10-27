@@ -102,11 +102,11 @@
 					</p:panelGrid>
 					<p:panelGrid id="pnlButtonSalvar" columns="2">
 						<p:commandButton id="buttonSalvar"
-							actionListener="#{MBModulo.salvar()}" value="Salvar"
+							actionListener="#{MBModulo.salvar}" value="Salvar"
 							update=":form1:msgs" />
 						<p:commandButton value="Cancelar" process="@this"
 							onclick="PF('dialogoNovo').hide();">
-							<p:resetInput target=":pnlNovo" />
+							<p:resetInput target=":formNovo:pnlNovo" />
 						</p:commandButton>
 					</p:panelGrid>
 				</h:form>
