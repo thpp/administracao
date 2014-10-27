@@ -39,7 +39,6 @@ public class ProjetoBean implements Serializable {
 		try {
 
 			if (projeto.getNome().length() > caracteresMinimos) {
-				//projeto.setNome(projeto.getNome().toUpperCase());
 				if (projeto.getNro() == null) {
 					ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
 					service.inserir(projeto);

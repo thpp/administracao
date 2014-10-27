@@ -20,8 +20,7 @@ public class ModuloServiceImpl implements ModuloService {
 			logger.info("Modulo inserido com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}
-		
+		}		
 	}
 
 	@Override

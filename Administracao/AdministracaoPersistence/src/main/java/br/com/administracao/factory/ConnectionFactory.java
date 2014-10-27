@@ -54,13 +54,13 @@ public class ConnectionFactory {
 		return conexao;
 	}	
 		
-//	public static void main(String[] args) {
-//		try {			
-//			@SuppressWarnings("unused")
-//			Connection con = ConnectionFactory.getConnection();
-//			System.out.print("conexao obtida");
-//		} catch (Exception e) {
-//			System.out.print("ERRO ao conecatr");
-//		}		
-//	}
+	public static void main(String[] args) {
+		try {			
+			@SuppressWarnings("unused")
+			Connection con = ConnectionFactory.getConnection();
+			System.out.print("conexao obtida");
+		} catch (Exception e) {
+			System.out.print("ERRO ao conecatr");
+		}		
+	}
 }
