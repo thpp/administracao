@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<body>
+
+	<ui:composition template="template.xhtml">
+
+		<ui:define name="titulo">
+            Cadastro de Módulos
+        </ui:define>
+
+		<ui:define name="content">
+
+			<p:panel style="background-color: buttonface">
+				<h:form id="form1">
+					<p:panel header="Cadastro de Módulos">
+						<p:messages id="msgs" showDetail="false">
+							<p:effect type="pulsate" event="load" delay="100" />
+						</p:messages>
+						<h:panelGrid id="busca" columns="4" style="margin-top:20px;">
+
+							<p:inputText value="#{MBModulo.textoBusca}"
+								style="text-transform:uppercase" size="60" />
+
+							<p:outputLabel value="Filtrar por:" style="margin-left: 30px;" />
+							<p:selectOneRadio value="#{MBModulo.escolhaBusca}">
+								<f:selectItem itemValue="modulo" itemLabel="Módulo" />
+								<f:selectItem itemValue="projeto" itemLabel="Projeto" />
+							</p:selectOneRadio>
+
+							<h:inputHidden />
+							<h:panelGrid columns="4" style="margin-top:10px;">
+								<p:commandButton value="Novo" oncomplete="PF('dlgNovo').show();"
+									actionListener="#{MBModulo.novo}"
+									update="msgs, :formNovo:pnlNovo" />
+								<p:commandButton value="Buscar"
+									actionListener="#{MBModulo.buscar()}" update="msgs" />
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<p:dataTable id="tabela" var="m" value="" style="margin-top: 20px;">
+						<p:column headerText="Nome do Módulo" style="text-align: center">
+							<h:outputText value="" />
+						</p:column>
+						<p:column headerText="Nome do Projeto" style="text-align: center">
+							<h:outputText value="" />
+						</p:column>
+						<p:column style="width:32px;text-align: center">
+							<p:commandButton update=":form1" icon="ui-icon-pencil"
+								title="Editar Módulo">
+								<f:setPropertyActionListener value="#{m}"
+									target="#{MBModulo.modulo}" />
+							</p:commandButton>
+						</p:column>
+						<p:column style="width:32px;text-align: center">
+							<p:commandButton update=":form1" icon="ui-icon-trash"
+								title="Excluir Módulo">
+								<p:confirm header="Atenção!"
+									message="Deseja realmente excluir o módulo?"
+									icon="ui-icon-alert" />
+								<f:setPropertyActionListener value="#{m}"
+									target="#{MBModulo.modulo}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true" showEffect="fade">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+
+				</h:form>
+			</p:panel>
+
+			<p:dialog id="dialogoNovo" widgetVar="dlgNovo" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Cadastro de Módulo">
+
+				<h:form id="formNovo">
+					<p:panelGrid id="pnlNovo" columns="2">
+						<p:outputLabel value="Nome:" />
+						<p:inputText value="#{MBModulo.modulo.nome}"
+							style="text-transform:uppercase" size="30" />
+						<p:outputLabel value="Projeto:" />
+						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
+							filter="true">
+							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
+							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
+								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:panelGrid id="pnlButtonSalvar" columns="2">
+						<p:commandButton id="buttonSalvar"
+							actionListener="#{MBModulo.salvar()}" value="Salvar"
+							update=":form1:msgs" />
+						<p:commandButton value="Cancelar" process="@this"
+							onclick="PF('dialogoNovo').hide();">
+							<p:resetInput target=":pnlNovo" />
+						</p:commandButton>
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+		</ui:define>
+
+	</ui:composition>
+
+</body>
+</html>
