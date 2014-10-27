@@ -4,7 +4,7 @@ public class Modulo {
 	
 	private Long nro;
 	private String nome;
-	private Projeto projeto;
+	private Projeto projeto = new Projeto();
 	
 	public Long getNro() {
 		return nro;
