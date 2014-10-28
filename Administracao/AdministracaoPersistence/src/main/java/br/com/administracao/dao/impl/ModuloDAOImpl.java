@@ -2,7 +2,9 @@ package br.com.administracao.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -83,8 +85,42 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 	@Override
 	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT p.nro, p.nome, p.proj_nro ");
+		sql.append("FROM s_modulo p ");
+		//sql.append("ORDER BY p.descricao ");
+		
+		
+		Connection conexao = null;
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		List<Modulo> lista = new ArrayList<Modulo>();
+		
+		try {
+			
+		conexao = ConnectionFactory.getConnection();		
+		comando = conexao.prepareStatement(sql.toString());		
+		resultado = comando.executeQuery();
+
+		while (resultado.next()) {
+			Modulo modulo = new Modulo();
+			modulo.setNro(resultado.getLong("nro"));
+			modulo.setNome(resultado.getString("nome"));
+			modulo.setProjeto(new ProjetoDAOImpl().buscar(resultado.getLong("PROJ_NRO")));
+
+			lista.add(modulo);
+		}
+		
+		} catch (SQLException ex) {
+			throw new PSTException(
+					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+		} finally {
+			PSTUtil.fechar(resultado);
+			PSTUtil.fechar(comando);
+			PSTUtil.fechar(conexao);
+		}
+		
+		return lista;
 	}
 
 	@Override

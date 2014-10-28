@@ -1,5 +1,6 @@
 package br.com.administracao.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import br.com.administracao.dao.impl.ModuloDAOImpl;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Modulo;
+
 @Stateless
 public class ModuloServiceImpl implements ModuloService {
 	
@@ -33,8 +35,15 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public List<Modulo> listar(int primeiro, int tamanho) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Modulo> lista = new ArrayList<Modulo>();
+		try {
+			lista = new ModuloDAOImpl().listar(primeiro, tamanho);
+			logger.info("Lista de modulos obtida com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+		return lista;
 	}
 
 	@Override
