@@ -46,7 +46,32 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 	@Override
 	public void editar(Modulo modulo) throws PSTException {
-		// TODO Auto-generated method stub
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE s_modulo ");
+		sql.append("SET nome = UPPER(?), PROJ_NRO = ?");
+		sql.append("WHERE nro = ? ");
+
+		Connection conexao = null;
+		PreparedStatement comando = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();
+
+			comando = conexao.prepareStatement(sql.toString());
+			comando.setString(1, modulo.getNome());
+			comando.setLong(2, modulo.getProjeto().getNro());
+			comando.setLong(3, modulo.getNro());
+
+			comando.executeUpdate();
+
+			logger.info("Modulo editado com sucesso");
+		} catch (SQLException ex) {
+			throw new PSTException(
+					"Ocorreu um erro ao tentar editar um modulo", ex);
+		} finally {
+			PSTUtil.fechar(comando);
+			PSTUtil.fechar(conexao);
+		}
 		
 	}
 

@@ -45,7 +45,12 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public void editar(Modulo modulo) {
-		// TODO Auto-generated method stub
+		try {			
+			new ModuloDAOImpl().editar(modulo);
+			logger.info("Modulo editado com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}	
 		
 	}
 
