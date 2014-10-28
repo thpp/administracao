@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<body>
+
+	<ui:composition template="template.xhtml">
+
+		<ui:define name="titulo">
+            Cadastro de Telas
+        </ui:define>
+
+		<ui:define name="content">
+			<p:panel style="background-color: buttonface">
+				<h:form id="form1">
+					<p:panel header="Cadastro de Telas">
+						<p:tabView widgetVar="tabTelas" id="guiaTelas">
+							<p:tab title="Consulta">
+								<p:messages id="msgConsulta" showDetail="false">
+									<p:effect type="pulsate" event="load" delay="100" />
+								</p:messages>
+								<h:panelGrid id="consulta" columns="3" style="margin-top:20px;">
+
+									<p:inputText style="text-transform:uppercase" size="60" />
+
+
+									<p:outputLabel value="Filtrar por:" style="margin-left: 30px;" />
+									<p:selectOneRadio value="tela">
+										<f:selectItem itemValue="tela" itemLabel="Tela" />
+										<f:selectItem itemValue="modulo" itemLabel="Módulo" />
+										<f:selectItem itemValue="projeto" itemLabel="Projeto" />
+									</p:selectOneRadio>
+
+									<h:panelGrid columns="4" style="margin-top:10px;">
+										<p:commandButton value="Novo"
+											oncomplete="tabTelas.selectTab(1);" update=":form1:guiaTelas" />
+										<p:commandButton value="Buscar" update="msgConsulta" />
+									</h:panelGrid>
+
+								</h:panelGrid>
+
+								<p:dataTable id="tabela" var="t" value=""
+									style="margin-top: 20px;">
+									<p:column headerText="Nome da Tela" style="text-align: center">
+										<h:outputText value="" />
+									</p:column>
+									<p:column headerText="Nome do Módulo"
+										style="text-align: center">
+										<h:outputText value="" />
+									</p:column>
+									<p:column headerText="Nome do Projeto"
+										style="text-align: center">
+										<h:outputText value="" />
+									</p:column>
+									<p:column style="width:32px;text-align: center">
+										<p:commandButton update=":form1" icon="ui-icon-plus"
+											title="Ver Funções">
+											<f:setPropertyActionListener value="#{t}" target="" />
+										</p:commandButton>
+									</p:column>
+									<p:column style="width:32px;text-align: center">
+										<p:commandButton update=":form1" icon="ui-icon-pencil"
+											title="Editar Módulo">
+											<f:setPropertyActionListener value="#{t}" target="" />
+										</p:commandButton>
+									</p:column>
+									<p:column style="width:32px;text-align: center">
+										<p:commandButton update=":form1" icon="ui-icon-trash"
+											title="Excluir Módulo">
+											<p:confirm header="Atenção!"
+												message="Deseja realmente excluir o módulo?"
+												icon="ui-icon-alert" />
+											<f:setPropertyActionListener value="#{t}" target="" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+
+							</p:tab>
+
+							<p:tab title="Cadastro e Edição">
+								<p:messages id="msgCadastro" showDetail="false">
+									<p:effect type="pulsate" event="load" delay="100" />
+								</p:messages>
+								<h:form id="formCadastro">
+									<h:panelGrid columns="4" style="margin-top:10px;">
+										<p:outputLabel value="Nome: " />
+										<p:inputText size="40" />
+										<p:selectOneMenu style="margin-left: 20px;">
+											<f:selectItem itemValue="" itemLabel="Selecione o projeto..." />
+										</p:selectOneMenu>
+										<p:selectOneMenu style="margin-left: 10px;">
+											<f:selectItem itemValue="" itemLabel="Selecione o módulo..." />
+										</p:selectOneMenu>
+									</h:panelGrid>
+									<div align="center" style="margin-top: 20px;">
+										<p:pickList id="pickListAcao" value="#{MBTela.acoes}"
+											var="acao" effect="bounce" itemValue="#{acao}"
+											itemLabel="#{acao.nome}" showCheckbox="true"
+											showSourceFilter="true" showTargetFilter="true"
+											filterMatchMode="contains" converter="acaoConverter"
+											addLabel="Adicionar" addAllLabel="Adicionar Todos"
+											removeLabel="Remover" removeAllLabel="Remover Todos">
+
+											<f:facet name="sourceCaption">Ações</f:facet>
+											<f:facet name="targetCaption">Funções</f:facet>
+
+											<p:ajax event="transfer" listener="#{MBTela.onTransfer}"
+												update=":form1:guiaTelas:msgCadastro" />
+
+											<p:column style="width:25%">
+												<h:outputText styleClass="ui-theme ui-theme-#{theme.name}" />
+											</p:column>
+
+											<p:column style="width:75%;">
+												<h:outputText value="#{acao.nome}" />
+											</p:column>
+										</p:pickList>
+									</div>
+					
+									<div align="center" style="margin-top: 20px;">
+										<p:commandButton id="buttonSalvar" value="Salvar"
+											update=":form1:guiaTelas:msgCadastro" />
+									</div>
+								</h:form>
+							</p:tab>
+						</p:tabView>
+					</p:panel>
+				</h:form>
+			</p:panel>
+
+		</ui:define>
+
+	</ui:composition>
+
+</body>
+</html>

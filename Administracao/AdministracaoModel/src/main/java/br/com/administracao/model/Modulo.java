@@ -1,6 +1,9 @@
 package br.com.administracao.model;
 
-public class Modulo {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Modulo implements Serializable{
 	
 	private Long nro;
 	private String nome;

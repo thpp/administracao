@@ -3,12 +3,14 @@ package br.com.administracao.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
+
 import br.com.administracao.client.ModuloService;
 import br.com.administracao.dao.impl.ModuloDAOImpl;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Modulo;
-
+@Stateless
 public class ModuloServiceImpl implements ModuloService {
 	
 	private static Logger logger = Logger.getLogger(ModuloServiceImpl.class.getName());
