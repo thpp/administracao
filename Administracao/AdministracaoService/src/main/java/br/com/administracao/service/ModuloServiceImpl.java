@@ -18,6 +18,7 @@ public class ModuloServiceImpl implements ModuloService {
 	@Override
 	public void inserir(Modulo modulo) {
 		try {
+			
 			new ModuloDAOImpl().inserir(modulo);
 			logger.info("Modulo inserido com sucesso");
 		} catch (PSTException ex) {
