@@ -1,4 +1,4 @@
-package br.com.administracao.bean;
+package br.com.administracao.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

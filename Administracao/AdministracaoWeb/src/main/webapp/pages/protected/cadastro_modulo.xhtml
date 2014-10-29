@@ -28,11 +28,12 @@
 							<p:inputText value="#{MBModulo.textoBusca}"
 								style="text-transform:uppercase" size="60" />
 
-							<p:outputLabel value="Filtrar por:" style="margin-left: 30px;" />
-							<p:selectOneRadio value="#{MBModulo.escolhaBusca}">
-								<f:selectItem itemValue="modulo" itemLabel="Módulo" />
-								<f:selectItem itemValue="projeto" itemLabel="Projeto" />
-							</p:selectOneRadio>
+							<p:outputLabel value="Filtrar por Projeto:"
+								style="margin-left: 30px;" />
+							<p:selectOneMenu value="#{MBModulo.escolhaBusca}" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
+							</p:selectOneMenu>
 
 							<h:inputHidden />
 							<h:panelGrid columns="4" style="margin-top:10px;">
@@ -40,23 +41,27 @@
 									actionListener="#{MBModulo.novo}"
 									update="msgs, :formNovo:pnlNovo" />
 								<p:commandButton value="Buscar"
-									actionListener="#{MBModulo.buscar()}" update="msgs" />
+									actionListener="#{MBModulo.buscarPorNome}" update="msgs" />
 							</h:panelGrid>
 
 						</h:panelGrid>
 
 					</p:panel>
 
-					<p:dataTable id="tabela" var="m" value="" style="margin-top: 20px;">
+					<p:dataTable id="tabelaModulos" widgetVar="tblModulos" var="m"
+						value="#{MBModulo.listaModulos}" style="margin-top: 20px;"
+						emptyMessage="Nenhum Registro Encontrado">
 						<p:column headerText="Nome do Módulo" style="text-align: center">
-							<h:outputText value="" />
+							<h:outputText value="#{m.nome}" />
 						</p:column>
 						<p:column headerText="Nome do Projeto" style="text-align: center">
-							<h:outputText value="" />
+							<h:outputText value="#{m.projeto.nome}" />
 						</p:column>
 						<p:column style="width:32px;text-align: center">
-							<p:commandButton update=":form1" icon="ui-icon-pencil"
-								title="Editar Módulo">
+							<p:commandButton icon="ui-icon-pencil"
+								actionListener="#{MBModulo.buscarProjetos}"
+								oncomplete="PF('dlgEdicao').show();" title="Editar Módulo"
+								update=":form1:msgs, :formEdicao:pnlEdicao">
 								<f:setPropertyActionListener value="#{m}"
 									target="#{MBModulo.modulo}" />
 							</p:commandButton>
@@ -91,23 +96,55 @@
 					<p:panelGrid id="pnlNovo" columns="2">
 						<p:outputLabel value="Nome:" />
 						<p:inputText value="#{MBModulo.modulo.nome}"
-							style="text-transform:uppercase" size="30" />
+							style="text-transform:uppercase" size="30" required="true"
+							requiredMessage="O campo nome é obrigatório!" />
 						<p:outputLabel value="Projeto:" />
 						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
-							filter="true">
+							filter="true" required="true"
+							requiredMessage="O campo projeto é obrigatório!">
 							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
 							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
 								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
 						</p:selectOneMenu>
 					</p:panelGrid>
-					<p:panelGrid id="pnlButtonSalvar" columns="2">
-						<p:commandButton id="buttonSalvar"
-							actionListener="#{MBModulo.salvar}" value="Salvar"
-							update=":form1:msgs" />
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBModulo.salvar}"
+							value="Salvar"
+							oncomplete="verificar(xhr, status, args, 'dlgNovo', 'tblModulos');"
+							update=":form1:msgs, :form1:tabelaModulos" />
 						<p:commandButton value="Cancelar" process="@this"
-							onclick="PF('dialogoNovo').hide();">
+							onclick="PF('dlgNovo').hide();">
 							<p:resetInput target=":formNovo:pnlNovo" />
 						</p:commandButton>
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoEdicao" widgetVar="dlgEdicao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Edição de Módulo">
+				<h:form id="formEdicao">
+					<p:panelGrid id="pnlEdicao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<p:inputText value="#{MBModulo.modulo.nome}"
+							style="text-transform:uppercase" size="30" required="true"
+							requiredMessage="O campo nome é obrigatório!" />
+						<p:outputLabel value="Projeto:" />
+						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
+							filter="true" required="true"
+							requiredMessage="O campo projeto é obrigatório!">
+							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
+							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
+								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBModulo.salvar}"
+							value="Editar"
+							oncomplete="verificar(xhr, status, args, 'dlgEdicao', 'tblModulos');"
+							update=":form1:msgs, :form1:tabelaModulos" />
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgEdicao').hide();" />
 					</p:panelGrid>
 				</h:form>
 			</p:dialog>

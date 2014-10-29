@@ -24,22 +24,29 @@ public class ModuloBean implements Serializable {
 	private Modulo modulo;
 	private List<Modulo> modulos = new ArrayList<Modulo>();
 	private Integer caracteresMinimos = 3;
-	private String escolhaBusca;
+	private String escolhaBusca = "modulo";
 	private String textoBusca = "";
 	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
+	private List<Modulo> listaModulos = new ArrayList<Modulo>();
 
 	@PostConstruct
-	public void buscar() {
-
+	public void buscarLista() {
+		try {
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(0, 0);
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
 	}
 
 	public void buscarPorNome() {
 		if ("modulo".equals(escolhaBusca)) {
-			textoBusca = "";
 			System.out.println("Busca Por Módulo");
-		} else if ("projeto".equals(escolhaBusca)) {
 			textoBusca = "";
+		} else if ("projeto".equals(escolhaBusca)) {
 			System.out.println("Busca Por Projeto");
+			textoBusca = "";
 		} else {
 			WebUtil.adicionarMensagemAviso("Selecione um filtro para busca!");
 		}
@@ -62,12 +69,25 @@ public class ModuloBean implements Serializable {
 
 	public void salvar() {
 		try {
-			ModuloService service = (ModuloService) WebUtil
-					.getNamedObject(ModuloService.NAME);
-			service.inserir(modulo);
-			WebUtil.adicionarMensagemSucesso("Módulo salvo com sucesso");
 
-			buscar();
+			if (modulo.getNome().length() > caracteresMinimos) {
+				if (modulo.getNro() == null) {
+					ModuloService service = (ModuloService) WebUtil
+							.getNamedObject(ModuloService.NAME);
+					service.inserir(modulo);
+					WebUtil.adicionarMensagemSucesso("Módulo salvo com sucesso");
+
+				} else {
+					ModuloService service = (ModuloService) WebUtil
+							.getNamedObject(ModuloService.NAME);
+					service.editar(modulo);
+					WebUtil.adicionarMensagemSucesso("Módulo editado com sucesso");
+				}
+			} else {
+				WebUtil.adicionarMensagemAviso("Módulo deve ter o nome maior que 3 caracteres");
+			}
+
+			buscarLista();
 
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
@@ -128,6 +148,14 @@ public class ModuloBean implements Serializable {
 
 	public void setListaProjetos(List<Projeto> listaProjetos) {
 		this.listaProjetos = listaProjetos;
+	}
+
+	public List<Modulo> getListaModulos() {
+		return listaModulos;
+	}
+
+	public void setListaModulos(List<Modulo> listaModulos) {
+		this.listaModulos = listaModulos;
 	}
 
 }

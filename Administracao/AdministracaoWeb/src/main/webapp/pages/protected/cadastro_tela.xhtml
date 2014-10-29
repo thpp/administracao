@@ -19,30 +19,36 @@
 			<p:panel style="background-color: buttonface">
 				<h:form id="form1">
 					<p:panel header="Cadastro de Telas">
-						<p:tabView widgetVar="tabTelas" id="guiaTelas">
+						<p:tabView widgetVar="tabTelas" id="guiaTelas"
+							binding="#{MBTela.tabView}">
+							<p:ajax event="tabChange" listener="#{MBTela.onTabChange}"
+								update=":form1:guiaTelas" />
 							<p:tab title="Consulta">
 								<p:messages id="msgConsulta" showDetail="false">
 									<p:effect type="pulsate" event="load" delay="100" />
 								</p:messages>
-								<h:panelGrid id="consulta" columns="3" style="margin-top:20px;">
+								<p:panel id="consulta" style="margin-top:20px;">
 
 									<p:inputText style="text-transform:uppercase" size="60" />
 
+									<h:panelGrid columns="3" style="margin-top:10px;">
 
-									<p:outputLabel value="Filtrar por:" style="margin-left: 30px;" />
-									<p:selectOneRadio value="tela">
-										<f:selectItem itemValue="tela" itemLabel="Tela" />
-										<f:selectItem itemValue="modulo" itemLabel="Módulo" />
-										<f:selectItem itemValue="projeto" itemLabel="Projeto" />
-									</p:selectOneRadio>
+										<p:outputLabel value="Filtrar: " />
+										<p:selectOneMenu style="margin-left: 20px;">
+											<f:selectItem itemValue="" itemLabel="Selecione o projeto..." />
+										</p:selectOneMenu>
+										<p:selectOneMenu style="margin-left: 10px;">
+											<f:selectItem itemValue="" itemLabel="Selecione o módulo..." />
+										</p:selectOneMenu>
 
-									<h:panelGrid columns="4" style="margin-top:10px;">
-										<p:commandButton value="Novo"
-											oncomplete="tabTelas.selectTab(1);" update=":form1:guiaTelas" />
-										<p:commandButton value="Buscar" update="msgConsulta" />
 									</h:panelGrid>
 
-								</h:panelGrid>
+									<h:panelGrid columns="4" style="margin-top:10px;">
+										<p:commandButton value="Novo" actionListener="#{MBTela.novo}"
+											update=":form1:guiaTelas" />
+										<p:commandButton value="Buscar" update="msgConsulta" />
+									</h:panelGrid>
+								</p:panel>
 
 								<p:dataTable id="tabela" var="t" value=""
 									style="margin-top: 20px;">
@@ -86,7 +92,8 @@
 								<p:messages id="msgCadastro" showDetail="false">
 									<p:effect type="pulsate" event="load" delay="100" />
 								</p:messages>
-								<h:form id="formCadastro">
+								<h:form id="formCadastro"
+									rendered="#{MBTela.activeTabIndex == '1'}">
 									<h:panelGrid columns="4" style="margin-top:10px;">
 										<p:outputLabel value="Nome: " />
 										<p:inputText size="40" />
@@ -121,7 +128,7 @@
 											</p:column>
 										</p:pickList>
 									</div>
-					
+
 									<div align="center" style="margin-top: 20px;">
 										<p:commandButton id="buttonSalvar" value="Salvar"
 											update=":form1:guiaTelas:msgCadastro" />
