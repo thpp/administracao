@@ -79,7 +79,29 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 	@Override
 	public void excluir(Long codigo) throws PSTException {
-		// TODO Auto-generated method stub
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM s_modulo ");
+		sql.append("WHERE nro = ? ");
+
+		Connection conexao = null;
+		PreparedStatement comando = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();
+
+			comando = conexao.prepareStatement(sql.toString());
+			comando.setLong(1, codigo);
+
+			comando.executeUpdate();
+
+			logger.info("Modulo excluido com sucesso");
+		} catch (SQLException ex) {
+			throw new PSTException(
+					"Ocorreu um erro ao tentar excluir um modulo", ex);
+		} finally {
+			PSTUtil.fechar(comando);
+			PSTUtil.fechar(conexao);
+		}
 		
 	}
 

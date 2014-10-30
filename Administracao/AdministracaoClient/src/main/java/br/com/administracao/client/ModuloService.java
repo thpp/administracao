@@ -15,7 +15,7 @@ public interface ModuloService {
 
 	public List<Modulo> listar(int primeiro, int tamanho);
 	
-	public List<Modulo> listar(String nome);
+	public List<Modulo> listar(String nome, Long nroProjeto);	
 
 	public void editar(Modulo modulo);
 

@@ -47,7 +47,7 @@ public class ModuloServiceImpl implements ModuloService {
 	}
 
 	@Override
-	public List<Modulo> listar(String nome) {
+	public List<Modulo> listar(String nome, Long nroProjeto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -65,7 +65,12 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public void excluir(Long codigo) {
-		// TODO Auto-generated method stub
+		try {
+			new ModuloDAOImpl().excluir(codigo);
+			logger.info("Modulo excluido com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
 		
 	}
 

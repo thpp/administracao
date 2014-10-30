@@ -46,6 +46,7 @@ public class ModuloServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void lista1() throws NamingException, ServiceException{
 		
 		java.util.List<Modulo> lista = new ArrayList<Modulo>();
@@ -56,6 +57,16 @@ public class ModuloServiceImplTest {
 			System.out.println("Modulo Nome: "+modulo.getNome());
 			System.out.println("Projeto Nome: "+modulo.getProjeto().getNome());
 		}
+	}
+	
+	@Test
+	public void excluir() throws NamingException, ServiceException{
+		
+		Modulo m = new Modulo();
+		m.setNro(9L);
+		ModuloService service = (ModuloService) ejbContainer.getContext().lookup("java:global/AdministracaoService/ModuloServiceImpl");
+		service.excluir(m.getNro());
+			
 	}
 	
 }
