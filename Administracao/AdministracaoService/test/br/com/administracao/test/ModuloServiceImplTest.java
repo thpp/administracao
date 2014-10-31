@@ -46,7 +46,6 @@ public class ModuloServiceImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void lista1() throws NamingException, ServiceException{
 		
 		java.util.List<Modulo> lista = new ArrayList<Modulo>();
@@ -60,6 +59,7 @@ public class ModuloServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void excluir() throws NamingException, ServiceException{
 		
 		Modulo m = new Modulo();

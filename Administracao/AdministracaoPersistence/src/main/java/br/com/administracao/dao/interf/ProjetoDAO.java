@@ -17,8 +17,6 @@ public interface ProjetoDAO {
 	public List<Projeto> listar(int primeiro, int tamanho) throws PSTException;
 	
 	public List<Projeto> listar(String nome) throws PSTException;
-	
-	public Projeto buscar(Long nro) throws PSTException;
 
 	public int contar() throws PSTException;
 	

@@ -16,7 +16,7 @@ public interface ModuloDAO {
 	
 	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException;
 	
-	public List<Modulo> listar(String nome) throws PSTException;
+	public List<Modulo> listar(String nome, Long nroProjeto) throws PSTException;
 
 	public int contar() throws PSTException;
 	

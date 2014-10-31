@@ -187,48 +187,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 		}
 		
 		return lista;
-	}
-	
-	@Override
-	public Projeto buscar(Long nro) throws PSTException {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT p.nro, p.nome ");
-		sql.append("FROM s_projeto p ");
-		sql.append("WHERE p.nro = ?");
-		
-		
-		Connection conexao = null;
-		PreparedStatement comando = null;
-		ResultSet resultado = null;
-		Projeto projeto = null;
-		
-		try {
-		conexao = ConnectionFactory.getConnection();
-		
-		comando = conexao.prepareStatement(sql.toString());
-		
-		comando.setLong(1, nro);
-		
-		resultado = comando.executeQuery();
-
-		while (resultado.next()) {
-			projeto = new Projeto();
-			projeto.setNro(resultado.getLong("nro"));
-			projeto.setNome(resultado.getString("nome"));
-
-		}
-		
-		} catch (SQLException ex) {
-			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
-		} finally {
-			PSTUtil.fechar(resultado);
-			PSTUtil.fechar(comando);
-			PSTUtil.fechar(conexao);
-		}
-		
-		return projeto;
-	}
+	}	
 
 	@Override
 	public int contar() throws PSTException {

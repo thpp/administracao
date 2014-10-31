@@ -12,6 +12,7 @@ import br.com.administracao.dao.interf.ModuloDAO;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.factory.ConnectionFactory;
 import br.com.administracao.model.Modulo;
+import br.com.administracao.model.Projeto;
 import br.com.administracao.util.PSTUtil;
 
 public class ModuloDAOImpl implements ModuloDAO {
@@ -73,8 +74,7 @@ public class ModuloDAOImpl implements ModuloDAO {
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
-		}
-		
+		}		
 	}
 
 	@Override
@@ -101,16 +101,15 @@ public class ModuloDAOImpl implements ModuloDAO {
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
-		}
-		
+		}		
 	}
 
 	@Override
 	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT p.nro, p.nome, p.proj_nro ");
-		sql.append("FROM s_modulo p ");
-		//sql.append("ORDER BY p.descricao ");
+		sql.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
+		sql.append("FROM s_modulo m, S_PROJETO p ");
+		sql.append("where m.PROJ_NRO = p.NRO ");
 		
 		
 		Connection conexao = null;
@@ -123,12 +122,21 @@ public class ModuloDAOImpl implements ModuloDAO {
 		conexao = ConnectionFactory.getConnection();		
 		comando = conexao.prepareStatement(sql.toString());		
 		resultado = comando.executeQuery();
-
+		
+		Modulo modulo;
+		Projeto projeto;
+		
 		while (resultado.next()) {
-			Modulo modulo = new Modulo();
-			modulo.setNro(resultado.getLong("nro"));
-			modulo.setNome(resultado.getString("nome"));
-			modulo.setProjeto(new ProjetoDAOImpl().buscar(resultado.getLong("PROJ_NRO")));
+			modulo = new Modulo();
+			projeto = new Projeto();
+			modulo.setNro(resultado.getLong("nroM"));
+			modulo.setNome(resultado.getString("nomeM"));
+			
+			projeto = new Projeto();
+			projeto.setNro(resultado.getLong("nroP"));
+			projeto.setNome(resultado.getString("nomeP"));
+			
+			modulo.setProjeto(projeto);
 
 			lista.add(modulo);
 		}
@@ -146,7 +154,7 @@ public class ModuloDAOImpl implements ModuloDAO {
 	}
 
 	@Override
-	public List<Modulo> listar(String nome) throws PSTException {
+	public List<Modulo> listar(String nome, Long nroProjeto) throws PSTException {
 		// TODO Auto-generated method stub
 		return null;
 	}
