@@ -60,6 +60,7 @@ public class ModuloServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void lista2() throws NamingException, ServiceException{
 		
 		java.util.List<Modulo> lista = new ArrayList<Modulo>();

@@ -1,6 +1,9 @@
 package br.com.administracao.model;
 
-public class Acoes {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Acoes implements Serializable {
 	
 	private Long nro;
 	private String nome;
