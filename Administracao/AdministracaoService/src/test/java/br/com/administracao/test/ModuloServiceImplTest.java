@@ -46,11 +46,25 @@ public class ModuloServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void lista1() throws NamingException, ServiceException{
 		
 		java.util.List<Modulo> lista = new ArrayList<Modulo>();
 		ModuloService service = (ModuloService) ejbContainer.getContext().lookup("java:global/AdministracaoService/ModuloServiceImpl");
 		lista = service.listar(0, 0);
+		
+		for (Modulo modulo : lista) {
+			System.out.println("Modulo Nome: "+modulo.getNome());
+			System.out.println("Projeto Nome: "+modulo.getProjeto().getNome());
+		}
+	}
+	
+	@Test
+	public void lista2() throws NamingException, ServiceException{
+		
+		java.util.List<Modulo> lista = new ArrayList<Modulo>();
+		ModuloService service = (ModuloService) ejbContainer.getContext().lookup("java:global/AdministracaoService/ModuloServiceImpl");
+		lista = service.listar("usu", 9L);
 		
 		for (Modulo modulo : lista) {
 			System.out.println("Modulo Nome: "+modulo.getNome());

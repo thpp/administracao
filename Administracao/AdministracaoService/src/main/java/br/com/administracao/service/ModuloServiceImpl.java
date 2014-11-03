@@ -48,8 +48,15 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public List<Modulo> listar(String nome, Long nroProjeto) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Modulo> lista = new ArrayList<Modulo>();
+		try {
+			lista = new ModuloDAOImpl().listar(nome, nroProjeto);
+			logger.info("Lista de modulos obtida com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+		return lista;
 	}
 
 	@Override

@@ -155,8 +155,72 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 	@Override
 	public List<Modulo> listar(String nome, Long nroProjeto) throws PSTException {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
+		sql.append("FROM s_modulo m, S_PROJETO p ");
+		sql.append("where m.PROJ_NRO = p.NRO ");
+		
+		if(nome != null){
+			sql.append("and m.nome like UPPER(?) ");
+		}
+		
+		if(nroProjeto != null){
+			sql.append("and m.PROJ_NRO =  ? ");
+		}
+		
+		
+		Connection conexao = null;
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		List<Modulo> lista = new ArrayList<Modulo>();
+		
+		try {
+			
+		conexao = ConnectionFactory.getConnection();		
+		comando = conexao.prepareStatement(sql.toString());
+		
+		if (nome != null && nroProjeto != null) {
+			comando.setString(1, "%"+nome+"%");
+			comando.setLong(2, nroProjeto);
+			
+		}else if(nome != null){
+			comando.setString(1, "%"+nome+"%");
+		}else if(nroProjeto != null){
+			comando.setLong(1, nroProjeto);
+		}
+		
+		resultado = comando.executeQuery();
+		
+		
+		
+		Modulo modulo;
+		Projeto projeto;
+		
+		while (resultado.next()) {
+			modulo = new Modulo();
+			projeto = new Projeto();
+			modulo.setNro(resultado.getLong("nroM"));
+			modulo.setNome(resultado.getString("nomeM"));
+			
+			projeto = new Projeto();
+			projeto.setNro(resultado.getLong("nroP"));
+			projeto.setNome(resultado.getString("nomeP"));
+			
+			modulo.setProjeto(projeto);
+
+			lista.add(modulo);
+		}
+		
+		} catch (SQLException ex) {
+			throw new PSTException(
+					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+		} finally {
+			PSTUtil.fechar(resultado);
+			PSTUtil.fechar(comando);
+			PSTUtil.fechar(conexao);
+		}
+		
+		return lista;
 	}
 
 	@Override
