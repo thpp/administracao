@@ -24,9 +24,10 @@ public class ModuloBean implements Serializable {
 	private Modulo modulo;
 	private List<Modulo> modulos = new ArrayList<Modulo>();
 	private Integer caracteresMinimos = 3;
-	private String escolhaBusca = "modulo";
+	private Long nroProjetoBusca = 0L;
 	private String textoBusca = "";
 	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
+	private List<Projeto> listaProjetosBusca = new ArrayList<Projeto>();
 	private List<Modulo> listaModulos = new ArrayList<Modulo>();
 
 	@PostConstruct
@@ -35,20 +36,47 @@ public class ModuloBean implements Serializable {
 			ModuloService service = (ModuloService) WebUtil
 					.getNamedObject(ModuloService.NAME);
 			listaModulos = service.listar(0, 0);
+
+			ProjetoService serviceProjeto = (ProjetoService) WebUtil
+					.getNamedObject(ProjetoService.NAME);
+			listaProjetosBusca = serviceProjeto.listar(0, 0);
+
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
 		}
 	}
 
 	public void buscarPorNome() {
-		if ("modulo".equals(escolhaBusca)) {
-			System.out.println("Busca Por Módulo");
+		if (!"".equals(textoBusca) && nroProjetoBusca != 0) {
+			// Pesquisar pelo texto digitado e número do projeto
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(textoBusca, nroProjetoBusca);
+			
 			textoBusca = "";
-		} else if ("projeto".equals(escolhaBusca)) {
-			System.out.println("Busca Por Projeto");
+			nroProjetoBusca = 0L;
+			
+		} else if (!"".equals(textoBusca)) {
+			// Pesquisar pelo texto
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(textoBusca, null);
+			
 			textoBusca = "";
+
+		} else if (nroProjetoBusca != 0) {
+			// Pesquisar pelo número do projeto (Usar no onchange do checkbox)
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(null, nroProjetoBusca);
+			
+			nroProjetoBusca = 0L;
+
 		} else {
-			WebUtil.adicionarMensagemAviso("Selecione um filtro para busca!");
+			// Pesquisar todos os módulos
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(0, 0);
 		}
 	}
 
@@ -94,12 +122,19 @@ public class ModuloBean implements Serializable {
 		}
 	}
 
-	public void editar() {
-
-	}
-
 	public void excluir() {
+		try {
 
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			service.excluir(modulo.getNro());
+			WebUtil.adicionarMensagemSucesso("Módulo excluído com sucesso");
+
+			buscarLista();
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
 	}
 
 	public Modulo getModulo() {
@@ -126,12 +161,12 @@ public class ModuloBean implements Serializable {
 		this.caracteresMinimos = caracteresMinimos;
 	}
 
-	public String getEscolhaBusca() {
-		return escolhaBusca;
+	public Long getNroProjetoBusca() {
+		return nroProjetoBusca;
 	}
 
-	public void setEscolhaBusca(String escolhaBusca) {
-		this.escolhaBusca = escolhaBusca;
+	public void setNroProjetoBusca(Long nroProjetoBusca) {
+		this.nroProjetoBusca = nroProjetoBusca;
 	}
 
 	public String getTextoBusca() {
@@ -148,6 +183,14 @@ public class ModuloBean implements Serializable {
 
 	public void setListaProjetos(List<Projeto> listaProjetos) {
 		this.listaProjetos = listaProjetos;
+	}
+
+	public List<Projeto> getListaProjetosBusca() {
+		return listaProjetosBusca;
+	}
+
+	public void setListaProjetosBusca(List<Projeto> listaProjetosBusca) {
+		this.listaProjetosBusca = listaProjetosBusca;
 	}
 
 	public List<Modulo> getListaModulos() {
