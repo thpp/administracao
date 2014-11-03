@@ -4,7 +4,7 @@ public class Tela {
 	
 	private Long nro;
 	private String nome;
-	private Modulo modulo;
+	private Modulo modulo = new Modulo();
 	
 	public Long getNro() {
 		return nro;
