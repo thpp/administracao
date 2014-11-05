@@ -8,7 +8,7 @@ public class Tela implements Serializable {
 	
 	private Long nro;
 	private String nome;
-	private Modulo modulo;
+	private Modulo modulo = new Modulo();
 	private List<Funcoes> listaFuncoes;
 	
 	public Long getNro() {
