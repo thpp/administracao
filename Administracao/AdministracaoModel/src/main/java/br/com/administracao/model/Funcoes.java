@@ -1,6 +1,9 @@
 package br.com.administracao.model;
 
-public class Funcoes {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Funcoes implements Serializable {
 	
 	private Tela tela;
 	private Acoes acoes;

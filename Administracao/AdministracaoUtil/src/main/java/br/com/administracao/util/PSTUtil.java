@@ -1,5 +1,6 @@
 package br.com.administracao.util;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +28,17 @@ public class PSTUtil {
 				logger.info("PreparedStatement encerrado com sucesso");
 			} catch (SQLException ex) {
 				logger.warning("Ocorreu um erro ao tentar liberar um recurso do tipo PreparedStatement");
+			}
+		}
+	}
+	
+	public static void fechar(CallableStatement comando) {
+		if (comando != null) {
+			try {
+				comando.close();
+				logger.info("CallableStatement encerrado com sucesso");
+			} catch (SQLException ex) {
+				logger.warning("Ocorreu um erro ao tentar liberar um recurso do tipo CallableStatement");
 			}
 		}
 	}

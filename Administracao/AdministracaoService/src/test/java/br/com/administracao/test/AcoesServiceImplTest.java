@@ -17,6 +17,7 @@ public class AcoesServiceImplTest {
 	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 	
 	@Test
+	@Ignore
 	public void listar() throws NamingException, ServiceException{
 		List<Acoes> lista = new ArrayList<Acoes>();
 		
