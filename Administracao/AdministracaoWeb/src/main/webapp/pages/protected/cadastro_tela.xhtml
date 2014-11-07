@@ -27,7 +27,8 @@
 								<p:messages id="msgConsulta" showDetail="false">
 									<p:effect type="pulsate" event="load" delay="100" />
 								</p:messages>
-								<p:panel id="consulta" style="margin-top:20px;">
+								<p:panel id="consulta" style="margin-top:20px;"
+									styleClass="semBorda">
 
 									<p:inputText value="#{MBTela.textoBusca}"
 										style="text-transform:uppercase" size="60" />
@@ -45,7 +46,7 @@
 											<f:selectItems value="#{MBTela.listaProjetos}" var="p"
 												itemValue="#{p.nro}" itemLabel="#{p.nome}" />
 										</p:selectOneMenu>
-										<p:selectOneMenu id="comboModulos"
+										<p:selectOneMenu id="comboModulosBusca"
 											rendered="#{MBTela.nroProjetoBusca != '0'}"
 											value="#{MBTela.nroModuloBusca}" filter="true"
 											filterMatchMode="contains">
@@ -58,7 +59,9 @@
 									<h:panelGrid columns="4" style="margin-top:10px;">
 										<p:commandButton value="Novo" actionListener="#{MBTela.novo}"
 											update=":form1:guiaTelas" />
-										<p:commandButton value="Buscar" update="msgConsulta" />
+										<p:commandButton value="Buscar"
+											actionListener="#{MBTela.testeDuplaChamada}"
+											update="msgConsulta" />
 									</h:panelGrid>
 								</p:panel>
 
@@ -104,67 +107,91 @@
 								<p:messages id="msgCadastro" showDetail="false">
 									<p:effect type="pulsate" event="load" delay="100" />
 								</p:messages>
-								<h:form id="formCadastro"
-									rendered="#{MBTela.activeTabIndex == '1'}">
-									<p:outputLabel value="Nome: " />
-									<p:inputText value="#{MBTela.textoBusca}"
-										style="text-transform:uppercase" size="40" />
-									<h:panelGrid id="pnlFiltroCadastro" columns="4"
-										style="margin-top:10px;">
-										<p:selectOneMenu value="#{MBTela.nroProjetoBusca}"
-											filter="true" filterMatchMode="contains">
-											<f:ajax event="change" listener="#{MBTela.buscarModulos}"
-												render="pnlFiltroCadastro" />
-											<f:selectItem itemValue=""
-												itemLabel="Selecione um projeto..." />
-											<f:selectItems value="#{MBTela.listaProjetos}" var="p"
-												itemValue="#{p.nro}" itemLabel="#{p.nome}" />
-										</p:selectOneMenu>
-										<p:selectOneMenu id="comboModulos"
-											rendered="#{MBTela.nroProjetoBusca != '0'}"
-											value="#{MBTela.tela.modulo.nro}" filter="true"
-											filterMatchMode="contains">
-											<f:selectItem itemValue="" itemLabel="Selecione um módulo..." />
-											<f:selectItems value="#{MBTela.listaModulos}" var="m"
-												itemValue="#{m.nro}" itemLabel="#{m.nome}" />
-										</p:selectOneMenu>
-									</h:panelGrid>
-									<div align="center" style="margin-top: 20px;">
-										<p:pickList id="pickListAcao" value="#{MBTela.acoes}"
-											var="acao" effect="bounce" itemValue="#{acao}"
-											itemLabel="#{acao.nome}" showCheckbox="true"
-											showSourceFilter="true" showTargetFilter="true"
-											filterMatchMode="contains" converter="acaoConverter"
-											addLabel="Adicionar" addAllLabel="Adicionar Todos"
-											removeLabel="Remover" removeAllLabel="Remover Todos">
+								<p:panel id="cadastro"
+									rendered="#{MBTela.activeTabIndex == '1'}"
+									styleClass="semBorda">
+									<p:panel rendered="#{MBTela.acoesDisponiveis.size() > 0}"
+										styleClass="semBorda">
+										<h:panelGrid columns="3">
+											<p:outputLabel value="Nome: " />
+											<p:inputText value="#{MBTela.tela.nome}"
+												style="text-transform:uppercase" size="40" />
+											<h:panelGrid id="pnlFiltroCadastro" columns="2">
+												<p:selectOneMenu value="#{MBTela.nroProjetoBusca}"
+													filter="true" filterMatchMode="contains">
+													<f:ajax event="change" listener="#{MBTela.buscarModulos}"
+														render="pnlFiltroCadastro" />
+													<f:selectItem itemValue=""
+														itemLabel="Selecione um projeto..." />
+													<f:selectItems value="#{MBTela.listaProjetos}" var="p"
+														itemValue="#{p.nro}" itemLabel="#{p.nome}" />
+												</p:selectOneMenu>
+												<p:selectOneMenu id="comboModulos"
+													rendered="#{MBTela.nroProjetoBusca != '0'}"
+													value="#{MBTela.tela.modulo.nro}" filter="true"
+													filterMatchMode="contains">
+													<f:selectItem itemValue="0"
+														itemLabel="Selecione um módulo..." />
+													<f:selectItems value="#{MBTela.listaModulos}" var="m"
+														itemValue="#{m.nro}" itemLabel="#{m.nome}" />
+												</p:selectOneMenu>
+											</h:panelGrid>
+										</h:panelGrid>
+										<div align="center" style="margin-top: 20px;">
+											<p:pickList id="pickListAcao" value="#{MBTela.acoes}"
+												var="acao" itemValue="#{acao}" itemLabel="#{acao.nome}"
+												showCheckbox="true" showSourceFilter="true"
+												showTargetFilter="true" filterMatchMode="contains"
+												converter="acaoConverter" addLabel="Adicionar"
+												addAllLabel="Adicionar Todos" removeLabel="Remover"
+												removeAllLabel="Remover Todos"
+												style="margin-left: 20%;">
 
-											<f:facet name="sourceCaption">Ações</f:facet>
-											<f:facet name="targetCaption">Funções</f:facet>
+												<p:ajax event="transfer" listener="#{MBTela.onTransfer}"
+													update=":form1:guiaTelas:msgCadastro totalAcoes" />
 
-											<p:ajax event="transfer" listener="#{MBTela.onTransfer}"
-												update=":form1:guiaTelas:msgCadastro" />
+												<f:facet name="sourceCaption">Ações</f:facet>
+												<f:facet name="targetCaption">Funções</f:facet>
 
-											<p:column style="width:25%">
-												<h:outputText styleClass="ui-theme ui-theme-#{theme.name}" />
-											</p:column>
+												<p:column style="width:85%;">
+													<h:outputText value="#{acao.nome}" />
+												</p:column>
+											</p:pickList>
+											<p:panelGrid id="pngTotal" columns="2"
+												style="margin-top: 20px;">
+												<h:outputText value="Quantidade de ações selecionadas:"
+													style="font-size: 16px; " />
+												<h:outputText id="totalAcoes"
+													value="#{MBTela.quantidadeAcoesSelecionadas}"
+													style="font-weight: bold; font-size: 16px;" />
+											</p:panelGrid>
+										</div>
 
-											<p:column style="width:75%;">
-												<h:outputText value="#{acao.nome}" />
-											</p:column>
-										</p:pickList>
-									</div>
+										<div align="center" style="margin-top: 20px;">
+											<p:commandButton style="width: 150px" value="Salvar"
+												actionListener="#{MBTela.validarSalvar}" process="@parent"
+												update=":form1:guiaTelas:msgCadastro, :form1:guiaTelas" />
+										</div>
 
-									<div align="center" style="margin-top: 20px;">
-										<p:commandButton id="buttonSalvar" value="Salvar"
-											update=":form1:guiaTelas:msgCadastro" />
-									</div>
-								</h:form>
+									</p:panel>
+								</p:panel>
+
+								<p:panel style="background-color: buttonface"
+									styleClass="semBorda"
+									rendered="#{MBTela.acoesDisponiveis.size() == 0}">
+									<h:outputLabel
+										value="Não existem ações disponíveis para o cadastro das funções!"
+										style="font-size: 16px; " />
+								</p:panel>
 							</p:tab>
 						</p:tabView>
 					</p:panel>
 				</h:form>
 			</p:panel>
 
+			<p:dialog widgetVar="dlgConfirmacao">
+
+			</p:dialog>
 		</ui:define>
 
 	</ui:composition>
