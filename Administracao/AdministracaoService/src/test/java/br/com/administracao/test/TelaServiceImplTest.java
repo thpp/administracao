@@ -63,8 +63,16 @@ public class TelaServiceImplTest {
 	public void lista() throws NamingException, ServiceException {
 
 		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
-
-		List<Tela> lista = service.listar(0, 0);
+		
+		Projeto projeto = new Projeto();
+		Modulo modulo = new Modulo();
+		
+		projeto.setNro(11L);
+		modulo.setNro(8L);
+		
+		
+		List<Tela> lista = service.listar(projeto, modulo, null);			
+		
 		for (Tela tela : lista) {
 			System.out.println("Tela nro: " + tela.getNro());
 			System.out.println("Tela nome: " + tela.getNome());

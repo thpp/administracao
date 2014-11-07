@@ -1,7 +1,11 @@
 package br.com.administracao.client;
 
 import java.util.List;
+
 import javax.ejb.Remote;
+
+import br.com.administracao.model.Modulo;
+import br.com.administracao.model.Projeto;
 import br.com.administracao.model.Tela;
 
 @Remote
@@ -14,7 +18,7 @@ public interface TelaService {
 
 	public List<Tela> listar(int primeiro, int tamanho);
 	
-	public List<Tela> listar(String nome);
+	public List<Tela> listar(Projeto projeto, Modulo modulo, String nome);
 
 	public void editar(Tela tela);
 

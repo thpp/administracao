@@ -228,14 +228,24 @@ public class TelaDAOImpl implements TelaDAO {
 			comando = conexao.prepareStatement(sql.toString());			
 			
 			if(projetoBusca != null && modulo == null){
+				
 				comando.setLong(1, projetoBusca.getNro());
+				
+				if(nome != null){
+					comando.setString(2, "%"+nome+"%");
+				}
+				
 			}else if(projetoBusca != null && modulo != null){
 				comando.setLong(1, projetoBusca.getNro());
 				comando.setLong(2, modulo.getNro());
+				
+				if(nome != null){
+					comando.setString(3, "%"+nome+"%");
+				}
 			}
 			
-			if(projetoBusca != null && modulo == null){
-				
+			if(projetoBusca == null && modulo == null && nome != null){
+				comando.setString(1, "%"+nome+"%");
 			}
 			
 			resultado = comando.executeQuery();
@@ -286,10 +296,16 @@ public class TelaDAOImpl implements TelaDAO {
 	
 	public static void main(String[] args) {
 		
-		TelaDAOImpl dao = new TelaDAOImpl();		
+		TelaDAOImpl dao = new TelaDAOImpl();
+		
+		Projeto projeto = new Projeto();
+		Modulo modulo = new Modulo();
+		
+		projeto.setNro(11L);
+		modulo.setNro(8L);
 		
 		try {			
-			List<Tela> lista = dao.listar(0, 0);			
+			List<Tela> lista = dao.listar(null, null, "8");			
 			for (Tela tela : lista) {
 				System.out.println("Tela nro: "+tela.getNro());
 				System.out.println("Tela nome: "+tela.getNome());
