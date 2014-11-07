@@ -1,12 +1,42 @@
 @CHARSET "ISO-8859-1";
 
 .ui-widget {
-    font-size: 14px !important;
+	font-size: 14px !important;
 }
 
-.texto_menu{
-    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;    
-    font-weight: bold;
-    color: #00008B;
-    font-size: 15px;
+.texto_menu {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #00008B;
+	font-size: 15px;
+}
+
+.ui-panelgrid tr, .ui-panelgrid td {
+	border: 0 !important;
+}
+
+.semBorda {
+	border: 0 !important;
+}
+
+/* Muda o ícone da PickList */
+
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-e{
+    background-image: none !important;
+    background: url(../img/arrow-forward-16.png) !important;
+}
+
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-e{
+    background-image: none !important;
+    background: url(../img/arrow-forward-outline-16.png) !important;
+}
+
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-w{
+    background-image: none !important;
+    background: url(../img/arrow-back-16.png) !important;
+}
+
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-w{
+    background-image: none !important;
+    background: url(../img/arrow-back-outline-16.png) !important;
 }

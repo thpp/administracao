@@ -15,10 +15,13 @@ import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
+import br.com.administracao.client.AcoesService;
 import br.com.administracao.client.ModuloService;
 import br.com.administracao.client.ProjetoService;
+import br.com.administracao.client.TelaService;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Acoes;
+import br.com.administracao.model.Funcoes;
 import br.com.administracao.model.Modulo;
 import br.com.administracao.model.Projeto;
 import br.com.administracao.model.Tela;
@@ -30,18 +33,29 @@ public class TelaBean implements Serializable {
 
 	private static final long serialVersionUID = -2062657756767836389L;
 
-	private DualListModel<Acoes> acoes;
-	private TabView tabView;
+	/* TABVIEW */
+	private transient TabView tabView; // Não precisa ser serializada
 	private Integer activeTabIndex;
 
+	/* PICKLIST */
+	private DualListModel<Acoes> acoes;
+	List<Acoes> acoesDisponiveis = new ArrayList<Acoes>();
+	List<Acoes> acoesSelecionadas = new ArrayList<Acoes>();
+	private Integer quantidadeAcoesSelecionadas;
+	int count = 0;
+
+	/* CAMPOS DE BUSCA */
 	private String textoBusca = "";
 	private Long nroProjetoBusca = 0L;
 	private Long nroModuloBusca = 0L;
-
-	private Tela tela = new Tela();
-	private List<Tela> telas = new ArrayList<Tela>();
 	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
 	private List<Modulo> listaModulos = new ArrayList<Modulo>();
+
+	/* DOMAIN */
+	private Tela tela = new Tela();
+	private Integer caracteresMinimos = 3;
+	private List<Tela> telas = new ArrayList<Tela>();
+	private List<Funcoes> funcoes;
 
 	@PostConstruct
 	public void buscarLista() {
@@ -77,15 +91,23 @@ public class TelaBean implements Serializable {
 		textoBusca = "";
 		nroProjetoBusca = 0L;
 		nroModuloBusca = 0L;
+		quantidadeAcoesSelecionadas = 0;
+		count = 0;
 	}
 
 	public void prepararNovo() {
-		// Ações
-		List<Acoes> themesSource = new ArrayList<Acoes>(); // Vai receber a
-															// listagem de Ações
-		List<Acoes> themesTarget = new ArrayList<Acoes>();
 
-		acoes = new DualListModel<Acoes>(themesSource, themesTarget);
+		tela = new Tela();
+		funcoes = new ArrayList<Funcoes>();
+
+		// Ações
+		AcoesService service = (AcoesService) WebUtil
+				.getNamedObject(AcoesService.NAME);
+
+		acoesDisponiveis = service.listar();
+		acoesSelecionadas = new ArrayList<Acoes>();
+
+		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesSelecionadas);
 
 		buscarProjetos();
 	}
@@ -94,19 +116,110 @@ public class TelaBean implements Serializable {
 		tabView.setActiveIndex(1);
 		activeTabIndex = tabView.getActiveIndex();
 
-		prepararNovo();
 		limparCamposBusca();
+		prepararNovo();
+
+	}
+
+	public void validarSalvar() {
+
+		if (tela.getNome().length() > caracteresMinimos && nroProjetoBusca > 0
+				&& tela.getModulo().getNro() > 0
+				&& acoes.getTarget().size() > 0) {
+
+			salvar();
+
+		} else {
+			if (!(tela.getNome().length() > caracteresMinimos)) {
+				WebUtil.adicionarMensagemAviso("Tela deve ter o nome maior que 3 caracteres");
+			} else if (!(nroProjetoBusca > 0)) {
+				WebUtil.adicionarMensagemAviso("Tela deve ter um módulo correspondente. Comece escolhendo o projeto.");
+			} else if (!(tela.getModulo().getNro() > 0)) {
+				WebUtil.adicionarMensagemAviso("Tela deve ter um módulo correspondente");
+			} else if (!(acoes.getTarget().size() > 0)) {
+				WebUtil.adicionarMensagemAviso("Tela deve ter pelo menos uma função");
+			}
+
+		}
+	}
+
+	public void salvar() {
+		try {
+
+			for (Acoes acao : acoes.getTarget()) {
+				Funcoes f = new Funcoes();
+				f.setAcoes(acao);
+				funcoes.add(f);
+			}
+			System.out.println("Tamanho Lista Funções: " + funcoes.size());
+			tela.setListaFuncoes(funcoes);
+
+			if (tela.getNro() == null) {
+				TelaService service = (TelaService) WebUtil
+						.getNamedObject(TelaService.NAME);
+				service.inserir(tela);
+				WebUtil.adicionarMensagemSucesso("Tela salva com sucesso");
+			} else {
+				TelaService service = (TelaService) WebUtil
+						.getNamedObject(TelaService.NAME);
+				service.editar(tela);
+				WebUtil.adicionarMensagemSucesso("Tela editada com sucesso");
+			}
+
+			limparCamposBusca();
+
+			tabView.setActiveIndex(0);
+			activeTabIndex = tabView.getActiveIndex();
+
+			// buscar()
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
+
+	}
+
+	public void testeDuplaChamada() {
+		System.out.println("PASSOU PELO MÉTODO");
+	}
+
+	public void prepararEditar() {
+
+		tela = new Tela();
+
+		// Ações
+		AcoesService service = (AcoesService) WebUtil
+				.getNamedObject(AcoesService.NAME);
+
+		acoesDisponiveis = service.listar();
+		acoesSelecionadas = service.listar(); // Carregar as ações da tela
+												// selecionada
+		List<Acoes> resultado = new ArrayList<Acoes>();
+
+		for (Acoes acao : acoesDisponiveis) {
+			if (!acoesDisponiveis.contains(acao)) {
+				resultado.add(acao);
+			}
+		}
+
+		count = acoesSelecionadas.size();
+		quantidadeAcoesSelecionadas = count;
+
+		acoes = new DualListModel<Acoes>(resultado, acoesSelecionadas);
+
+		buscarProjetos();
 	}
 
 	public void onTabChange(TabChangeEvent event) {
 
 		activeTabIndex = ((TabView) event.getComponent()).getActiveIndex();
 
+		limparCamposBusca();
+
 		if (activeTabIndex == 1) {
 			prepararNovo();
 		}
 
-		limparCamposBusca();
 	}
 
 	public void onTransfer(TransferEvent event) {
@@ -115,12 +228,28 @@ public class TelaBean implements Serializable {
 			builder.append(((Acoes) item).getNome()).append("<br />");
 		}
 
-		FacesMessage msg = new FacesMessage();
-		msg.setSeverity(FacesMessage.SEVERITY_INFO);
-		msg.setSummary("Items Transferred");
-		msg.setDetail(builder.toString());
+		if (event.isAdd()) {
 
-		FacesContext.getCurrentInstance().addMessage(null, msg);
+			count += event.getItems().size();
+
+			FacesMessage msg = new FacesMessage();
+			msg.setSeverity(FacesMessage.SEVERITY_INFO);
+			msg.setSummary(String.valueOf(event.getItems().size())
+					+ " ação(ões) adicionada(s).");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+
+		} else if (event.isRemove()) {
+
+			count = count - event.getItems().size();
+
+			FacesMessage msg = new FacesMessage();
+			msg.setSeverity(FacesMessage.SEVERITY_INFO);
+			msg.setSummary(String.valueOf(event.getItems().size())
+					+ " ação(ões) removida(s).");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+
+		quantidadeAcoesSelecionadas = count;
 	}
 
 	public DualListModel<Acoes> getAcoes() {
@@ -201,6 +330,39 @@ public class TelaBean implements Serializable {
 
 	public void setNroModuloBusca(Long nroModuloBusca) {
 		this.nroModuloBusca = nroModuloBusca;
+	}
+
+	public List<Acoes> getAcoesDisponiveis() {
+		return acoesDisponiveis;
+	}
+
+	public void setAcoesDisponiveis(List<Acoes> acoesDisponiveis) {
+		this.acoesDisponiveis = acoesDisponiveis;
+	}
+
+	public List<Acoes> getAcoesSelecionadas() {
+		return acoesSelecionadas;
+	}
+
+	public void setAcoesSelecionadas(List<Acoes> acoesSelecionadas) {
+		this.acoesSelecionadas = acoesSelecionadas;
+	}
+
+	public Integer getquantidadeAcoesSelecionadas() {
+		return quantidadeAcoesSelecionadas;
+	}
+
+	public void setquantidadeAcoesSelecionadas(
+			Integer quantidadeAcoesSelecionadas) {
+		this.quantidadeAcoesSelecionadas = quantidadeAcoesSelecionadas;
+	}
+
+	public List<Funcoes> getFuncoes() {
+		return funcoes;
+	}
+
+	public void setFuncoes(List<Funcoes> funcoes) {
+		this.funcoes = funcoes;
 	}
 
 }
