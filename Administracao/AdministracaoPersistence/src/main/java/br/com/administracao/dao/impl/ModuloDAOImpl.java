@@ -105,11 +105,12 @@ public class ModuloDAOImpl implements ModuloDAO {
 	}
 
 	@Override
-	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
-		sql.append("FROM s_modulo m, S_PROJETO p ");
-		sql.append("where m.PROJ_NRO = p.NRO ");
+	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {			
+		
+		StringBuilder sqlTela = new StringBuilder();
+		sqlTela.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
+		sqlTela.append("FROM s_modulo m, S_PROJETO p ");
+		sqlTela.append("where m.PROJ_NRO = p.NRO ");
 		
 		
 		Connection conexao = null;
@@ -120,7 +121,7 @@ public class ModuloDAOImpl implements ModuloDAO {
 		try {
 			
 		conexao = ConnectionFactory.getConnection();		
-		comando = conexao.prepareStatement(sql.toString());		
+		comando = conexao.prepareStatement(sqlTela.toString());		
 		resultado = comando.executeQuery();
 		
 		Modulo modulo;

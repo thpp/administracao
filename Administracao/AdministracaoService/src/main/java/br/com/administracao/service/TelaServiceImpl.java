@@ -1,11 +1,13 @@
 package br.com.administracao.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
 import br.com.administracao.client.TelaService;
+import br.com.administracao.dao.impl.ProjetoDAOImpl;
 import br.com.administracao.dao.impl.TelaDAOImpl;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;
@@ -34,8 +36,16 @@ public class TelaServiceImpl implements TelaService {
 
 	@Override
 	public List<Tela> listar(int primeiro, int tamanho) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Tela> lista = new ArrayList<Tela>();
+		try {
+			lista = new TelaDAOImpl().listar(primeiro, tamanho);
+			logger.info("Lista de telas obtida com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+		
+		return lista;
 	}
 
 	@Override
