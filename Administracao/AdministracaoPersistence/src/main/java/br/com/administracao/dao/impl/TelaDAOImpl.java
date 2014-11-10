@@ -85,7 +85,64 @@ public class TelaDAOImpl implements TelaDAO {
 
 	@Override
 	public void editar(Tela tela) throws PSTException {
-		// TODO Auto-generated method stub
+		
+		StringBuilder sqlAtualizaTela = new StringBuilder();
+		sqlAtualizaTela.append("UPDATE s_telas ");
+		sqlAtualizaTela.append("SET nome = UPPER(?), MOD_NRO = ? ");
+		sqlAtualizaTela.append("WHERE nro = ? ");
+		
+		StringBuilder sqlDeletaFuncao = new StringBuilder();
+		sqlDeletaFuncao.append("DELETE FROM S_FUNCOES ");
+		sqlDeletaFuncao.append("WHERE TELA_NRO = ? ");
+		
+		
+		StringBuilder sqlInsereFuncao = new StringBuilder();
+		sqlInsereFuncao.append("INSERT INTO S_FUNCOES ");
+		sqlInsereFuncao.append("(ACAO_NRO, TELA_NRO) ");
+		sqlInsereFuncao.append("VALUES (?, ?)");
+
+		Connection conexao = null;
+		PreparedStatement comandoAtualizaTela = null;
+		PreparedStatement comandoDeletaFuncao = null;
+		PreparedStatement comandoInsereFuncao = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();			
+			conexao.setAutoCommit(false);
+
+			comandoAtualizaTela = conexao.prepareStatement(sqlAtualizaTela.toString());
+			comandoAtualizaTela.setString(1, tela.getNome());
+			comandoAtualizaTela.setLong(2, tela.getModulo().getNro());
+			comandoAtualizaTela.setLong(3, tela.getNro());
+			comandoAtualizaTela.executeUpdate();
+			
+			comandoDeletaFuncao = conexao.prepareStatement(sqlDeletaFuncao.toString());
+			comandoDeletaFuncao.setLong(1, tela.getNro());
+			comandoDeletaFuncao.executeUpdate();
+			
+			comandoInsereFuncao = conexao.prepareStatement(sqlInsereFuncao.toString());
+			
+			for (Funcoes funcoes : tela.getListaFuncoes()) {
+				comandoInsereFuncao.setLong(1, funcoes.getAcoes().getNro());
+				comandoInsereFuncao.setLong(2, tela.getNro());				
+				comandoInsereFuncao.executeUpdate();				
+			}
+			
+			conexao.commit();
+			
+			logger.info("Tela editado com sucesso");
+		} catch (SQLException ex) {			
+			try {
+				conexao.rollback();
+			} catch (SQLException e) {
+				throw new PSTException("Ocorreu um erro ao tentar editar um Tela", ex);
+			}				
+		} finally {
+			PSTUtil.fechar(comandoAtualizaTela);
+			PSTUtil.fechar(comandoDeletaFuncao);
+			PSTUtil.fechar(comandoInsereFuncao);
+			PSTUtil.fechar(conexao);
+		}
 		
 	}
 
@@ -215,7 +272,7 @@ public class TelaDAOImpl implements TelaDAO {
 		}
 		
 		if(nome != null){
-			sql.append("and t.nome like ? ");
+			sql.append("and t.nome like UPPER(?) ");
 		}
 		
 		Connection conexao = null;

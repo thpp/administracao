@@ -65,8 +65,12 @@ public class TelaServiceImpl implements TelaService {
 
 	@Override
 	public void editar(Tela tela) {
-		// TODO Auto-generated method stub
-		
+		try {			
+			new TelaDAOImpl().editar(tela);
+			logger.info("Tela editado com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
 	}
 
 	@Override

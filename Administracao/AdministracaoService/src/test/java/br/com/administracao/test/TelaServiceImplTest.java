@@ -56,10 +56,49 @@ public class TelaServiceImplTest {
 
 		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
 		service.inserir(t);
+	}
+	
+	@Test
+	public void editar() throws NamingException, ServiceException {
+
+		Tela t = new Tela();
+		Modulo m = new Modulo();
+		//Projeto p = new Projeto();
+
+		Acoes ac1 = new Acoes();
+		ac1.setNro(3L);
+
+		Acoes ac2 = new Acoes();
+		ac2.setNro(4L);
+
+		Funcoes f1 = new Funcoes();
+		Funcoes f2 = new Funcoes();
+				
+		f1.setAcoes(ac1);
+		f2.setAcoes(ac2);
+
+		List<Funcoes> lista = new ArrayList<Funcoes>();
+
+		lista.add(f1);
+		lista.add(f2);
+
+		//p.setNro(15L);
+		m.setNro(10L);
+		//m.setProjeto(p);
+		
+		t.setNro(10L);
+		t.setNome("Alteração!!..");
+		t.setModulo(m);
+		t.setListaFuncoes(lista);
+
+		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
+		service.editar(t);
 
 	}
+	
 
 	@Test
+	@Ignore
 	public void lista() throws NamingException, ServiceException {
 
 		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
