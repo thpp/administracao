@@ -59,6 +59,7 @@ public class TelaServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void editar() throws NamingException, ServiceException {
 
 		Tela t = new Tela();
@@ -93,6 +94,15 @@ public class TelaServiceImplTest {
 
 		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
 		service.editar(t);
+
+	}
+	
+	@Test
+	@Ignore
+	public void excluir() throws NamingException, ServiceException {
+
+		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
+		service.excluir(14L);
 
 	}
 	

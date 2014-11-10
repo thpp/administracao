@@ -148,7 +148,47 @@ public class TelaDAOImpl implements TelaDAO {
 
 	@Override
 	public void excluir(Long codigo) throws PSTException {
-		// TODO Auto-generated method stub
+		
+		StringBuilder sqlDeletaFuncao = new StringBuilder();
+		sqlDeletaFuncao.append("DELETE FROM S_FUNCOES ");
+		sqlDeletaFuncao.append("WHERE TELA_NRO = ? ");
+		
+		StringBuilder sqlDeletaTela = new StringBuilder();
+		sqlDeletaTela.append("DELETE FROM S_TELAS ");
+		sqlDeletaTela.append("WHERE NRO = ? ");
+		
+		Connection conexao = null;
+		PreparedStatement comandoDeletaTela = null;
+		PreparedStatement comandoDeletaFuncao = null;
+		
+		try {
+			conexao = ConnectionFactory.getConnection();			
+			conexao.setAutoCommit(false);
+			
+			comandoDeletaFuncao = conexao.prepareStatement(sqlDeletaFuncao.toString());
+			comandoDeletaFuncao.setLong(1, codigo);
+			comandoDeletaFuncao.executeUpdate();
+			
+			comandoDeletaTela = conexao.prepareStatement(sqlDeletaTela.toString());
+			comandoDeletaTela.setLong(1, codigo);
+			comandoDeletaTela.executeUpdate();
+		
+			conexao.commit();
+			
+			logger.info("Tela excluido com sucesso");
+		} catch (SQLException ex) {			
+			try {
+				conexao.rollback();
+			} catch (SQLException e) {
+				throw new PSTException("Ocorreu um erro ao tentar excluido uma Tela", ex);
+			}				
+		} finally {
+			PSTUtil.fechar(comandoDeletaFuncao);
+			PSTUtil.fechar(comandoDeletaTela);
+			PSTUtil.fechar(conexao);
+		}
+		
+		
 		
 	}
 

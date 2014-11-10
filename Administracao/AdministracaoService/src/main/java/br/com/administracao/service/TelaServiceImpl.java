@@ -75,8 +75,12 @@ public class TelaServiceImpl implements TelaService {
 
 	@Override
 	public void excluir(Long codigo) {
-		// TODO Auto-generated method stub
-		
+		try {			
+			new TelaDAOImpl().excluir(codigo);
+			logger.info("Tela excluido com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
 	}
 
 }
