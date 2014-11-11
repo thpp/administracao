@@ -54,15 +54,81 @@ public class TelaBean implements Serializable {
 	/* DOMAIN */
 	private Tela tela = new Tela();
 	private Integer caracteresMinimos = 3;
-	private List<Tela> telas = new ArrayList<Tela>();
+	private List<Tela> listaTelas = new ArrayList<Tela>();
 	private List<Funcoes> funcoes;
 
 	@PostConstruct
 	public void buscarLista() {
 		buscarProjetos();
+
+		TelaService service = (TelaService) WebUtil
+				.getNamedObject(TelaService.NAME);
+		listaTelas = service.listar(0, 0);
 	}
 
-	public void buscarPorNome() {
+	public void pesquisar() {
+
+		if (!"".equals(textoBusca) && nroProjetoBusca != 0
+				&& nroModuloBusca != 0) {
+			textoBusca = textoBusca.toUpperCase();
+
+			Projeto projeto = new Projeto();
+			Modulo modulo = new Modulo();
+			projeto.setNro(nroProjetoBusca);
+			modulo.setNro(nroModuloBusca);
+
+			// Pesquisar pelo texto digitado, número do projeto e número do
+			// módulo
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, modulo, textoBusca);
+
+		} else if (!"".equals(textoBusca) && nroProjetoBusca != 0) {
+			textoBusca = textoBusca.toUpperCase();
+
+			Projeto projeto = new Projeto();
+			projeto.setNro(nroProjetoBusca);
+
+			// Pesquisar pelo texto digitado e número do projeto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, null, textoBusca);
+
+		} else if (nroProjetoBusca != 0 && nroModuloBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			Modulo modulo = new Modulo();
+			projeto.setNro(nroProjetoBusca);
+			modulo.setNro(nroModuloBusca);
+
+			// Pesquisar pelo número do projeto e número do
+			// módulo
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, modulo, null);
+
+		} else if (!"".equals(textoBusca)) {
+			textoBusca = textoBusca.toUpperCase();
+			// Pesquisar pelo texto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(null, null, textoBusca);
+
+		} else if (nroProjetoBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			projeto.setNro(nroProjetoBusca);
+
+			// Pesquisar pelo número do projeto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, null, null);
+
+		} else {
+
+			// Pesquisar todas as telas
+			buscarLista();
+		}
 
 	}
 
@@ -87,12 +153,17 @@ public class TelaBean implements Serializable {
 		}
 	}
 
+	public void buscarFuncoes() {
+		funcoes = tela.getListaFuncoes();
+	}
+
 	public void limparCamposBusca() {
 		textoBusca = "";
-		nroProjetoBusca = 0L;
 		nroModuloBusca = 0L;
+		nroProjetoBusca = 0L;
 		quantidadeAcoesSelecionadas = 0;
 		count = 0;
+		buscarLista();
 	}
 
 	public void prepararNovo() {
@@ -117,6 +188,7 @@ public class TelaBean implements Serializable {
 		activeTabIndex = tabView.getActiveIndex();
 
 		limparCamposBusca();
+
 		prepararNovo();
 
 	}
@@ -151,7 +223,6 @@ public class TelaBean implements Serializable {
 				f.setAcoes(acao);
 				funcoes.add(f);
 			}
-			System.out.println("Tamanho Lista Funções: " + funcoes.size());
 			tela.setListaFuncoes(funcoes);
 
 			if (tela.getNro() == null) {
@@ -166,21 +237,15 @@ public class TelaBean implements Serializable {
 				WebUtil.adicionarMensagemSucesso("Tela editada com sucesso");
 			}
 
-			limparCamposBusca();
-
 			tabView.setActiveIndex(0);
 			activeTabIndex = tabView.getActiveIndex();
 
-			// buscar()
+			limparCamposBusca();
 
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
 		}
 
-	}
-
-	public void testeDuplaChamada() {
-		System.out.println("PASSOU PELO MÉTODO");
 	}
 
 	public void prepararEditar() {
@@ -300,12 +365,12 @@ public class TelaBean implements Serializable {
 		this.tela = tela;
 	}
 
-	public List<Tela> getTelas() {
-		return telas;
+	public List<Tela> getListaTelas() {
+		return listaTelas;
 	}
 
-	public void setTelas(List<Tela> telas) {
-		this.telas = telas;
+	public void setListaTelas(List<Tela> listaTelas) {
+		this.listaTelas = listaTelas;
 	}
 
 	public List<Projeto> getListaProjetos() {

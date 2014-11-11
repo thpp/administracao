@@ -46,31 +46,30 @@ public class ModuloBean implements Serializable {
 		}
 	}
 
-	public void buscarPorNome() {
+	public void limparCamposBusca() {
+		textoBusca = "";
+		nroProjetoBusca = 0L;
+		buscarLista();
+	}
+
+	public void pesquisar() {
 		if (!"".equals(textoBusca) && nroProjetoBusca != 0) {
 			// Pesquisar pelo texto digitado e número do projeto
 			ModuloService service = (ModuloService) WebUtil
 					.getNamedObject(ModuloService.NAME);
 			listaModulos = service.listar(textoBusca, nroProjetoBusca);
-			
-			textoBusca = "";
-			nroProjetoBusca = 0L;
-			
+
 		} else if (!"".equals(textoBusca)) {
 			// Pesquisar pelo texto
 			ModuloService service = (ModuloService) WebUtil
 					.getNamedObject(ModuloService.NAME);
 			listaModulos = service.listar(textoBusca, null);
-			
-			textoBusca = "";
 
 		} else if (nroProjetoBusca != 0) {
-			// Pesquisar pelo número do projeto (Usar no onchange do checkbox)
+			// Pesquisar pelo número do projeto
 			ModuloService service = (ModuloService) WebUtil
 					.getNamedObject(ModuloService.NAME);
 			listaModulos = service.listar(null, nroProjetoBusca);
-			
-			nroProjetoBusca = 0L;
 
 		} else {
 			// Pesquisar todos os módulos
