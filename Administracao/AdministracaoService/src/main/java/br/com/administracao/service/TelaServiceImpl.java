@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 
 import br.com.administracao.client.TelaService;
-import br.com.administracao.dao.impl.ProjetoDAOImpl;
 import br.com.administracao.dao.impl.TelaDAOImpl;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;

@@ -1,8 +1,10 @@
 package br.com.administracao.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Usuario {
+@SuppressWarnings("serial")
+public class Usuario implements Serializable {
 	
 	private Long nro;
 	private String usuario;
