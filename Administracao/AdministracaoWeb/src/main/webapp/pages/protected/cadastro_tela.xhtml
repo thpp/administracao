@@ -18,89 +18,109 @@
 		<ui:define name="content">
 			<p:panel style="background-color: buttonface">
 				<h:form id="form1">
+					<p:defaultCommand target=":form1:guiaTelas:formConsulta:btnBuscar" />
 					<p:panel header="Cadastro de Telas">
 						<p:tabView widgetVar="tabTelas" id="guiaTelas"
 							binding="#{MBTela.tabView}">
 							<p:ajax event="tabChange" listener="#{MBTela.onTabChange}"
-								update=":form1:guiaTelas" />
+								update=":form1" />
 							<p:tab title="Consulta">
 								<p:messages id="msgConsulta" showDetail="false">
 									<p:effect type="pulsate" event="load" delay="100" />
 								</p:messages>
-								<p:panel id="consulta" style="margin-top:20px;"
-									styleClass="semBorda">
+								<h:form id="formConsulta">
+									<p:panel id="consulta" style="margin-top:20px;"
+										styleClass="semBorda">
 
-									<p:inputText value="#{MBTela.textoBusca}"
-										style="text-transform:uppercase" size="60" />
+										<p:inputText id="textoBusca" value="#{MBTela.textoBusca}"
+											style="text-transform:uppercase" size="60" />
 
-									<h:panelGrid id="pnlFiltroConsulta" columns="3"
-										style="margin-top:10px;">
+										<h:panelGrid id="pnlFiltroConsulta" columns="3"
+											style="margin-top:10px;">
 
-										<p:outputLabel value="Filtrar: " />
-										<p:selectOneMenu value="#{MBTela.nroProjetoBusca}"
-											filter="true" filterMatchMode="contains">
-											<f:ajax event="change" listener="#{MBTela.buscarModulos}"
-												render="pnlFiltroConsulta" />
-											<f:selectItem itemValue=""
-												itemLabel="Selecione um projeto..." />
-											<f:selectItems value="#{MBTela.listaProjetos}" var="p"
-												itemValue="#{p.nro}" itemLabel="#{p.nome}" />
-										</p:selectOneMenu>
-										<p:selectOneMenu id="comboModulosBusca"
-											rendered="#{MBTela.nroProjetoBusca != '0'}"
-											value="#{MBTela.nroModuloBusca}" filter="true"
-											filterMatchMode="contains">
-											<f:selectItem itemValue="" itemLabel="Selecione um módulo..." />
-											<f:selectItems value="#{MBTela.listaModulos}" var="m"
-												itemValue="#{m.nro}" itemLabel="#{m.nome}" />
-										</p:selectOneMenu>
-									</h:panelGrid>
+											<p:outputLabel value="Filtrar: " />
+											<p:selectOneMenu id="comboProjetosBusca"
+												value="#{MBTela.nroProjetoBusca}" filter="true"
+												filterMatchMode="contains">
+												<f:ajax event="change" listener="#{MBTela.buscarModulos}"
+													render="pnlFiltroConsulta" />
+												<f:selectItem itemValue=""
+													itemLabel="Selecione um projeto..." />
+												<f:selectItems value="#{MBTela.listaProjetos}" var="p"
+													itemValue="#{p.nro}" itemLabel="#{p.nome}" />
+											</p:selectOneMenu>
+											<p:selectOneMenu id="comboModulosBusca"
+												rendered="#{MBTela.nroProjetoBusca != '0'}"
+												value="#{MBTela.nroModuloBusca}" filter="true"
+												filterMatchMode="contains">
+												<f:selectItem itemValue=""
+													itemLabel="Selecione um módulo..." />
+												<f:selectItems value="#{MBTela.listaModulos}" var="m"
+													itemValue="#{m.nro}" itemLabel="#{m.nome}" />
+											</p:selectOneMenu>
+										</h:panelGrid>
 
-									<h:panelGrid columns="4" style="margin-top:10px;">
-										<p:commandButton value="Novo" actionListener="#{MBTela.novo}"
-											update=":form1:guiaTelas" />
-										<p:commandButton value="Buscar"
-											actionListener="#{MBTela.testeDuplaChamada}"
-											update="msgConsulta" />
-									</h:panelGrid>
-								</p:panel>
+										<h:panelGrid columns="4" style="margin-top:10px;">
+											<p:commandButton value="Novo" actionListener="#{MBTela.novo}"
+												process="@form" update=":form1:guiaTelas" />
+											<p:commandButton value="Limpar Busca"
+												actionListener="#{MBTela.limparCamposBusca}" process="@form"
+												update=":form1:guiaTelas:formConsulta:tabela,
+												:form1:guiaTelas:formConsulta:textoBusca
+												:form1:guiaTelas:formConsulta:pnlFiltroConsulta"
+												style="margin-left: 5px;" />
+											<p:spacer width="95" height="0" />
+											<p:commandButton id="btnBuscar" value="Buscar"
+												style="width: 150px" actionListener="#{MBTela.pesquisar}"
+												process="@form"
+												update=":form1:guiaTelas:formConsulta:tabela">
+											</p:commandButton>
 
-								<p:dataTable id="tabela" var="t" value=""
-									style="margin-top: 20px;">
-									<p:column headerText="Nome da Tela" style="text-align: center">
-										<h:outputText value="" />
-									</p:column>
-									<p:column headerText="Nome do Módulo"
-										style="text-align: center">
-										<h:outputText value="" />
-									</p:column>
-									<p:column headerText="Nome do Projeto"
-										style="text-align: center">
-										<h:outputText value="" />
-									</p:column>
-									<p:column style="width:32px;text-align: center">
-										<p:commandButton update=":form1" icon="ui-icon-plus"
-											title="Ver Funções">
-											<f:setPropertyActionListener value="#{t}" target="" />
-										</p:commandButton>
-									</p:column>
-									<p:column style="width:32px;text-align: center">
-										<p:commandButton update=":form1" icon="ui-icon-pencil"
-											title="Editar Módulo">
-											<f:setPropertyActionListener value="#{t}" target="" />
-										</p:commandButton>
-									</p:column>
-									<p:column style="width:32px;text-align: center">
-										<p:commandButton update=":form1" icon="ui-icon-trash"
-											title="Excluir Módulo">
-											<p:confirm header="Atenção!"
-												message="Deseja realmente excluir o módulo?"
-												icon="ui-icon-alert" />
-											<f:setPropertyActionListener value="#{t}" target="" />
-										</p:commandButton>
-									</p:column>
-								</p:dataTable>
+										</h:panelGrid>
+									</p:panel>
 
+
+									<p:dataTable id="tabela" var="t" value="#{MBTela.listaTelas}"
+										style="margin-top: 20px;"
+										emptyMessage="Nenhum Registro Encontrado">
+										<p:column headerText="Nome da Tela" style="text-align: center">
+											<h:outputText value="#{t.nome}" />
+										</p:column>
+										<p:column headerText="Nome do Módulo"
+											style="text-align: center">
+											<h:outputText value="#{t.modulo.nome}" />
+										</p:column>
+										<p:column headerText="Nome do Projeto"
+											style="text-align: center">
+											<h:outputText value="#{t.modulo.projeto.nome}" />
+										</p:column>
+										<p:column style="width:32px;text-align: center">
+											<p:commandButton
+												update=":dialogoFuncoes :formFuncoes:dataListFuncoes"
+												icon="ui-icon-plus" title="Ver Funções"
+												actionListener="#{MBTela.buscarFuncoes}"
+												oncomplete="PF('dlgFuncoes').show();" process="@all">
+												<f:setPropertyActionListener value="#{t}"
+													target="#{MBTela.tela}" />
+											</p:commandButton>
+										</p:column>
+										<p:column style="width:32px;text-align: center">
+											<p:commandButton update=":form1" icon="ui-icon-pencil"
+												title="Editar Módulo">
+												<f:setPropertyActionListener value="#{t}" target="" />
+											</p:commandButton>
+										</p:column>
+										<p:column style="width:32px;text-align: center">
+											<p:commandButton update=":form1" icon="ui-icon-trash"
+												title="Excluir Módulo">
+												<p:confirm header="Atenção!"
+													message="Deseja realmente excluir o módulo?"
+													icon="ui-icon-alert" />
+												<f:setPropertyActionListener value="#{t}" target="" />
+											</p:commandButton>
+										</p:column>
+									</p:dataTable>
+								</h:form>
 							</p:tab>
 
 							<p:tab title="Cadastro e Edição">
@@ -137,15 +157,14 @@
 												</p:selectOneMenu>
 											</h:panelGrid>
 										</h:panelGrid>
-										<div align="center" style="margin-top: 20px;">
+										<div align="center">
 											<p:pickList id="pickListAcao" value="#{MBTela.acoes}"
 												var="acao" itemValue="#{acao}" itemLabel="#{acao.nome}"
 												showCheckbox="true" showSourceFilter="true"
 												showTargetFilter="true" filterMatchMode="contains"
 												converter="acaoConverter" addLabel="Adicionar"
 												addAllLabel="Adicionar Todos" removeLabel="Remover"
-												removeAllLabel="Remover Todos"
-												style="margin-left: 20%;">
+												removeAllLabel="Remover Todos">
 
 												<p:ajax event="transfer" listener="#{MBTela.onTransfer}"
 													update=":form1:guiaTelas:msgCadastro totalAcoes" />
@@ -190,6 +209,22 @@
 			</p:panel>
 
 			<p:dialog widgetVar="dlgConfirmacao">
+
+			</p:dialog>
+
+			<p:dialog id="dialogoFuncoes" widgetVar="dlgFuncoes" modal="true"
+				appendTo="@(body)" header="Ações - Tela de #{MBTela.tela.nome}"
+				closable="true" draggable="false" resizable="false" width="600">
+
+				<h:form id="formFuncoes">
+					<p:dataList id="dataListFuncoes" value="#{MBTela.funcoes}" var="f"
+						type="unordered" emptyMessage="Nenhum Registro Encontrado">
+						<f:facet name="header">
+            			Funções
+        				</f:facet>
+        				#{f.acoes.nome}
+    				</p:dataList>
+				</h:form>
 
 			</p:dialog>
 		</ui:define>
