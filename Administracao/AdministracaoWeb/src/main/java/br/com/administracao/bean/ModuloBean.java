@@ -22,7 +22,6 @@ public class ModuloBean implements Serializable {
 	private static final long serialVersionUID = -1750627356416442575L;
 
 	private Modulo modulo;
-	private List<Modulo> modulos = new ArrayList<Modulo>();
 	private Integer caracteresMinimos = 3;
 	private Long nroProjetoBusca = 0L;
 	private String textoBusca = "";
@@ -142,14 +141,6 @@ public class ModuloBean implements Serializable {
 
 	public void setModulo(Modulo modulo) {
 		this.modulo = modulo;
-	}
-
-	public List<Modulo> getModulos() {
-		return modulos;
-	}
-
-	public void setModulos(List<Modulo> modulos) {
-		this.modulos = modulos;
 	}
 
 	public Integer getCaracteresMinimos() {

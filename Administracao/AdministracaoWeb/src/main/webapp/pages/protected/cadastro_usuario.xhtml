@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<body>
+
+	<ui:composition template="template.xhtml">
+
+		<ui:define name="titulo">
+            Cadastro de Usuários
+        </ui:define>
+
+		<ui:define name="content">
+
+			<p:panel style="background-color: buttonface">
+				<h:form id="form1">
+					<p:defaultCommand target="btnBuscar" />
+
+					<p:panel header="Cadastro de Usuários">
+						<p:messages id="msgs" showDetail="false">
+							<p:effect type="pulsate" event="load" delay="100" />
+						</p:messages>
+						<h:panelGrid id="busca" columns="4" style="margin-top:20px;">
+
+							<p:inputText value="#{MBUsuario.textoBusca}"
+								style="text-transform:uppercase" size="60" />
+
+							<p:outputLabel value="Filtrar:" style="margin-left: 30px;" />
+							<p:selectOneMenu value="ativos">
+								<f:selectItem itemValue="ativos" itemLabel="Ativos" />
+								<f:selectItem itemValue="inativos" itemLabel="Inativos" />
+							</p:selectOneMenu>
+
+							<h:inputHidden />
+							<h:panelGrid columns="4" style="margin-top:10px;">
+								<p:commandButton value="Novo" oncomplete="PF('dlgNovo').show();"
+									actionListener="#{MBUsuario.novo}"
+									update="msgs, :formNovo:pnlNovo" />
+								<p:commandButton value="Limpar Busca"
+									actionListener="#{MBUsuario.limparCamposBusca}" update="form1"
+									style="margin-left: 5px;" />
+								<p:spacer width="65" height="0" />
+								<p:commandButton value="Buscar" id="btnBuscar"
+									style="width: 120px" actionListener="#{MBUsuario.pesquisar}"
+									update="form1" />
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+					</p:panel>
+
+					<p:dataTable id="tabelaUsuarios" widgetVar="tblUsuarios" var="u"
+						value="#{MBUsuario.listaUsuarios}" style="margin-top: 20px;"
+						emptyMessage="Nenhum Registro Encontrado">
+						<p:column headerText="Nome" style="text-align: center">
+							<h:outputText value="#{u.nome}" />
+						</p:column>
+						<p:column headerText="Usuário" style="text-align: center">
+							<h:outputText value="#{u.usuario}" />
+						</p:column>
+						<p:column headerText="Cargo" style="text-align: center">
+							<h:outputText value="#{u.cargo}" />
+						</p:column>
+						<p:column style="width:32px;text-align: center">
+							<p:commandButton icon="ui-icon-pencil"
+								oncomplete="PF('dlgEdicao').show();" title="Editar Usuário"
+								update=":form1:msgs, :formEdicao:pnlEdicao">
+								<f:setPropertyActionListener value="#{u}"
+									target="#{MBUsuario.usuario}" />
+							</p:commandButton>
+						</p:column>
+						<p:column style="width:32px;text-align: center">
+							<p:commandButton icon="ui-icon-trash"
+								oncomplete="PF('dlgExclusao').show();" title="Excluir Usuário"
+								update=":form1:msgs, :formExclusao:pnlExclusao">
+								<f:setPropertyActionListener value="#{u}"
+									target="#{MBUsuario.usuario}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true" showEffect="fade">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+
+				</h:form>
+			</p:panel>
+
+			<p:dialog id="dialogoNovo" widgetVar="dlgNovo" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Cadastro de Usuário">
+
+				<h:form id="formNovo">
+					<p:panelGrid id="pnlNovo" columns="2">
+						<p:outputLabel value="Nome:" />
+						<p:inputText value="#{MBUsuario.usuario.nome}"
+							style="text-transform:uppercase" size="30" required="true"
+							requiredMessage="O campo nome é obrigatório!" />
+						<p:outputLabel value="CPF:" />
+						<p:inputText value="#{MBUsuario.cpf}"
+							style="text-transform:uppercase" size="11" required="true"
+							requiredMessage="O campo cpf é obrigatório!" />
+						<p:outputLabel value="Cargo:" />
+						<p:inputText value="#{MBUsuario.usuario.cargo}"
+							style="text-transform:uppercase" size="11" required="true"
+							requiredMessage="O campo cargo é obrigatório!" />
+						<p:outputLabel value="Usuário:" />
+						<p:inputText value="#{MBUsuario.usuario.usuario}"
+							style="text-transform:uppercase" size="11" required="true"
+							requiredMessage="O campo usuário é obrigatório!" />
+						<p:outputLabel value="Senha:" />
+						<p:inputText value="#{MBUsuario.usuario.senha}"
+							style="text-transform:uppercase" size="11" required="true"
+							requiredMessage="O campo senha é obrigatório!" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBUsuario.validarSalvar}"
+							value="Salvar"
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo', 'tblUsuarios');"
+							update=":form1:msgs, :form1:tabelaUsuarios">
+							<p:confirm header="Atenção!" message="Deseja realmente salvar?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Cancelar" process="@this"
+							onclick="PF('dlgNovo').hide();">
+							<p:resetInput target=":formNovo:pnlNovo" />
+						</p:commandButton>
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoEdicao" widgetVar="dlgEdicao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Edição de Usuário">
+				<h:form id="formEdicao">
+					<p:panelGrid id="pnlEdicao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<p:inputText value="#{MBUsuario.usuario.nome}"
+							style="text-transform:uppercase" size="30" required="true"
+							requiredMessage="O campo nome é obrigatório!" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBUsuario.salvar}"
+							value="Editar"
+							oncomplete="verificar(xhr, status, args, 'dlgEdicao', 'tblUsuarios');"
+							update=":form1:msgs, :form1:tabelaUsuarios">
+							<p:confirm header="Atenção!" message="Deseja realmente editar?" />
+						</p:commandButton>
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgEdicao').hide();" />
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoExclusao" widgetVar="dlgExclusao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Exclusão de Módulo">
+				<h:form id="formExclusao">
+					<p:panelGrid id="pnlExclusao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<h:outputText value="#{MBUsuario.usuario.nome}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBUsuario.excluir}"
+							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
+							update=":form1:msgs, :form1:tabelaUsuarios">
+							<p:confirm header="Atenção!"
+								message="Deseja realmente excluir o módulo?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgExclusao').hide();" />
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
+		</ui:define>
+
+	</ui:composition>
+
+</body>
+</html>
