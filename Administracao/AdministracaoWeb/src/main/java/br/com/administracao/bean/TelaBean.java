@@ -57,6 +57,9 @@ public class TelaBean implements Serializable {
 	private List<Tela> listaTelas = new ArrayList<Tela>();
 	private List<Funcoes> funcoes;
 
+	/* RENDERED */
+	private boolean existeAcoes = false;
+
 	@PostConstruct
 	public void buscarLista() {
 		buscarProjetos();
@@ -181,6 +184,9 @@ public class TelaBean implements Serializable {
 		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesSelecionadas);
 
 		buscarProjetos();
+		
+		if(acoesDisponiveis.size() > 0)
+			existeAcoes = true;
 	}
 
 	public void novo() {
@@ -218,6 +224,8 @@ public class TelaBean implements Serializable {
 	public void salvar() {
 		try {
 
+			funcoes = new ArrayList<Funcoes>();/* Importante na edição */
+
 			for (Acoes acao : acoes.getTarget()) {
 				Funcoes f = new Funcoes();
 				f.setAcoes(acao);
@@ -249,30 +257,60 @@ public class TelaBean implements Serializable {
 	}
 
 	public void prepararEditar() {
+		tabView.setActiveIndex(1);
+		activeTabIndex = tabView.getActiveIndex();
 
-		tela = new Tela();
+		buscarProjetos();
+
+		nroProjetoBusca = tela.getModulo().getProjeto().getNro();
+		buscarModulos();
 
 		// Ações
 		AcoesService service = (AcoesService) WebUtil
 				.getNamedObject(AcoesService.NAME);
 
+		List<Acoes> todasAcoes = service.listar();
+		
+		if(todasAcoes.size() > 0)
+			existeAcoes = true;
+		
+		List<Acoes> acoesTela = new ArrayList<Acoes>();
 		acoesDisponiveis = service.listar();
-		acoesSelecionadas = service.listar(); // Carregar as ações da tela
-												// selecionada
-		List<Acoes> resultado = new ArrayList<Acoes>();
+		buscarFuncoes();
 
-		for (Acoes acao : acoesDisponiveis) {
-			if (!acoesDisponiveis.contains(acao)) {
-				resultado.add(acao);
+		for (Funcoes funcao : funcoes) {
+			acoesTela.add(funcao.getAcoes());
+		}
+
+		for (Acoes acao : todasAcoes) {
+
+			for (Acoes acaoTela : acoesTela) {
+				if (acaoTela.equals(acao)) {
+					acoesDisponiveis.remove(acaoTela);
+				}
 			}
 		}
 
-		count = acoesSelecionadas.size();
+		count = acoesTela.size();
 		quantidadeAcoesSelecionadas = count;
 
-		acoes = new DualListModel<Acoes>(resultado, acoesSelecionadas);
+		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesTela);
 
-		buscarProjetos();
+	}
+
+	public void excluir() {
+		try {
+
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			service.excluir(tela.getNro());
+			WebUtil.adicionarMensagemSucesso("Tela excluída com sucesso");
+
+			buscarLista();
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
 	}
 
 	public void onTabChange(TabChangeEvent event) {
@@ -428,6 +466,14 @@ public class TelaBean implements Serializable {
 
 	public void setFuncoes(List<Funcoes> funcoes) {
 		this.funcoes = funcoes;
+	}
+
+	public boolean isExisteAcoes() {
+		return existeAcoes;
+	}
+
+	public void setExisteAcoes(boolean existeAcoes) {
+		this.existeAcoes = existeAcoes;
 	}
 
 }

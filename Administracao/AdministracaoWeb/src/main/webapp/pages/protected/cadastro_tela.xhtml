@@ -62,18 +62,20 @@
 
 										<h:panelGrid columns="4" style="margin-top:10px;">
 											<p:commandButton value="Novo" actionListener="#{MBTela.novo}"
-												process="@form" update=":form1:guiaTelas" />
+												process="@form" update=":form1" />
 											<p:commandButton value="Limpar Busca"
 												actionListener="#{MBTela.limparCamposBusca}" process="@form"
 												update=":form1:guiaTelas:formConsulta:tabela,
 												:form1:guiaTelas:formConsulta:textoBusca
-												:form1:guiaTelas:formConsulta:pnlFiltroConsulta"
+												:form1:guiaTelas:formConsulta:pnlFiltroConsulta
+												:form1:guiaTelas:msgConsulta"
 												style="margin-left: 5px;" />
 											<p:spacer width="95" height="0" />
 											<p:commandButton id="btnBuscar" value="Buscar"
 												style="width: 150px" actionListener="#{MBTela.pesquisar}"
 												process="@form"
-												update=":form1:guiaTelas:formConsulta:tabela">
+												update=":form1:guiaTelas:formConsulta:tabela
+												:form1:guiaTelas:msgConsulta">
 											</p:commandButton>
 
 										</h:panelGrid>
@@ -105,20 +107,22 @@
 											</p:commandButton>
 										</p:column>
 										<p:column style="width:32px;text-align: center">
-											<p:commandButton update=":form1" icon="ui-icon-pencil"
-												title="Editar Módulo">
-												<f:setPropertyActionListener value="#{t}" target="" />
+											<p:commandButton icon="ui-icon-pencil"
+												oncomplete="PF('dlgEdicao').show();" title="Editar Tela"
+												update=":form1:guiaTelas:msgConsulta, :formEdicao:pnlEdicao">
+												<f:setPropertyActionListener value="#{t}"
+													target="#{MBTela.tela}" />
 											</p:commandButton>
 										</p:column>
 										<p:column style="width:32px;text-align: center">
-											<p:commandButton update=":form1" icon="ui-icon-trash"
-												title="Excluir Módulo">
-												<p:confirm header="Atenção!"
-													message="Deseja realmente excluir o módulo?"
-													icon="ui-icon-alert" />
-												<f:setPropertyActionListener value="#{t}" target="" />
+											<p:commandButton icon="ui-icon-trash"
+												oncomplete="PF('dlgExclusao').show();" title="Excluir Tela"
+												update=":form1:guiaTelas:msgConsulta, :formExclusao:pnlExclusao">
+												<f:setPropertyActionListener value="#{t}"
+													target="#{MBTela.tela}" />
 											</p:commandButton>
 										</p:column>
+
 									</p:dataTable>
 								</h:form>
 							</p:tab>
@@ -130,12 +134,11 @@
 								<p:panel id="cadastro"
 									rendered="#{MBTela.activeTabIndex == '1'}"
 									styleClass="semBorda">
-									<p:panel rendered="#{MBTela.acoesDisponiveis.size() > 0}"
-										styleClass="semBorda">
+									<p:panel rendered="#{MBTela.existeAcoes}" styleClass="semBorda">
 										<h:panelGrid columns="3">
 											<p:outputLabel value="Nome: " />
 											<p:inputText value="#{MBTela.tela.nome}"
-												style="text-transform:uppercase" size="40" />
+												style="text-transform:uppercase" size="30" />
 											<h:panelGrid id="pnlFiltroCadastro" columns="2">
 												<p:selectOneMenu value="#{MBTela.nroProjetoBusca}"
 													filter="true" filterMatchMode="contains">
@@ -189,15 +192,18 @@
 										<div align="center" style="margin-top: 20px;">
 											<p:commandButton style="width: 150px" value="Salvar"
 												actionListener="#{MBTela.validarSalvar}" process="@parent"
-												update=":form1:guiaTelas:msgCadastro, :form1:guiaTelas" />
+												update=":form1:guiaTelas:msgCadastro, :form1">
+												<p:confirm header="Atenção!"
+													message="Deseja realmente salvar?"
+													icon="ui-icon-alert" />
+											</p:commandButton>
 										</div>
 
 									</p:panel>
 								</p:panel>
 
 								<p:panel style="background-color: buttonface"
-									styleClass="semBorda"
-									rendered="#{MBTela.acoesDisponiveis.size() == 0}">
+									styleClass="semBorda" rendered="#{MBTela.existeAcoes == false}">
 									<h:outputLabel
 										value="Não existem ações disponíveis para o cadastro das funções!"
 										style="font-size: 16px; " />
@@ -205,6 +211,12 @@
 							</p:tab>
 						</p:tabView>
 					</p:panel>
+					<p:confirmDialog global="true" showEffect="fade">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
 				</h:form>
 			</p:panel>
 
@@ -226,6 +238,51 @@
     				</p:dataList>
 				</h:form>
 
+			</p:dialog>
+
+			<p:dialog id="dialogoExclusao" widgetVar="dlgExclusao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Exclusão de Tela">
+				<h:form id="formExclusao">
+					<p:panelGrid id="pnlExclusao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<h:outputText value="#{MBTela.tela.nome}" />
+						<p:outputLabel value="Módulo: " />
+						<h:outputText value="#{MBTela.tela.modulo.nome}" />
+
+						<p:commandButton actionListener="#{MBTela.excluir}"
+							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
+							update=":form1:guiaTelas:msgConsulta, :form1:guiaTelas:formConsulta:tabela"
+							process="@form">
+							<p:confirm header="Atenção!"
+								message="Deseja realmente excluir a tela?" icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgExclusao').hide();" />
+					</p:panelGrid>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoEdicao" widgetVar="dlgEdicao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Edição de Tela">
+				<h:form id="formEdicao">
+					<p:panelGrid id="pnlEdicao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<h:outputText value="#{MBTela.tela.nome}" />
+						<p:outputLabel value="Módulo: " />
+						<h:outputText value="#{MBTela.tela.modulo.nome}" />
+
+						<p:commandButton actionListener="#{MBTela.prepararEditar}"
+							oncomplete="PF('dlgEdicao').hide();" value="Editar"
+							update=":form1" process="@form" />
+
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgEdicao').hide();" />
+					</p:panelGrid>
+
+				</h:form>
 			</p:dialog>
 		</ui:define>
 
