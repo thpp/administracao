@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.primefaces.context.RequestContext;
+
 import br.com.administracao.client.ModuloService;
 import br.com.administracao.client.ProjetoService;
 import br.com.administracao.execao.ServiceException;
@@ -103,14 +105,27 @@ public class ModuloBean implements Serializable {
 					service.inserir(modulo);
 					WebUtil.adicionarMensagemSucesso("Módulo salvo com sucesso");
 
+					// Fecha o diálogo
+					org.primefaces.context.RequestContext.getCurrentInstance()
+							.execute("PF('dlgNovo').hide();");
+
 				} else {
 					ModuloService service = (ModuloService) WebUtil
 							.getNamedObject(ModuloService.NAME);
 					service.editar(modulo);
 					WebUtil.adicionarMensagemSucesso("Módulo editado com sucesso");
+
+					// Fecha o diálogo
+					org.primefaces.context.RequestContext.getCurrentInstance()
+							.execute("PF('dlgEdicao').hide();");
+
 				}
+
+				// Atualiza a mensagem de sucesso
+				RequestContext.getCurrentInstance().update("form1:msgs");
 			} else {
 				WebUtil.adicionarMensagemAviso("Módulo deve ter o nome maior que 3 caracteres");
+				RequestContext.getCurrentInstance().update("msgValorInvalido");
 			}
 
 			buscarLista();

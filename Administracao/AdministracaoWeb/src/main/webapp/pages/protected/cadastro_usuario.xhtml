@@ -94,38 +94,45 @@
 				</h:form>
 			</p:panel>
 
+			<p:growl id="msgValorInvalido" showDetail="false" life="3000" />
+
 			<p:dialog id="dialogoNovo" widgetVar="dlgNovo" modal="true"
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Cadastro de Usuário">
 
 				<h:form id="formNovo">
-					<p:panelGrid id="pnlNovo" columns="2">
-						<p:outputLabel value="Nome:" />
-						<p:inputText value="#{MBUsuario.usuario.nome}"
-							style="text-transform:uppercase" size="30" required="true"
-							requiredMessage="O campo nome é obrigatório!" />
+					<p:panelGrid id="pnlNovo" columns="3">
+						<p:outputLabel value="Nome completo:" />
+						<p:inputText id="txtNome" value="#{MBUsuario.usuario.nome}"
+							style="text-transform:uppercase" size="50" maxlength="100"
+							required="true" requiredMessage="O campo nome é obrigatório!" />
+						<p:message for="txtNome" />
 						<p:outputLabel value="CPF:" />
-						<p:inputText value="#{MBUsuario.cpf}"
-							style="text-transform:uppercase" size="11" required="true"
-							requiredMessage="O campo cpf é obrigatório!" />
+						<p:inputText id="txtCpf" value="#{MBUsuario.cpf}"
+							style="text-transform:uppercase" size="15" maxlength="15"
+							required="true" requiredMessage="O campo cpf é obrigatório!" />
+						<p:message for="txtCpf" />
 						<p:outputLabel value="Cargo:" />
-						<p:inputText value="#{MBUsuario.usuario.cargo}"
-							style="text-transform:uppercase" size="11" required="true"
-							requiredMessage="O campo cargo é obrigatório!" />
+						<p:inputText id="txtCargo" value="#{MBUsuario.usuario.cargo}"
+							style="text-transform:uppercase" size="50" maxlength="50"
+							required="true" requiredMessage="O campo cargo é obrigatório!" />
+						<p:message for="txtCargo" />
 						<p:outputLabel value="Usuário:" />
-						<p:inputText value="#{MBUsuario.usuario.usuario}"
-							style="text-transform:uppercase" size="11" required="true"
+						<p:inputText id="txtUsuario" value="#{MBUsuario.usuario.usuario}"
+							size="30" maxlength="30" required="true"
 							requiredMessage="O campo usuário é obrigatório!" />
+						<p:message for="txtUsuario" />
 						<p:outputLabel value="Senha:" />
-						<p:inputText value="#{MBUsuario.usuario.senha}"
-							style="text-transform:uppercase" size="11" required="true"
+						<p:inputText id="txtSenha" value="#{MBUsuario.usuario.senha}"
+							size="15" maxlength="15" required="true"
 							requiredMessage="O campo senha é obrigatório!" />
+						<p:message for="txtSenha" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
-						<p:commandButton actionListener="#{MBUsuario.validarSalvar}"
+						<p:commandButton actionListener="#{MBUsuario.salvar}"
 							value="Salvar"
-							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo', 'tblUsuarios');"
-							update=":form1:msgs, :form1:tabelaUsuarios">
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo');"
+							update=":formNovo:pnlNovo, :form1:tabelaUsuarios">
 							<p:confirm header="Atenção!" message="Deseja realmente salvar?"
 								icon="ui-icon-alert" />
 						</p:commandButton>
@@ -141,17 +148,38 @@
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Edição de Usuário">
 				<h:form id="formEdicao">
-					<p:panelGrid id="pnlEdicao" columns="2">
-						<p:outputLabel value="Nome: " />
-						<p:inputText value="#{MBUsuario.usuario.nome}"
-							style="text-transform:uppercase" size="30" required="true"
-							requiredMessage="O campo nome é obrigatório!" />
+					<p:panelGrid id="pnlEdicao" columns="3">
+						<p:outputLabel value="Nome completo:" />
+						<p:inputText id="txtNome" value="#{MBUsuario.usuario.nome}"
+							style="text-transform:uppercase" size="50" maxlength="100"
+							required="true" requiredMessage="O campo nome é obrigatório!" />
+						<p:message for="txtNome" />
+						<p:outputLabel value="CPF:" />
+						<p:inputText id="txtCpf" value="#{MBUsuario.usuario.cpf}"
+							style="text-transform:uppercase" size="15" maxlength="15"
+							required="true" requiredMessage="O campo cpf é obrigatório!" />
+						<p:message for="txtCpf" />
+						<p:outputLabel value="Cargo:" />
+						<p:inputText id="txtCargo" value="#{MBUsuario.usuario.cargo}"
+							style="text-transform:uppercase" size="50" maxlength="50"
+							required="true" requiredMessage="O campo cargo é obrigatório!" />
+						<p:message for="txtCargo" />
+						<p:outputLabel value="Usuário:" />
+						<p:inputText id="txtUsuario" value="#{MBUsuario.usuario.usuario}"
+							size="30" maxlength="30" required="true"
+							requiredMessage="O campo usuário é obrigatório!" />
+						<p:message for="txtUsuario" />
+						<p:outputLabel value="Senha:" />
+						<p:inputText id="txtSenha" value="#{MBUsuario.usuario.senha}"
+							size="15" maxlength="15" required="true"
+							requiredMessage="O campo senha é obrigatório!" />
+						<p:message for="txtSenha" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
-						<p:commandButton actionListener="#{MBUsuario.salvar}"
+						<p:commandButton actionListener="#{MBUsuario.editar}"
 							value="Editar"
-							oncomplete="verificar(xhr, status, args, 'dlgEdicao', 'tblUsuarios');"
-							update=":form1:msgs, :form1:tabelaUsuarios">
+							update=":formEdicao:pnlEdicao, :form1:tabelaUsuarios"
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgEdicao');">
 							<p:confirm header="Atenção!" message="Deseja realmente editar?" />
 						</p:commandButton>
 						<p:commandButton value="Cancelar" process="@this"
@@ -167,13 +195,15 @@
 					<p:panelGrid id="pnlExclusao" columns="2">
 						<p:outputLabel value="Nome: " />
 						<h:outputText value="#{MBUsuario.usuario.nome}" />
+						<p:outputLabel value="CPF: " />
+						<h:outputText value="#{MBUsuario.usuario.cpf}" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBUsuario.excluir}"
 							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
 							update=":form1:msgs, :form1:tabelaUsuarios">
 							<p:confirm header="Atenção!"
-								message="Deseja realmente excluir o módulo?"
+								message="Deseja realmente excluir o usuário"
 								icon="ui-icon-alert" />
 						</p:commandButton>
 						<p:commandButton value="Cancelar" process="@this"
