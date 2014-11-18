@@ -94,7 +94,7 @@
 
 				</h:form>
 			</p:panel>
-			
+
 			<p:growl id="msgValorInvalido" showDetail="false" life="3000" />
 
 			<p:dialog id="dialogoNovo" widgetVar="dlgNovo" modal="true"
@@ -121,7 +121,7 @@
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBModulo.salvar}"
 							value="Salvar"
-							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo', 'tblModulos');"
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo');"
 							update=":formNovo:pnlNovo, :form1:tabelaModulos">
 							<p:confirm header="Atenção!" message="Deseja realmente salvar?"
 								icon="ui-icon-alert" />
@@ -138,19 +138,21 @@
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Edição de Módulo">
 				<h:form id="formEdicao">
-					<p:panelGrid id="pnlEdicao" columns="2">
+					<p:panelGrid id="pnlEdicao" columns="3">
 						<p:outputLabel value="Nome: " />
-						<p:inputText value="#{MBModulo.modulo.nome}"
+						<p:inputText id="txtNome" value="#{MBModulo.modulo.nome}"
 							style="text-transform:uppercase" size="30" required="true"
 							requiredMessage="O campo nome é obrigatório!" />
+						<p:message for="txtNome" />
 						<p:outputLabel value="Projeto:" />
-						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
-							filter="true" required="true"
-							requiredMessage="O campo projeto é obrigatório!">
+						<p:selectOneMenu id="cbProjetos"
+							value="#{MBModulo.modulo.projeto.nro}" filter="true"
+							required="true" requiredMessage="O campo projeto é obrigatório!">
 							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
 							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
 								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
 						</p:selectOneMenu>
+						<p:message for="cbProjetos" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBModulo.salvar}"
