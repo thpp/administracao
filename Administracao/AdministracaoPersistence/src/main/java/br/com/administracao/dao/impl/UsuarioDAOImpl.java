@@ -50,13 +50,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 				}else{
 					throw new PSTException("O sistema ja possui um administrador contate: "+adm.getPessoa().getNome());
 				}
-			}
-			
-			if(buscaADM() != null){
-				comando.setString(6, "N");				
-			}else{
-				comando.setString(6, usuario.getFlgAdm() ? "S" : "N");
-			}						
+			}								
 			
 			comando.setDate(7, null);
 			
