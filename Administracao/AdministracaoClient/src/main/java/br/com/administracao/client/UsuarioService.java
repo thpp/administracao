@@ -14,7 +14,7 @@ public interface UsuarioService {
 
 	public Integer contar();
 
-	public List<Usuario> listar(int primeiro, int tamanho, String nome);	
+	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo);	
 
 	public void editar(Usuario usuario);
 

@@ -9,13 +9,20 @@ public class Usuario implements Serializable {
 	private Long nro;
 	private String usuario;
 	private String senha;
-	private String nome;
-	private String cpf;
-	private String cargo;
+	private String obs;
 	private Date dataInclusao;
 	private Date dataBaixa;
 	private Boolean flgAtivo;
+	private Boolean flgProfissional;
+	private Boolean flgAdm;
+	private Pessoa pessoa;		
 
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
 	public Long getNro() {
 		return nro;
 	}
@@ -33,24 +40,6 @@ public class Usuario implements Serializable {
 	}
 	public void setSenha(String senha) {
 		this.senha = senha;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getCpf() {
-		return cpf;
-	}
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-	public String getCargo() {
-		return cargo;
-	}
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
 	}
 	public Date getDataInclusao() {
 		return dataInclusao;
@@ -70,7 +59,22 @@ public class Usuario implements Serializable {
 	public void setFlgAtivo(Boolean flgAtivo) {
 		this.flgAtivo = flgAtivo;
 	}
-	
-	
-
+	public String getObs() {
+		return obs;
+	}
+	public void setObs(String obs) {
+		this.obs = obs;
+	}
+	public Boolean getFlgProfissional() {
+		return flgProfissional;
+	}
+	public void setFlgProfissional(Boolean flgProfissional) {
+		this.flgProfissional = flgProfissional;
+	}
+	public Boolean getFlgAdm() {
+		return flgAdm;
+	}
+	public void setFlgAdm(Boolean flgAdm) {
+		this.flgAdm = flgAdm;
+	}	
 }

@@ -34,11 +34,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public List<Usuario> listar(int primeiro, int tamanho, String nome) {
+	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo) {
 		List<Usuario> lista = new ArrayList<Usuario>();
 		
 		try {
-			lista = new UsuarioDAOImpl().listar(primeiro, tamanho, nome);
+			lista = new UsuarioDAOImpl().listar(primeiro, tamanho, nome, flgAtivo);
 			logger.info("Lista de usuarios obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
