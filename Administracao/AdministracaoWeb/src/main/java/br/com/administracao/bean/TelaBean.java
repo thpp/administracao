@@ -184,8 +184,8 @@ public class TelaBean implements Serializable {
 		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesSelecionadas);
 
 		buscarProjetos();
-		
-		if(acoesDisponiveis.size() > 0)
+
+		if (acoesDisponiveis.size() > 0)
 			existeAcoes = true;
 	}
 
@@ -270,10 +270,10 @@ public class TelaBean implements Serializable {
 				.getNamedObject(AcoesService.NAME);
 
 		List<Acoes> todasAcoes = service.listar();
-		
-		if(todasAcoes.size() > 0)
+
+		if (todasAcoes.size() > 0)
 			existeAcoes = true;
-		
+
 		List<Acoes> acoesTela = new ArrayList<Acoes>();
 		acoesDisponiveis = service.listar();
 		buscarFuncoes();

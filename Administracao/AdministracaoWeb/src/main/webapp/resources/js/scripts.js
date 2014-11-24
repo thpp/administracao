@@ -1,5 +1,5 @@
 function verificar(xhr, status, args, dlg, tbl) { // 3 primeiros padrão, não
-													// mexa
+	// mexa
 	if (args.validationFailed) {
 		PF(dlg).jq.effect("shake", {
 			times : 5
@@ -10,13 +10,11 @@ function verificar(xhr, status, args, dlg, tbl) { // 3 primeiros padrão, não
 	}
 }
 
-function verificarSemHide(xhr, status, args, dlg, tbl) { // 3 primeiros
-															// padrão, não mexa
+function verificarSemHide(xhr, status, args, dlg) { // 3 primeiros
+	// padrão, não mexa
 	if (args.validationFailed) {
 		PF(dlg).jq.effect("shake", {
 			times : 5
 		}, 100); // faz choacalhar
-	} else {
-		PF(tbl).clearFilters();
 	}
 }

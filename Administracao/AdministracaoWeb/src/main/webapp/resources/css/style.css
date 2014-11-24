@@ -11,32 +11,38 @@
 	font-size: 15px;
 }
 
+/* Tira borda dos panels grid */
 .ui-panelgrid tr, .ui-panelgrid td {
 	border: 0 !important;
 }
 
+/* Tira borda */
 .semBorda {
 	border: 0 !important;
 }
 
-/* Muda o ícone da PickList */
-
-.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-e{
-    background-image: none !important;
-    background: url(../img/arrow-forward-16.png) !important;
+/* Muda o ícone dos botões da PickList */
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-e {
+	background-image: none !important;
+	background: url(../img/arrow-forward-16.png) !important;
 }
 
-.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-e{
-    background-image: none !important;
-    background: url(../img/arrow-forward-outline-16.png) !important;
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-e {
+	background-image: none !important;
+	background: url(../img/arrow-forward-outline-16.png) !important;
 }
 
-.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-w{
-    background-image: none !important;
-    background: url(../img/arrow-back-16.png) !important;
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrow-1-w {
+	background-image: none !important;
+	background: url(../img/arrow-back-16.png) !important;
 }
 
-.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-w{
-    background-image: none !important;
-    background: url(../img/arrow-back-outline-16.png) !important;
+.ui-button-icon-left.ui-icon.ui-c.ui-icon.ui-icon-arrowstop-1-w {
+	background-image: none !important;
+	background: url(../img/arrow-back-outline-16.png) !important;
+}
+
+/* Não deixa a inputText ficar vermelha quando valor inválido */
+.ui-state-error {
+	border: 1px solid #a8a8a8 !important;
 }

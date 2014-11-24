@@ -45,8 +45,8 @@
 									actionListener="#{MBModulo.novo}"
 									update="msgs, :formNovo:pnlNovo" />
 								<p:commandButton value="Limpar Busca"
-									actionListener="#{MBModulo.limparCamposBusca}" update="form1" 
-									style="margin-left: 5px;"/>
+									actionListener="#{MBModulo.limparCamposBusca}" update="form1"
+									style="margin-left: 5px;" />
 								<p:spacer width="65" height="0" />
 								<p:commandButton value="Buscar" id="btnBuscar"
 									style="width: 120px" actionListener="#{MBModulo.pesquisar}"
@@ -95,30 +95,34 @@
 				</h:form>
 			</p:panel>
 
+			<p:growl id="msgValorInvalido" showDetail="false" life="3000" />
+
 			<p:dialog id="dialogoNovo" widgetVar="dlgNovo" modal="true"
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Cadastro de Módulo">
 
 				<h:form id="formNovo">
-					<p:panelGrid id="pnlNovo" columns="2">
+					<p:panelGrid id="pnlNovo" columns="3">
 						<p:outputLabel value="Nome:" />
-						<p:inputText value="#{MBModulo.modulo.nome}"
+						<p:inputText id="txtNome" value="#{MBModulo.modulo.nome}"
 							style="text-transform:uppercase" size="30" required="true"
 							requiredMessage="O campo nome é obrigatório!" />
+						<p:message for="txtNome" />
 						<p:outputLabel value="Projeto:" />
-						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
-							filter="true" required="true"
-							requiredMessage="O campo projeto é obrigatório!">
+						<p:selectOneMenu id="cbProjetos"
+							value="#{MBModulo.modulo.projeto.nro}" filter="true"
+							required="true" requiredMessage="O campo projeto é obrigatório!">
 							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
 							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
 								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
 						</p:selectOneMenu>
+						<p:message for="cbProjetos" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBModulo.salvar}"
 							value="Salvar"
-							oncomplete="verificar(xhr, status, args, 'dlgNovo', 'tblModulos');"
-							update=":form1:msgs, :form1:tabelaModulos">
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo');"
+							update=":formNovo:pnlNovo, :form1:tabelaModulos">
 							<p:confirm header="Atenção!" message="Deseja realmente salvar?"
 								icon="ui-icon-alert" />
 						</p:commandButton>
@@ -134,25 +138,27 @@
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Edição de Módulo">
 				<h:form id="formEdicao">
-					<p:panelGrid id="pnlEdicao" columns="2">
+					<p:panelGrid id="pnlEdicao" columns="3">
 						<p:outputLabel value="Nome: " />
-						<p:inputText value="#{MBModulo.modulo.nome}"
+						<p:inputText id="txtNome" value="#{MBModulo.modulo.nome}"
 							style="text-transform:uppercase" size="30" required="true"
 							requiredMessage="O campo nome é obrigatório!" />
+						<p:message for="txtNome" />
 						<p:outputLabel value="Projeto:" />
-						<p:selectOneMenu value="#{MBModulo.modulo.projeto.nro}"
-							filter="true" required="true"
-							requiredMessage="O campo projeto é obrigatório!">
+						<p:selectOneMenu id="cbProjetos"
+							value="#{MBModulo.modulo.projeto.nro}" filter="true"
+							required="true" requiredMessage="O campo projeto é obrigatório!">
 							<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
 							<f:selectItems value="#{MBModulo.listaProjetos}" var="p"
 								itemValue="#{p.nro}" itemLabel="#{p.nome}" />
 						</p:selectOneMenu>
+						<p:message for="cbProjetos" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBModulo.salvar}"
 							value="Editar"
-							oncomplete="verificar(xhr, status, args, 'dlgEdicao', 'tblModulos');"
-							update=":form1:msgs, :form1:tabelaModulos">
+							oncomplete="verificarSemHide(xhr, status, args, 'dlgEdicao');"
+							update=":formEdicao:pnlEdicao, :form1:tabelaModulos">
 							<p:confirm header="Atenção!" message="Deseja realmente editar?" />
 						</p:commandButton>
 						<p:commandButton value="Cancelar" process="@this"
