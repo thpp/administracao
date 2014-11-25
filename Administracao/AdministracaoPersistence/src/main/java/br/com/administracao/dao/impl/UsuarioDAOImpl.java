@@ -76,8 +76,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 			}else{
 				throw new PSTException("Ocorreu um erro ao tentar inserir um usuario "+ex.getMessage(), ex);
 			}
-			
-			
+						
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
@@ -151,11 +150,11 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT U.NRO nroUsuario, U.USUARIO usuario, U.SENHA senha, U.OBS obs, U.PES_NRO pesNro, U.FLG_PROFISSIONAL flgProfissional, U.FLG_ADM flgadm, U.FLG_ATIVO flgAtivo, P.NOME nomePessoa, P.FLG_PESSOA flgPessoa, P.CNPJ_CPF cnpjCpf ");
 		sql.append("FROM S_USUARIO U, PESSOA P ");		
-		sql.append("AND U.FLG_ATIVO = UPPER(?) ");
+		sql.append("WHERE U.FLG_ATIVO = UPPER(?) ");
 		sql.append("AND U.PES_NRO = P.NRO ");
 		
 		if(nome != null){
-			sql.append("AND O.NOME LIKE UPPER(?) ");
+			sql.append("AND P.NOME LIKE UPPER(?) ");
 		};
 		
 		Connection conexao = null;
@@ -339,36 +338,37 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		try {
 			UsuarioDAOImpl dao = new UsuarioDAOImpl();
 			
-			Usuario usuario = new Usuario();
-			Pessoa pessoa = new Pessoa();
+//			Usuario usuario = new Usuario();
+//			Pessoa pessoa = new Pessoa();
+//			
+//			pessoa.setNome("Thiago Henrique");
+//			pessoa.setFlgPessoa("M");
+//			pessoa.setCpf("36995369807");
+//			
+//			usuario.setUsuario("formen");
+//			usuario.setSenha("123mudar");
+//			usuario.setFlgAtivo(Boolean.TRUE);
+//			usuario.setFlgAdm(Boolean.TRUE);
+//			usuario.setFlgProfissional(Boolean.TRUE);
+//			usuario.setObs("Teste.....");
+//			usuario.setPessoa(pessoa);
 			
-			pessoa.setNome("Thiago Henrique");
-			pessoa.setFlgPessoa("M");
-			pessoa.setCpf("36995369807");
-			
-			usuario.setUsuario("formen");
-			usuario.setSenha("123mudar");
-			usuario.setFlgAtivo(Boolean.TRUE);
-			usuario.setFlgAdm(Boolean.TRUE);
-			usuario.setFlgProfissional(Boolean.TRUE);
-			usuario.setObs("Teste.....");
-			usuario.setPessoa(pessoa);
-			
-			dao.inserir(usuario);
-			
-			System.out.println("Sucesso!!....");
+//			dao.inserir(usuario);
+//			
+//			System.out.println("Sucesso!!....");
 			
 			
 			//Pessoa pessoa1 = dao.buscaPessoa("36995369807");
 			//usuario.setNro(1L);
 //			usuario.setDataBaixa(new java.util.Date());
 			
-			//List<Usuario> lista = dao.listar(0, 0, null);
+			List<Usuario> lista = dao.listar(0, 0, null, "S");
 			
-//			for (Usuario usuario : lista) {
-//				System.out.println("Nome: "+usuario.getNome());
-//				System.out.println("Data: "+usuario.getDataBaixa());
-//			}
+			for (Usuario usuario : lista) {
+				System.out.println("Nome: "+usuario.getPessoa().getNome());
+				System.out.println("Usuario: "+usuario.getUsuario());
+				System.out.println("Senha: "+usuario.getSenha());
+			}
 			
 			
 		} catch (PSTException e) {

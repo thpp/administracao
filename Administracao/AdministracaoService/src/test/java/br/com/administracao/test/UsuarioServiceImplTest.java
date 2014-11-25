@@ -1,5 +1,7 @@
 package br.com.administracao.test;
 
+import java.util.List;
+
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 import javax.xml.rpc.ServiceException;
@@ -18,6 +20,7 @@ public class UsuarioServiceImplTest {
 	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 	
 	@Test
+	@Ignore
 	public void inserir() throws NamingException, ServiceException {
 
 		Usuario usuario = new Usuario();
@@ -39,6 +42,25 @@ public class UsuarioServiceImplTest {
 		service.inserir(usuario);
 	}
 	
+	@Test
+	public void listar() throws NamingException, ServiceException {		
+
+		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
+		
+		List<Usuario> lista = service.listar(0, 0, null, "S");
+		
+		for (Usuario usuario : lista) {
+			System.out.println("Nome: "+usuario.getPessoa().getNome());
+			System.out.println("Usuario: "+usuario.getUsuario());
+			System.out.println("Senha: "+usuario.getSenha());
+		}		
+	}	
 	
-	
+	@Test
+	@Ignore
+	public void excluir() throws NamingException, ServiceException {		
+
+		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
+		service.excluir(1L);		
+	}
 }
