@@ -17,7 +17,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	private static Logger logger = Logger.getLogger(UsuarioServiceImpl.class.getName());
 	
-	//retorna true quando a pessoa ja tiver cadastrada no gemmap
+	//retorna true quando a pessoa foi incluida na tabela pessoa
 	@Override
 	public Boolean inserir(Usuario usuario) {
 		Boolean pessoaJaGravada = null;

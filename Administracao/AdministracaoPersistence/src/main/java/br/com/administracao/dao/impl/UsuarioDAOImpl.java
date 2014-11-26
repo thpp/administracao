@@ -22,7 +22,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 	
 	private static Logger logger = Logger.getLogger(UsuarioDAOImpl.class.getName());
 	
-	//retorna true quando a pessoa ja tiver cadastrada no gemmap
+	//retorna true quando a pessoa foi incluida na tabela pessoa
 	@Override
 	public Boolean inserir(Usuario usuario) throws PSTException {
 		
