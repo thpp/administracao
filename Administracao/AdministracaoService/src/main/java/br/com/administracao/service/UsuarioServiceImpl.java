@@ -17,11 +17,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	private static Logger logger = Logger.getLogger(UsuarioServiceImpl.class.getName());
 	
+	//retorna true quando a pessoa ja tiver cadastrada no gemmap
 	@Override
-	public void inserir(Usuario usuario) {
+	public Boolean inserir(Usuario usuario) {
+		Boolean pessoaJaGravada = null;
 		try {			
-			new UsuarioDAOImpl().inserir(usuario);
+			 pessoaJaGravada = new UsuarioDAOImpl().inserir(usuario);
 			logger.info("Usuario inserido com sucesso");
+			return pessoaJaGravada;
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}	

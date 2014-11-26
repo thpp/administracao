@@ -21,9 +21,10 @@ import br.com.administracao.util.PSTUtil;
 public class UsuarioDAOImpl implements UsuarioDAO {
 	
 	private static Logger logger = Logger.getLogger(UsuarioDAOImpl.class.getName());
-
+	
+	//retorna true quando a pessoa ja tiver cadastrada no gemmap
 	@Override
-	public void inserir(Usuario usuario) throws PSTException {
+	public Boolean inserir(Usuario usuario) throws PSTException {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO S_USUARIO ");
@@ -33,6 +34,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		Connection conexao = null;
 		PreparedStatement comando = null;
 		Pessoa pessoa = null;
+		Boolean retorno = null;
 		
 		try {
 			conexao = ConnectionFactory.getConnection();
@@ -62,13 +64,16 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 			if(pessoa == null){
 				Integer nroPessoa = inserirPessoa(usuario.getPessoa());
 				comando.setLong(8, nroPessoa);
+				retorno = Boolean.TRUE;
 			}else{
 				comando.setLong(8, pessoa.getNro());
+				retorno = Boolean.FALSE;
 			}
 			
-			comando.executeUpdate();
-
+			comando.executeUpdate();			
 			logger.info("Usuario inserido com sucesso");
+			return retorno;
+			
 		} catch (SQLException ex) {
 			
 			if(ex.getMessage().contains("ORA-00001")){

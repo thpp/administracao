@@ -39,10 +39,17 @@ public class UsuarioServiceImplTest {
 		usuario.setPessoa(pessoa);
 
 		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
-		service.inserir(usuario);
+		Boolean retorno = service.inserir(usuario);
+		
+		if(retorno){
+			System.out.println("Não!!!....estava na tabela pessoa");
+		}else{
+			System.out.println("Já estava na tabela pessoa");
+		}
 	}
 	
 	@Test
+	@Ignore
 	public void listar() throws NamingException, ServiceException {		
 
 		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");

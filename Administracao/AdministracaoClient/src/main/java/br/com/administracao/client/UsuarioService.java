@@ -9,8 +9,9 @@ import br.com.administracao.model.Usuario;
 @Remote
 public interface UsuarioService {	
 	public static final String NAME = "global/AdministracaoService/UsuarioServiceImpl!br.com.administracao.client.UsuarioService";
-
-	public void inserir(Usuario usuario);
+	
+	//retorna true quando a pessoa ja tiver cadastrada no gemmap
+	public Boolean inserir(Usuario usuario);
 
 	public Integer contar();
 

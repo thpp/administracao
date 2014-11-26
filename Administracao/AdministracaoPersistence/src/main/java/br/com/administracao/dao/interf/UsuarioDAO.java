@@ -8,7 +8,8 @@ import br.com.administracao.model.Usuario;
 
 public interface UsuarioDAO {
 	
-	public void inserir(Usuario usuario) throws PSTException;
+	//retorna true quando a pessoa ja tiver cadastrada no gemmap
+	public Boolean inserir(Usuario usuario) throws PSTException;
 
 	public void editar(Usuario usuario) throws PSTException;
 
