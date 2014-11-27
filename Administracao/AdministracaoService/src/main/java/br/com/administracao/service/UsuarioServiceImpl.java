@@ -23,7 +23,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Boolean pessoaJaGravada = null;
 		try {			
 			 pessoaJaGravada = new UsuarioDAOImpl().inserir(usuario);
-			logger.info("Usuario inserido com sucesso");
+			 logger.info("Usuario inserido com sucesso");
 			return pessoaJaGravada;
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);

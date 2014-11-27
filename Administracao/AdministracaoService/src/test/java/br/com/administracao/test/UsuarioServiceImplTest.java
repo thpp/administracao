@@ -70,4 +70,31 @@ public class UsuarioServiceImplTest {
 		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
 		service.excluir(1L);		
 	}
+	
+	@Test
+	public void editar() throws NamingException, ServiceException {
+
+		Usuario usuario = new Usuario();
+		Pessoa pessoa = new Pessoa();
+		
+		pessoa.setNro(148337L);
+		pessoa.setNome("Thiago Henrique Pereira Paiva");
+		pessoa.setFlgPessoa("M");
+		pessoa.setCpf("36995369807");
+		
+		usuario.setNro(3L);
+		usuario.setUsuario("vaiiiEditarrr");
+		usuario.setSenha("123mudar");
+		usuario.setFlgAtivo(Boolean.TRUE);
+		usuario.setFlgAdm(Boolean.TRUE);
+		usuario.setFlgProfissional(Boolean.TRUE);
+		usuario.setObs("Teste.....");
+		usuario.setDataBaixa(null);
+		
+		usuario.setPessoa(pessoa);
+
+		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
+		service.editar(usuario);		
+		
+	}
 }

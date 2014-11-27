@@ -90,36 +90,75 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 	@Override
 	public void editar(Usuario usuario) throws PSTException {		
-//		StringBuilder sql = new StringBuilder();
-//		sql.append("UPDATE S_USUARIO ");
-//		sql.append("SET NOME_COMPLETO = UPPER(?), CPF = ?, CARGO = ?, USUARIO = ?, SENHA = ?, DATA_BAIXA = ?, FLG_ATIVO = ?");
-//		sql.append("WHERE NRO = ? ");
-//		
-//		Connection conexao = null;
-//		PreparedStatement comando = null;
-//
-//		try {
-//			conexao = ConnectionFactory.getConnection();
-//			comando = conexao.prepareStatement(sql.toString());
-//			comando.setString(1, usuario.getNome());
-//			comando.setString(2, usuario.getCpf());
-//			comando.setString(3, usuario.getCargo());
-//			comando.setString(4, usuario.getUsuario());
-//			comando.setString(5, usuario.getSenha());
-//			comando.setDate(6, usuario.getDataBaixa() == null ? null : new java.sql.Date(((java.util.Date) usuario.getDataBaixa()).getTime()));
-//			comando.setString(7, usuario.getFlgAtivo() ? "S" : "N");
-//			
-//			comando.setLong(8, usuario.getNro());
-//			
-//			comando.executeUpdate();
-//
-//			logger.info("Usuario editado com sucesso");
-//		} catch (SQLException ex) {
-//			throw new PSTException("Ocorreu um erro ao tentar editado um usuario "+ex.getCause(), ex);
-//		} finally {
-//			PSTUtil.fechar(comando);
-//			PSTUtil.fechar(conexao);
-//		}
+		
+		StringBuilder sqlUpdatePessoa = new StringBuilder();
+		sqlUpdatePessoa.append("UPDATE PESSOA ");
+		sqlUpdatePessoa.append("SET NOME = UPPER(?), CNPJ_CPF = ?, FLG_PESSOA = UPPER(?)");
+		sqlUpdatePessoa.append("WHERE NRO = ? ");
+		
+		StringBuilder sqlUpdateUsuario = new StringBuilder();
+		sqlUpdateUsuario.append("UPDATE S_USUARIO ");
+		sqlUpdateUsuario.append("SET USUARIO = UPPER(?), SENHA = ?, OBS = ?, FLG_ADM = ?, FLG_ATIVO = ?, DATA_BAIXA = ?");
+		sqlUpdateUsuario.append("WHERE NRO = ? ");
+		
+		
+		Connection conexao = null;
+		PreparedStatement comandoUpdatePessao = null;
+		PreparedStatement comandoUpdateUsuario = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();			
+			conexao.setAutoCommit(false);
+			
+			comandoUpdatePessao = conexao.prepareStatement(sqlUpdatePessoa.toString());
+			comandoUpdatePessao.setString(1, usuario.getPessoa().getNome());
+			comandoUpdatePessao.setString(2, new Helper().aplicarMascara(usuario.getPessoa().getCpf()));
+			comandoUpdatePessao.setString(3, usuario.getPessoa().getFlgPessoa());
+			comandoUpdatePessao.setLong(4, usuario.getPessoa().getNro());
+			
+			comandoUpdatePessao.executeUpdate();
+			
+			comandoUpdateUsuario = conexao.prepareStatement(sqlUpdateUsuario.toString());
+			comandoUpdateUsuario.setString(1, usuario.getUsuario());
+			comandoUpdateUsuario.setString(2, usuario.getSenha());
+			comandoUpdateUsuario.setString(3, usuario.getObs());
+			
+			if(usuario.getFlgAdm()){
+				Usuario adm = buscaADM();
+				if(adm == null){
+					comandoUpdateUsuario.setString(4, "S");
+				}else{
+					if(adm.getNro().equals(usuario.getNro())){
+						comandoUpdateUsuario.setString(4, usuario.getFlgAdm() ? "S" : "N");
+					}else{
+						throw new PSTException("O sistema ja possui um administrador contate: "+adm.getPessoa().getNome());
+					}					
+				}
+			}else{
+				comandoUpdateUsuario.setString(4, "N");
+			}
+			
+			comandoUpdateUsuario.setString(5, usuario.getFlgAtivo() ? "S" : "N");
+			if(usuario.getDataBaixa() != null){
+				comandoUpdateUsuario.setDate(6, new java.sql.Date(((java.util.Date) usuario.getDataBaixa()).getTime()));
+			}else{
+				comandoUpdateUsuario.setDate(6, null);
+			}
+			
+			comandoUpdateUsuario.setLong(7, usuario.getNro());
+			
+			comandoUpdateUsuario.executeUpdate();
+			
+			conexao.commit();
+			
+			logger.info("Usuario editado com sucesso");
+		} catch (SQLException ex) {
+			throw new PSTException("Ocorreu um erro ao tentar editado um usuario "+ex.getCause(), ex);
+		} finally {
+			PSTUtil.fechar(comandoUpdatePessao);
+			PSTUtil.fechar(comandoUpdateUsuario);
+			PSTUtil.fechar(conexao);
+		}
 
 	}
 
