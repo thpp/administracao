@@ -77,7 +77,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		} catch (SQLException ex) {
 			
 			if(ex.getMessage().contains("ORA-00001")){
-				throw new PSTException("Username já esta dendo usando por um usuario "+ex.getMessage(), ex);
+				throw new PSTException("Username já esta sendo usando por um usuario "+ex.getMessage(), ex);
 			}else{
 				throw new PSTException("Ocorreu um erro ao tentar inserir um usuario "+ex.getMessage(), ex);
 			}

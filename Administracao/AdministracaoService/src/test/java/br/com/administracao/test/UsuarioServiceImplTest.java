@@ -20,7 +20,6 @@ public class UsuarioServiceImplTest {
 	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 	
 	@Test
-	@Ignore
 	public void inserir() throws NamingException, ServiceException {
 
 		Usuario usuario = new Usuario();
@@ -28,12 +27,12 @@ public class UsuarioServiceImplTest {
 		
 		pessoa.setNome("Thiago Henrique");
 		pessoa.setFlgPessoa("M");
-		pessoa.setCpf("36995369807");
+		pessoa.setCpf("798.572.321-83");
 		
 		usuario.setUsuario("formen");
 		usuario.setSenha("123mudar");
 		usuario.setFlgAtivo(Boolean.TRUE);
-		usuario.setFlgAdm(Boolean.TRUE);
+		usuario.setFlgAdm(Boolean.FALSE);
 		usuario.setFlgProfissional(Boolean.TRUE);
 		usuario.setObs("Teste.....");
 		usuario.setPessoa(pessoa);
@@ -72,6 +71,7 @@ public class UsuarioServiceImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void editar() throws NamingException, ServiceException {
 
 		Usuario usuario = new Usuario();
