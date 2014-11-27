@@ -17,6 +17,9 @@ import br.com.administracao.model.Modulo;
 import br.com.administracao.model.Projeto;
 import br.com.administracao.util.WebUtil;
 
+/**
+ * @author Leticia Alves
+ */
 @ManagedBean(name = "MBModulo")
 @ViewScoped
 public class ModuloBean implements Serializable {
