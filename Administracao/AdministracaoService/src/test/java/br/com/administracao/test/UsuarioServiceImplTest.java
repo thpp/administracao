@@ -20,6 +20,7 @@ public class UsuarioServiceImplTest {
 	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 	
 	@Test
+	@Ignore
 	public void inserir() throws NamingException, ServiceException {
 
 		Usuario usuario = new Usuario();
@@ -51,8 +52,7 @@ public class UsuarioServiceImplTest {
 	@Ignore
 	public void listar() throws NamingException, ServiceException {		
 
-		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
-		
+		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");		
 		List<Usuario> lista = service.listar(0, 0, null, "S");
 		
 		for (Usuario usuario : lista) {
