@@ -27,6 +27,9 @@ import br.com.administracao.model.Projeto;
 import br.com.administracao.model.Tela;
 import br.com.administracao.util.WebUtil;
 
+/**
+ * @author Leticia Alves
+ */
 @ManagedBean(name = "MBTela")
 @ViewScoped
 public class TelaBean implements Serializable {
