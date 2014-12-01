@@ -19,12 +19,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	//retorna true quando a pessoa foi incluida na tabela pessoa
 	@Override
-	public Boolean inserir(Usuario usuario) {
-		Boolean pessoaJaGravada = null;
+	public Usuario inserir(Usuario usuario) {
+		Usuario usuarioRetorno = null;
 		try {			
-			 pessoaJaGravada = new UsuarioDAOImpl().inserir(usuario);
+			usuarioRetorno = new UsuarioDAOImpl().inserir(usuario);
 			 logger.info("Usuario inserido com sucesso");
-			return pessoaJaGravada;
+			return usuarioRetorno;
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}	

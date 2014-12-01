@@ -20,7 +20,6 @@ public class UsuarioServiceImplTest {
 	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 	
 	@Test
-	@Ignore
 	public void inserir() throws NamingException, ServiceException {
 
 		Usuario usuario = new Usuario();
@@ -28,7 +27,7 @@ public class UsuarioServiceImplTest {
 		
 		pessoa.setNome("Thiago Henrique");
 		pessoa.setFlgPessoa("M");
-		pessoa.setCpf("798.572.321-83");
+		pessoa.setCpf("369.953.698-07");
 		
 		usuario.setUsuario("formen");
 		usuario.setSenha("123mudar");
@@ -39,12 +38,16 @@ public class UsuarioServiceImplTest {
 		usuario.setPessoa(pessoa);
 
 		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");
-		Boolean retorno = service.inserir(usuario);
+		Usuario retorno = service.inserir(usuario);
 		
-		if(retorno){
-			System.out.println("Não!!!....estava na tabela pessoa");
+		if(retorno == null){
+			System.out.println("Não!!!....estava na tabela pessoa");			
 		}else{
 			System.out.println("Já estava na tabela pessoa");
+			System.out.println("Id usuario: "+ retorno.getNro());
+			System.out.println("user usuario: "+ retorno.getUsuario());
+			System.out.println("Id Pessoa: "+ retorno.getPessoa().getNro());
+				
 		}
 	}
 	

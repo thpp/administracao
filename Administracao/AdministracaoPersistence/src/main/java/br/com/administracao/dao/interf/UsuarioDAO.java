@@ -8,8 +8,8 @@ import br.com.administracao.model.Usuario;
 
 public interface UsuarioDAO {
 	
-	//retorna true quando a pessoa foi incluida na tabela pessoa
-	public Boolean inserir(Usuario usuario) throws PSTException;
+	//retorna null se pessoa foi incluida no banco, caso contrario retorna o usuario cadastraso 
+	public Usuario inserir(Usuario usuario) throws PSTException;
 
 	public void editar(Usuario usuario) throws PSTException;
 

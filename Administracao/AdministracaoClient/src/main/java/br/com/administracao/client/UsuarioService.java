@@ -10,8 +10,8 @@ import br.com.administracao.model.Usuario;
 public interface UsuarioService {	
 	public static final String NAME = "global/AdministracaoService/UsuarioServiceImpl!br.com.administracao.client.UsuarioService";
 	
-	//retorna true quando a pessoa foi incluida na tabela pessoa
-	public Boolean inserir(Usuario usuario);
+	//retorna null se pessoa foi incluida no banco, caso contrario retorna o usuario cadastraso
+	public Usuario inserir(Usuario usuario);
 
 	public Integer contar();
 
