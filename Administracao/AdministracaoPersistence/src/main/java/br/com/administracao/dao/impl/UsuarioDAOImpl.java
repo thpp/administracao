@@ -236,9 +236,9 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 				usuario.setUsuario(resultado.getString("usuario"));
 				usuario.setSenha(resultado.getString("senha"));
 				usuario.setObs(resultado.getString("obs"));
-				usuario.setFlgProfissional(resultado.getString("flgProfissional") == "S" ? Boolean.TRUE : Boolean.FALSE);
-				usuario.setFlgAdm(resultado.getString("flgadm") == "S" ? Boolean.TRUE : Boolean.FALSE);
-				usuario.setFlgAtivo(resultado.getString("flgAtivo") == "S" ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setFlgProfissional(resultado.getString("flgProfissional").equals("S") ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setFlgAdm(resultado.getString("flgadm").equals("S") ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setFlgAtivo(resultado.getString("flgAtivo").equals("S") ? Boolean.TRUE : Boolean.FALSE);
 				usuario.setPessoa(new Pessoa(resultado.getLong("pesNro"), resultado.getString("nomePessoa"), resultado.getString("flgPessoa"), resultado.getString("cnpjCpf")));
 				usuario.setDataInclusao(resultado.getDate("dataInc"));
 				
