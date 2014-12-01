@@ -60,9 +60,11 @@ public class UsuarioServiceImplTest {
 		
 		for (Usuario usuario : lista) {
 			System.out.println("Nome: "+usuario.getPessoa().getNome());
+			System.out.println("Nome: "+usuario.getPessoa().getCpf());
 			System.out.println("Usuario: "+usuario.getUsuario());
 			System.out.println("Senha: "+usuario.getSenha());
 			System.out.println("Administrador: "+ usuario.getFlgAdm());
+			System.out.println("Administrador: "+ usuario.getDataBaixa());
 		}		
 	}	
 	

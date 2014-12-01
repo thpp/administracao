@@ -205,7 +205,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 	@Override
 	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo)throws PSTException {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT U.NRO nroUsuario, U.USUARIO usuario, U.SENHA senha, U.OBS obs, U.PES_NRO pesNro, U.FLG_PROFISSIONAL flgProfissional, U.FLG_ADM flgadm, U.FLG_ATIVO flgAtivo, P.NOME nomePessoa, P.FLG_PESSOA flgPessoa, P.CNPJ_CPF cnpjCpf, U.DATA_INC dataInc ");
+		sql.append("SELECT U.NRO nroUsuario, U.USUARIO usuario, U.SENHA senha, U.OBS obs, U.PES_NRO pesNro, U.FLG_PROFISSIONAL flgProfissional, U.FLG_ADM flgadm, U.FLG_ATIVO flgAtivo, P.NOME nomePessoa, P.FLG_PESSOA flgPessoa, P.CNPJ_CPF cnpjCpf, U.DATA_INC dataInc, U.DATA_BAIXA dataBaixa ");
 		sql.append("FROM S_USUARIO U, PESSOA P ");		
 		sql.append("WHERE U.FLG_ATIVO = UPPER(?) ");
 		sql.append("AND U.PES_NRO = P.NRO ");
@@ -241,6 +241,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 				usuario.setFlgAtivo(resultado.getString("flgAtivo").equals("S") ? Boolean.TRUE : Boolean.FALSE);
 				usuario.setPessoa(new Pessoa(resultado.getLong("pesNro"), resultado.getString("nomePessoa"), resultado.getString("flgPessoa"), resultado.getString("cnpjCpf")));
 				usuario.setDataInclusao(resultado.getDate("dataInc"));
+				usuario.setDataBaixa(resultado.getDate("dataBaixa"));
 				
 				lista.add(usuario);
 			}
