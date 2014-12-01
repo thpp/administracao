@@ -1,7 +1,6 @@
 package br.com.administracao.bean;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class UsuarioBean implements Serializable {
 	private List<Usuario> listaUsuarios = new ArrayList<Usuario>();
 	private Integer caracteresMinimos = 3;
 	private String textoBusca = "";
+	private String tipoBusca;
 	private String cpf;
 
 	@PostConstruct
@@ -49,20 +49,20 @@ public class UsuarioBean implements Serializable {
 	public void limparCamposBusca() {
 		textoBusca = "";
 		buscarLista();
+		tipoBusca = "S";
 	}
 
 	public void pesquisar() {
 		if (!"".equals(textoBusca)) {
-			// Pesquisar pelo texto
+			// Pesquisar pelo nome da pessoa
 			UsuarioService service = (UsuarioService) WebUtil
 					.getNamedObject(UsuarioService.NAME);
-			// listaUsuarios = service.listar(0, 0, textoBusca);
-
+			listaUsuarios = service.listar(0, 0, textoBusca, tipoBusca);
 		} else {
-			// Pesquisar todos os usuários
+			// Pesquisar todos os usuários ativos OU inativos
 			UsuarioService service = (UsuarioService) WebUtil
 					.getNamedObject(UsuarioService.NAME);
-			// listaUsuarios = service.listar(0, 0, null);
+			listaUsuarios = service.listar(0, 0, null, tipoBusca);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class UsuarioBean implements Serializable {
 	}
 
 	public void editar() {
-		// cpf = usuario.getCpf();
+		cpf = usuario.getPessoa().getCpf();
 		salvar();
 	}
 
@@ -85,57 +85,98 @@ public class UsuarioBean implements Serializable {
 			cpf = cpf.replaceAll("\\/", "").replaceAll("\\.", "")
 					.replaceAll("-", "").trim();
 
-			/* Validação */
-			if (usuario.getPessoa().getNome().length() > caracteresMinimos
-					&& CpfValidator.validaCPF(this.cpf)) {
+			/* Validação do Nome */
+			if (usuario.getPessoa().getNome().length() > caracteresMinimos) {
+				/* Inserir */
 				if (usuario.getNro() == null) {
-					Boolean pessoaGravada = null;
 
-					usuario.getPessoa().setCpf(cpf);
-					usuario.setDataInclusao(new java.util.Date());
+					/* Validação do CPF */
+					if (CpfValidator.validaCPF(this.cpf)) {
+						/*
+						 * Retorna null se pessoa foi incluída no banco, caso
+						 * contrário retorna o usuário cadastrado
+						 */
+						Usuario usuarioGravado = null;
+
+						usuario.getPessoa().setCpf(cpf);
+						usuario.setDataInclusao(new java.util.Date());
+						UsuarioService service = (UsuarioService) WebUtil
+								.getNamedObject(UsuarioService.NAME);
+
+						usuarioGravado = service.inserir(usuario);
+						WebUtil.adicionarMensagemSucesso("Usuário salvo com sucesso");
+
+						// Fecha o diálogo
+						org.primefaces.context.RequestContext
+								.getCurrentInstance().execute(
+										"PF('dlgNovo').hide();");
+
+						// A pessoa já existe na tabela
+						if (usuarioGravado != null) {
+							/*
+							 * O atributo usuario passa a referenciar o que foi
+							 * acabado de gravar
+							 */
+							usuario = usuarioGravado;
+							cpf = usuario.getPessoa().getCpf();
+
+							/*
+							 * É preciso setar o flgAtivo manualmente, pois isso
+							 * não é feito pelo usuário durante o cadastro
+							 */
+							usuario.setFlgAtivo(true);
+
+							RequestContext.getCurrentInstance().update(
+									"formInfo:pnlInfo");
+							org.primefaces.context.RequestContext
+									.getCurrentInstance()
+									.execute(
+											"PF('dlgInfoEdicaoPessoa').show();");
+						}
+					} else {
+						/* Exibe p:growl de cpf inválido */
+						WebUtil.adicionarMensagemAviso("CPF inválido.");
+						RequestContext.getCurrentInstance().update(
+								"msgValorInvalido");
+					}
+
+					/* Editar */
+				} else {
 					UsuarioService service = (UsuarioService) WebUtil
 							.getNamedObject(UsuarioService.NAME);
+					
+					usuario.getPessoa().setCpf(cpf);
+					
+					/* Usuário Inativo - gera data baixa */
+					if (!usuario.getFlgAtivo()) {
+						usuario.setDataBaixa(new java.util.Date());
+					} else {
+						usuario.setDataBaixa(null);
+					}
 
-					pessoaGravada = service.inserir(usuario);
+					service.editar(usuario);
 					WebUtil.adicionarMensagemSucesso("Usuário salvo com sucesso");
 
 					// Fecha o diálogo
 					org.primefaces.context.RequestContext.getCurrentInstance()
-							.execute("PF('dlgNovo').hide();");
+							.execute("PF('dlgEdicao').hide();");
 
-					if (true) {
-						// A pessoa já existia na tabela
-						RequestContext.getCurrentInstance().update(
-								"formInfo:pnlInfo");
-						org.primefaces.context.RequestContext
-								.getCurrentInstance().execute(
-										"PF('dlgInfoEdicaoPessoa').show();");
-
-					}
-
-				} else {
-					// editar
 				}
 				// Atualiza a mensagem de sucesso
 				RequestContext.getCurrentInstance().update("form1:msgs");
 				cpf = "";
+
 			} else {
-				if (!(usuario.getPessoa().getNome().length() > caracteresMinimos)) {
-					WebUtil.adicionarMensagemAviso("Usuário deve ter o nome maior que 3 caracteres");
-					RequestContext.getCurrentInstance().update(
-							"msgValorInvalido");
-				} else if (!CpfValidator.validaCPF(this.cpf)) {
-					/* Exibe p:growl de cpf inválido */
-					WebUtil.adicionarMensagemAviso("CPF inválido.");
-					RequestContext.getCurrentInstance().update(
-							"msgValorInvalido");
-				}
+
+				WebUtil.adicionarMensagemAviso("Usuário deve ter o nome maior que 3 caracteres");
+				RequestContext.getCurrentInstance().update("msgValorInvalido");
+
 			}
 
 			buscarLista();
 
 		} catch (ServiceException ex) {
-			WebUtil.adicionarMensagemErro("Service Exception");
+			WebUtil.adicionarMensagemErro(ex.getMessage());
 			RequestContext.getCurrentInstance().update("msgValorInvalido");
 		} catch (Exception ex) {
 			String mensagem = ex.getMessage();
@@ -147,63 +188,7 @@ public class UsuarioBean implements Serializable {
 				System.out.println(mensagemSeparada[i]);
 			RequestContext.getCurrentInstance().update("msgValorInvalido");
 		}
-		// try {
-		// cpf = cpf.replaceAll("\\/", "").replaceAll("\\.", "")
-		// .replaceAll("-", "").trim();
-		//
-		// /* Validação */
-		// if (usuario.getNome().length() > caracteresMinimos
-		// && CpfValidator.validaCPF(this.cpf)) {
-		//
-		// if (usuario.getNro() == null) {
-		//
-		// usuario.setCpf(cpf);
-		// usuario.setDataInclusao(new java.util.Date());
-		//
-		// UsuarioService service = (UsuarioService) WebUtil
-		// .getNamedObject(UsuarioService.NAME);
-		// service.inserir(usuario);
-		// WebUtil.adicionarMensagemSucesso("Usuário salvo com sucesso");
-		//
-		// // Fecha o diálogo
-		// org.primefaces.context.RequestContext.getCurrentInstance()
-		// .execute("PF('dlgNovo').hide();");
-		//
-		// } else {
-		// UsuarioService service = (UsuarioService) WebUtil
-		// .getNamedObject(UsuarioService.NAME);
-		// service.editar(usuario);
-		// WebUtil.adicionarMensagemSucesso("Usuário editado com sucesso");
-		//
-		// // Fecha o diálogo
-		// org.primefaces.context.RequestContext.getCurrentInstance()
-		// .execute("PF('dlgEdicao').hide();");
-		//
-		// }
-		//
-		// // Atualiza a mensagem de sucesso
-		// RequestContext.getCurrentInstance().update("form1:msgs");
-		//
-		// } else {
-		// if (!(usuario.getNome().length() > caracteresMinimos)) {
-		// WebUtil.adicionarMensagemAviso("Usuário deve ter o nome maior que 3 caracteres");
-		// RequestContext.getCurrentInstance().update(
-		// "msgValorInvalido");
-		// } else if (!CpfValidator.validaCPF(this.cpf)) {
-		// /* Exibe p:growl de cpf inválido */
-		// WebUtil.adicionarMensagemAviso("CPF inválido.");
-		// RequestContext.getCurrentInstance().update(
-		// "msgValorInvalido");
-		// }
-		//
-		// }
-		//
-		// buscarLista();
-		// cpf = "";
-		//
-		// } catch (ServiceException ex) {
-		// WebUtil.adicionarMensagemErro(ex.getMessage());
-		// }
+
 	}
 
 	public void excluir() {
@@ -269,4 +254,11 @@ public class UsuarioBean implements Serializable {
 		this.cpf = cpf;
 	}
 
+	public String getTipoBusca() {
+		return tipoBusca;
+	}
+
+	public void setTipoBusca(String tipoBusca) {
+		this.tipoBusca = tipoBusca;
+	}
 }

@@ -32,9 +32,10 @@
 
 							<p:outputLabel value="Filtrar por usuários:"
 								style="margin-left: 30px;" />
-							<p:selectOneMenu value="ativos">
-								<f:selectItem itemValue="ativos" itemLabel="Ativos" />
-								<f:selectItem itemValue="inativos" itemLabel="Inativos" />
+							<p:selectOneMenu value="#{MBUsuario.tipoBusca}"
+								style="width: 150px;">
+								<f:selectItem itemValue="S" itemLabel="Ativos" />
+								<f:selectItem itemValue="N" itemLabel="Inativos" />
 							</p:selectOneMenu>
 
 							<h:inputHidden />
@@ -71,8 +72,8 @@
 						</p:column>
 						<p:column style="width:32px;text-align: center">
 							<p:commandButton icon="ui-icon-plus"
-								oncomplete="PF('dlgEdicao').show();" title="Mais informações"
-								update=":form1:msgs, :formEdicao:pnlEdicao">
+								oncomplete="PF('dlgDetalhes').show();" title="Mais informações"
+								update=":form1:msgs, :formDetalhes:pnlDetalhes">
 								<f:setPropertyActionListener value="#{u}"
 									target="#{MBUsuario.usuario}" />
 							</p:commandButton>
@@ -177,30 +178,51 @@
 				<h:form id="formEdicao">
 					<p:panelGrid id="pnlEdicao" columns="3">
 						<p:outputLabel value="Nome completo:" />
-						<p:inputText id="txtNome" value="#{MBUsuario.usuario.nome}"
-							style="text-transform:uppercase" size="50" maxlength="100"
+						<p:inputText id="txtNome" value="#{MBUsuario.usuario.pessoa.nome}"
+							style="text-transform:uppercase" size="30" maxlength="100"
 							required="true" requiredMessage="O campo nome é obrigatório!" />
 						<p:message for="txtNome" />
 						<p:outputLabel value="CPF:" />
-						<p:inputText id="txtCpf" value="#{MBUsuario.usuario.cpf}"
-							style="text-transform:uppercase" size="15" maxlength="15"
-							required="true" requiredMessage="O campo cpf é obrigatório!" />
-						<p:message for="txtCpf" />
-						<p:outputLabel value="Cargo:" />
-						<p:inputText id="txtCargo" value="#{MBUsuario.usuario.cargo}"
-							style="text-transform:uppercase" size="50" maxlength="50"
-							required="true" requiredMessage="O campo cargo é obrigatório!" />
-						<p:message for="txtCargo" />
+						<p:inputText id="txtCpf" value="#{MBUsuario.usuario.pessoa.cpf}"
+							readonly="true" style="text-transform:uppercase" size="15"
+							maxlength="15" required="true"
+							requiredMessage="O campo cpf é obrigatório!" />
+						<h:inputHidden />
+						<p:outputLabel value="Sexo:" />
+						<p:selectOneMenu id="txtSexo"
+							value="#{MBUsuario.usuario.pessoa.flgPessoa}"
+							style="text-transform:uppercase; width: 150px;" required="true"
+							requiredMessage="O campo sexo é obrigatório!">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItem itemLabel="Feminino" itemValue="F" />
+							<f:selectItem itemLabel="Masculino" itemValue="M" />
+						</p:selectOneMenu>
+						<p:message for="txtSexo" />
 						<p:outputLabel value="Usuário:" />
 						<p:inputText id="txtUsuario" value="#{MBUsuario.usuario.usuario}"
 							size="30" maxlength="30" required="true"
+							style="text-transform:uppercase"
 							requiredMessage="O campo usuário é obrigatório!" />
 						<p:message for="txtUsuario" />
 						<p:outputLabel value="Senha:" />
-						<p:inputText id="txtSenha" value="#{MBUsuario.usuario.senha}"
-							size="15" maxlength="15" required="true"
-							requiredMessage="O campo senha é obrigatório!" />
+						<p:inputText id="txtSenha" value="#{MBUsuario.usuario.senha}" />
 						<p:message for="txtSenha" />
+						<p:outputLabel value="Observações:" />
+						<p:inputTextarea value="#{MBUsuario.usuario.obs}" cols="31"
+							rows="2" maxlength="50" style="resize: none;" />
+						<h:inputHidden />
+						<p:outputLabel value="Ativo?" />
+						<p:selectBooleanCheckbox value="#{MBUsuario.usuario.flgAtivo}"
+							itemLabel="Sim" />
+						<h:inputHidden />
+						<p:outputLabel value="Profissional?" />
+						<p:selectBooleanCheckbox
+							value="#{MBUsuario.usuario.flgProfissional}" itemLabel="Sim" />
+						<h:inputHidden />
+						<p:outputLabel value="Administrador?" />
+						<p:selectBooleanCheckbox value="#{MBUsuario.usuario.flgAdm}"
+							itemLabel="Sim" />
+						<h:inputHidden />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBUsuario.editar}"
@@ -215,22 +237,65 @@
 				</h:form>
 			</p:dialog>
 
+			<p:dialog id="dialogoDetalhes" widgetVar="dlgDetalhes" modal="true"
+				appendTo="@(body)" closable="true" draggable="false"
+				resizable="false" header="Detalhes do Usuário">
+				<h:form id="formDetalhes" style="width: 500px;">
+					<p:panelGrid id="pnlDetalhes" columns="2">
+						<p:outputLabel value="Nome completo:" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.nome}"
+							style="text-transform:uppercase" />
+						<p:outputLabel value="CPF:" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.cpf}"
+							style="text-transform:uppercase" />
+						<p:outputLabel value="Sexo:" style="font-weight: bold;" />
+						<h:outputText
+							value="#{MBUsuario.usuario.pessoa.flgPessoa == 'F' ? 'Feminino' : 'Masculino'}"
+							style="text-transform:uppercase;" />
+						<p:outputLabel value="Usuário:" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.usuario}"
+							style="text-transform:uppercase" />
+						<p:outputLabel value="Senha:" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.senha}" />
+						<p:outputLabel value="Observações:" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.obs}" />
+						<p:outputLabel value="Ativo?" style="font-weight: bold;" />
+						<h:outputText
+							value="#{MBUsuario.usuario.flgAtivo ? 'Sim' : 'Não'}" />
+						<p:outputLabel rendered="#{!MBUsuario.usuario.flgAtivo}"
+							value="Data Baixa:" style="font-weight: bold;" />
+						<h:outputText rendered="#{!MBUsuario.usuario.flgAtivo}"
+							value="#{MBUsuario.usuario.dataBaixa}">
+							<f:convertDateTime pattern="dd/MM/yy" />
+						</h:outputText>
+						<p:outputLabel value="Profissional?" style="font-weight: bold;" />
+						<h:outputText
+							value="#{MBUsuario.usuario.flgProfissional ? 'Sim' : 'Não'}" />
+						<p:outputLabel value="Administrador?" style="font-weight: bold;" />
+						<h:outputText value="#{MBUsuario.usuario.flgAdm ? 'Sim' : 'Não'}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
 			<p:dialog id="dialogoExclusao" widgetVar="dlgExclusao" modal="true"
 				appendTo="@(body)" closable="false" draggable="false"
 				resizable="false" header="Exclusão de Módulo">
-				<h:form id="formExclusao">
+				<h:form id="formExclusao" style="width: 350px;">
 					<p:panelGrid id="pnlExclusao" columns="2">
 						<p:outputLabel value="Nome: " />
-						<h:outputText value="#{MBUsuario.usuario.nome}" />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.nome}" />
 						<p:outputLabel value="CPF: " />
-						<h:outputText value="#{MBUsuario.usuario.cpf}" />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.cpf}" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBUsuario.excluir}"
 							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
 							update=":form1:msgs, :form1:tabelaUsuarios">
 							<p:confirm header="Atenção!"
-								message="Deseja realmente excluir o usuário"
+								message="Deseja realmente excluir o usuário?"
 								icon="ui-icon-alert" />
 						</p:commandButton>
 						<p:commandButton value="Cancelar" process="@this"
@@ -246,19 +311,31 @@
 				<h:form id="formInfo">
 					<p:panelGrid id="pnlInfo" columns="1">
 						<h:outputText
-							value="O CPF informado está vinculado com a seguinte pessoa:" />
+							value="O usuário cadastrado foi vinculado com a seguinte pessoa:" />
 						<h:inputHidden />
 						<p:panelGrid columns="2">
-							<p:outputLabel value="Nome: " style="text-transform:uppercase" />
-							<h:outputText value="#{MBUsuario.usuario.pessoa.nome}" />
+							<p:outputLabel value="Nome: " />
+							<h:outputText value="#{MBUsuario.usuario.pessoa.nome}"
+								style="text-transform:uppercase" />
 							<p:outputLabel value="CPF: " />
 							<h:outputText value="#{MBUsuario.usuario.pessoa.cpf}">
 								<p:inputMask mask="999.999.999-99" />
 							</h:outputText>
+							<p:outputLabel value="Sexo: " />
+							<h:outputText
+								value="#{MBUsuario.usuario.pessoa.flgPessoa == 'F' ? 'Feminino' : 'Masculino'}"
+								style="text-transform:uppercase" />
 						</p:panelGrid>
+						<h:outputText value="Deseja editar os dados da pessoa acima?" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
-
+						<p:commandButton value="Sim"
+							oncomplete="PF('dlgEdicao').show();PF('dlgInfoEdicaoPessoa').hide();"
+							update=":form1:msgs, :formEdicao:pnlEdicao">
+						</p:commandButton>
+						<p:commandButton value="Não"
+							oncomplete="PF('dlgInfoEdicaoPessoa').hide();">
+						</p:commandButton>
 					</p:panelGrid>
 				</h:form>
 			</p:dialog>
