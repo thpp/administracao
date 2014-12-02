@@ -200,13 +200,11 @@ public class UsuarioBean implements Serializable {
 			String mensagem = ex.getMessage();
 			String[] mensagemSeparada = mensagem.split(":");
 			System.out.println("Tamanho mensagem: " + mensagemSeparada.length);
-			if (mensagemSeparada.length == 5) {
-				WebUtil.adicionarMensagemErro(mensagemSeparada[3] + " : "
-						+ mensagemSeparada[4]);
-			} else {
-				WebUtil.adicionarMensagemErro(mensagemSeparada[2] + " : "
-						+ mensagemSeparada[3]);
-			}
+			int tamanhoMensagem = mensagemSeparada.length;
+
+			WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
+					+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
+
 			RequestContext.getCurrentInstance().update("msgValorInvalido");
 		}
 		pesquisar();// para atualizar a tabela corretamente
