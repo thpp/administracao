@@ -79,9 +79,17 @@
 							</p:commandButton>
 						</p:column>
 						<p:column style="width:32px;text-align: center">
-							<p:commandButton icon="ui-icon-pencil"
-								oncomplete="PF('dlgEdicao').show();" title="Editar Usuário"
+							<p:commandButton rendered="#{u.flgAtivo}"
+								icon="ui-icon-pencil" oncomplete="PF('dlgEdicao').show();"
+								title="Editar Usuário"
 								update=":form1:msgs, :formEdicao:pnlEdicao">
+								<f:setPropertyActionListener value="#{u}"
+									target="#{MBUsuario.usuario}" />
+							</p:commandButton>
+							<p:commandButton rendered="#{!u.flgAtivo}"
+								icon="ui-icon-arrowreturnthick-1-n"
+								oncomplete="PF('dlgAtivacao').show();" title="Ativar Usuário"
+								update=":form1:msgs, :formAtivacao:pnlAtivacao">
 								<f:setPropertyActionListener value="#{u}"
 									target="#{MBUsuario.usuario}" />
 							</p:commandButton>
@@ -148,7 +156,7 @@
 							rows="2" maxlength="50" style="resize: none;" />
 						<h:inputHidden />
 						<p:outputLabel value="Profissional?" />
-						<p:selectBooleanCheckbox
+						<p:selectBooleanCheckbox	
 							value="#{MBUsuario.usuario.flgProfissional}" itemLabel="Sim" />
 						<h:inputHidden />
 						<p:outputLabel value="Administrador?" />
@@ -160,7 +168,7 @@
 						<p:commandButton actionListener="#{MBUsuario.salvar}"
 							value="Salvar"
 							oncomplete="verificarSemHide(xhr, status, args, 'dlgNovo');"
-							update=":formNovo:pnlNovo, :form1:tabelaUsuarios">
+							update=":formNovo:pnlNovo, :form1:tabelaUsuarios, :form1:busca">
 							<p:confirm header="Atenção!" message="Deseja realmente salvar?"
 								icon="ui-icon-alert" />
 						</p:commandButton>
@@ -227,12 +235,12 @@
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBUsuario.editar}"
 							value="Editar"
-							update=":formEdicao:pnlEdicao, :form1:tabelaUsuarios"
+							update=":formEdicao:pnlEdicao, :form1:tabelaUsuarios, :form1:busca"
 							oncomplete="verificarSemHide(xhr, status, args, 'dlgEdicao');">
 							<p:confirm header="Atenção!" message="Deseja realmente editar?" />
 						</p:commandButton>
 						<p:commandButton value="Cancelar" process="@this"
-							oncomplete="PF('dlgEdicao').hide();" />
+							onclick="PF('dlgEdicao').hide();" />
 					</p:panelGrid>
 				</h:form>
 			</p:dialog>
@@ -274,15 +282,12 @@
 						<p:outputLabel value="Administrador?" style="font-weight: bold;" />
 						<h:outputText value="#{MBUsuario.usuario.flgAdm ? 'Sim' : 'Não'}" />
 					</p:panelGrid>
-					<p:panelGrid columns="2">
-
-					</p:panelGrid>
 				</h:form>
 			</p:dialog>
 
 			<p:dialog id="dialogoExclusao" widgetVar="dlgExclusao" modal="true"
 				appendTo="@(body)" closable="false" draggable="false"
-				resizable="false" header="Exclusão de Módulo">
+				resizable="false" header="Exclusão de Usuário">
 				<h:form id="formExclusao" style="width: 350px;">
 					<p:panelGrid id="pnlExclusao" columns="2">
 						<p:outputLabel value="Nome: " />
@@ -293,7 +298,7 @@
 					<p:panelGrid columns="2">
 						<p:commandButton actionListener="#{MBUsuario.excluir}"
 							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
-							update=":form1:msgs, :form1:tabelaUsuarios">
+							update=":form1:msgs, :form1:tabelaUsuarios, :form1:busca">
 							<p:confirm header="Atenção!"
 								message="Deseja realmente excluir o usuário?"
 								icon="ui-icon-alert" />
@@ -336,6 +341,26 @@
 						<p:commandButton value="Não"
 							oncomplete="PF('dlgInfoEdicaoPessoa').hide();">
 						</p:commandButton>
+					</p:panelGrid>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoAtivacao" widgetVar="dlgAtivacao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Ativar Usuário">
+				<h:form id="formAtivacao" style="width: 350px;">
+					<p:panelGrid id="pnlAtivacao" columns="2">
+						<p:outputLabel value="Nome: " />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.nome}" />
+						<p:outputLabel value="CPF: " />
+						<h:outputText value="#{MBUsuario.usuario.pessoa.cpf}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBUsuario.ativarUsuario}"
+							oncomplete="PF('dlgAtivacao').hide();" value="Ativar"
+							update=":form1:msgs, :form1:tabelaUsuarios, :form1:busca" />
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgAtivacao').hide();" />
 					</p:panelGrid>
 				</h:form>
 			</p:dialog>
