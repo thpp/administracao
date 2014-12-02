@@ -23,13 +23,14 @@
 						<p:messages id="msgs" showDetail="true" >
 							<p:effect type="pulsate" event="load" delay="100" />
 						</p:messages>
-						<h:panelGrid id="cadastro" columns="2" style="margin-top:20px;">
+						<h:panelGrid id="cadastro" columns="3" style="margin-top:20px;">
 							
 							<p:outputLabel value="Código:" />
 							<p:outputLabel value="#{MBProjeto.projeto.nro}" />							
-							
+							<h:inputHidden/>
 							<p:outputLabel value="Projeto:" />
-							<p:inputText value="#{MBProjeto.projeto.nome}" style="text-transform:uppercase" size="30" />
+							<p:inputText id="txtProjeto" value="#{MBProjeto.projeto.nome}" style="text-transform:uppercase" size="30" />
+							<p:watermark for="txtProjeto" value="Nome do projeto" />
 							
 							<h:inputHidden/>
 							<h:panelGrid columns="4" style="margin-top:10px;">
