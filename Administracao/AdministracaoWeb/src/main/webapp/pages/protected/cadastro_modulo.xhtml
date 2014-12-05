@@ -25,11 +25,11 @@
 						<p:messages id="msgs" showDetail="false">
 							<p:effect type="pulsate" event="load" delay="100" />
 						</p:messages>
-						<h:panelGrid id="busca" columns="4" style="margin-top:20px;">
+						<h:panelGrid id="busca" columns="5" style="margin-top:20px;">
 
-							<p:inputText value="#{MBModulo.textoBusca}"
+							<p:inputText id="textoBusca" value="#{MBModulo.textoBusca}"
 								style="text-transform:uppercase" size="60" />
-
+							<p:watermark for="textoBusca" value="Nome do módulo" />
 							<p:outputLabel value="Filtrar por Projeto:"
 								style="margin-left: 30px;" />
 							<p:selectOneMenu value="#{MBModulo.nroProjetoBusca}"
@@ -47,7 +47,7 @@
 								<p:commandButton value="Limpar Busca"
 									actionListener="#{MBModulo.limparCamposBusca}" update="form1"
 									style="margin-left: 5px;" />
-								<p:spacer width="65" height="0" />
+								<p:spacer width="0" height="0" />
 								<p:commandButton value="Buscar" id="btnBuscar"
 									style="width: 120px" actionListener="#{MBModulo.pesquisar}"
 									update="form1" />

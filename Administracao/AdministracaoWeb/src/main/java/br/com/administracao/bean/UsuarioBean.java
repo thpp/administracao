@@ -80,6 +80,24 @@ public class UsuarioBean implements Serializable {
 		salvar();
 	}
 
+	public void ativarUsuario() {
+		// Sem isso vai gravar o cpf com duas máscaras
+		cpf = usuario.getPessoa().getCpf();
+		cpf = cpf.replaceAll("\\/", "").replaceAll("\\.", "")
+				.replaceAll("-", "").trim();
+		usuario.getPessoa().setCpf(cpf);
+
+		usuario.setFlgAtivo(true);
+		usuario.setDataBaixa(null);
+
+		UsuarioService service = (UsuarioService) WebUtil
+				.getNamedObject(UsuarioService.NAME);
+
+		service.editar(usuario);
+		WebUtil.adicionarMensagemSucesso("Usuário ativado com sucesso");
+		limparCamposBusca();
+	}
+
 	public void salvar() {
 		try {
 			cpf = cpf.replaceAll("\\/", "").replaceAll("\\.", "")
@@ -144,9 +162,9 @@ public class UsuarioBean implements Serializable {
 				} else {
 					UsuarioService service = (UsuarioService) WebUtil
 							.getNamedObject(UsuarioService.NAME);
-					
+
 					usuario.getPessoa().setCpf(cpf);
-					
+
 					/* Usuário Inativo - gera data baixa */
 					if (!usuario.getFlgAtivo()) {
 						usuario.setDataBaixa(new java.util.Date());
@@ -155,7 +173,7 @@ public class UsuarioBean implements Serializable {
 					}
 
 					service.editar(usuario);
-					WebUtil.adicionarMensagemSucesso("Usuário salvo com sucesso");
+					WebUtil.adicionarMensagemSucesso("Usuário editado com sucesso");
 
 					// Fecha o diálogo
 					org.primefaces.context.RequestContext.getCurrentInstance()
@@ -173,7 +191,7 @@ public class UsuarioBean implements Serializable {
 
 			}
 
-			buscarLista();
+			limparCamposBusca();
 
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
@@ -182,13 +200,14 @@ public class UsuarioBean implements Serializable {
 			String mensagem = ex.getMessage();
 			String[] mensagemSeparada = mensagem.split(":");
 			System.out.println("Tamanho mensagem: " + mensagemSeparada.length);
-			WebUtil.adicionarMensagemErro(mensagemSeparada[3] + " : "
-					+ mensagemSeparada[4]);
-			for (int i = 0; i < mensagemSeparada.length; i++)
-				System.out.println(mensagemSeparada[i]);
+			int tamanhoMensagem = mensagemSeparada.length;
+
+			WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
+					+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
+
 			RequestContext.getCurrentInstance().update("msgValorInvalido");
 		}
-
+		pesquisar();// para atualizar a tabela corretamente
 	}
 
 	public void excluir() {
@@ -199,7 +218,7 @@ public class UsuarioBean implements Serializable {
 			service.excluir(usuario.getNro());
 			WebUtil.adicionarMensagemSucesso("Usuário excluído com sucesso");
 
-			buscarLista();
+			limparCamposBusca();
 
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
