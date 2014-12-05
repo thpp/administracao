@@ -2,6 +2,7 @@ package br.com.administracao.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Usuario implements Serializable {
@@ -15,7 +16,8 @@ public class Usuario implements Serializable {
 	private Boolean flgAtivo;
 	private Boolean flgProfissional;
 	private Boolean flgAdm;
-	private Pessoa pessoa;		
+	private Pessoa pessoa;
+	private List<Acesso> listaAcesso;
 
 	public Pessoa getPessoa() {
 		return pessoa;
@@ -76,5 +78,11 @@ public class Usuario implements Serializable {
 	}
 	public void setFlgAdm(Boolean flgAdm) {
 		this.flgAdm = flgAdm;
+	}
+	public List<Acesso> getListaAcesso() {
+		return listaAcesso;
+	}
+	public void setListaAcesso(List<Acesso> listaAcesso) {
+		this.listaAcesso = listaAcesso;
 	}	
 }

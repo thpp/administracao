@@ -28,7 +28,7 @@ public class UsuarioServiceImplTest {
 		
 		pessoa.setNome("Thiago Henrique");
 		pessoa.setFlgPessoa("M");
-		pessoa.setCpf("369.953.698-07");
+		pessoa.setCpf("36995369807");
 		
 		usuario.setUsuario("formen");
 		usuario.setSenha("123mudar");
@@ -56,7 +56,7 @@ public class UsuarioServiceImplTest {
 	public void listar() throws NamingException, ServiceException {		
 
 		UsuarioService service = (UsuarioService) ejbContainer.getContext().lookup("java:global/AdministracaoService/UsuarioServiceImpl");		
-		List<Usuario> lista = service.listar(0, 0, null, "S");
+		List<Usuario> lista = service.listar("36995369807");
 		
 		for (Usuario usuario : lista) {
 			System.out.println("Nome: "+usuario.getPessoa().getNome());

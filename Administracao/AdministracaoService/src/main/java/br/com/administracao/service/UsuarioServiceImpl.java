@@ -49,6 +49,20 @@ public class UsuarioServiceImpl implements UsuarioService {
 				
 		return lista;
 	}
+	
+	@Override
+	public List<Usuario> listar(String cpf) {
+		List<Usuario> lista = new ArrayList<Usuario>();
+		
+		try {
+			lista = new UsuarioDAOImpl().listar(cpf);
+			logger.info("Lista de usuarios obtida com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+				
+		return lista;
+	}
 
 	@Override
 	public void editar(Usuario usuario) {

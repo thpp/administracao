@@ -15,7 +15,9 @@ public interface UsuarioDAO {
 
 	public void excluir(Long codigo) throws PSTException;
 	
-	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo) throws PSTException;	
+	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo) throws PSTException;
+	
+	public List<Usuario> listar(String cpf) throws PSTException;
 
 	public int contar() throws PSTException;
 

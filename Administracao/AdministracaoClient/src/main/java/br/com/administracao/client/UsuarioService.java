@@ -20,5 +20,7 @@ public interface UsuarioService {
 	public void editar(Usuario usuario);
 
 	public void excluir(Long codigo);
+	
+	public List<Usuario> listar(String cpf);
 
 }

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 
 
+
 import br.com.administracao.dao.interf.UsuarioDAO;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.factory.ConnectionFactory;
@@ -263,6 +264,55 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		return 0;
 	}
 	
+	@Override
+	public List<Usuario> listar(String cpf) throws PSTException {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT U.NRO nroUsuario, U.USUARIO usuario, U.SENHA senha, U.OBS obs, U.PES_NRO pesNro, U.FLG_PROFISSIONAL flgProfissional, U.FLG_ADM flgadm, U.FLG_ATIVO flgAtivo, P.NOME nomePessoa, P.FLG_PESSOA flgPessoa, P.CNPJ_CPF cnpjCpf, U.DATA_INC dataInc, U.DATA_BAIXA dataBaixa ");
+		sql.append("FROM S_USUARIO U, PESSOA P ");		
+		sql.append("WHERE U.FLG_ATIVO = 'S' ");
+		sql.append("AND U.PES_NRO = P.NRO ");
+		sql.append("AND P.CNPJ_CPF = ? ");
+
+		
+		Connection conexao = null;
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		List<Usuario> lista = new ArrayList<Usuario>();
+		
+		try {
+			conexao = ConnectionFactory.getConnection();		
+			comando = conexao.prepareStatement(sql.toString());
+			comando.setString(1, new Helper().aplicarMascara(cpf));
+			resultado = comando.executeQuery();
+	
+			while (resultado.next()) {
+				Usuario usuario = new Usuario();				
+				usuario = new Usuario();				
+				usuario.setNro(resultado.getLong("nroUsuario"));
+				usuario.setUsuario(resultado.getString("usuario"));
+				usuario.setSenha(resultado.getString("senha"));
+				usuario.setObs(resultado.getString("obs"));
+				usuario.setFlgProfissional(resultado.getString("flgProfissional").equals("S") ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setFlgAdm(resultado.getString("flgadm").equals("S") ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setFlgAtivo(resultado.getString("flgAtivo").equals("S") ? Boolean.TRUE : Boolean.FALSE);
+				usuario.setPessoa(new Pessoa(resultado.getLong("pesNro"), resultado.getString("nomePessoa"), resultado.getString("flgPessoa"), resultado.getString("cnpjCpf")));
+				usuario.setDataInclusao(resultado.getDate("dataInc"));
+				usuario.setDataBaixa(resultado.getDate("dataBaixa"));
+				
+				lista.add(usuario);
+			}
+		
+		} catch (SQLException ex) {
+			throw new PSTException("Ocorreu um erro ao tentar obter a listagem de usuarios", ex);
+		} finally {
+			PSTUtil.fechar(resultado);
+			PSTUtil.fechar(comando);
+			PSTUtil.fechar(conexao);
+		}
+		
+		return lista;
+	}
+	
 	public Usuario buscaADM()throws PSTException {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT U.NRO nroUsuario, U.USUARIO usuario, U.SENHA senha, U.OBS obs, U.PES_NRO pesNro, U.FLG_PROFISSIONAL flgProfissional, P.NOME nomePessoa, P.FLG_PESSOA flgPessoa, P.CNPJ_CPF cnpjCpf ");
@@ -435,5 +485,5 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 			e.printStackTrace();
 		}
 		
-	}
+	}	
 }

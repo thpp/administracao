@@ -3,7 +3,7 @@ package br.com.administracao.model;
 public class Permissoes {
 	
 	private Acesso acesso;
-	private Acoes acoes;
+	private Funcoes funcoes;
 	
 	public Acesso getAcesso() {
 		return acesso;
@@ -11,11 +11,10 @@ public class Permissoes {
 	public void setAcesso(Acesso acesso) {
 		this.acesso = acesso;
 	}
-	public Acoes getAcoes() {
-		return acoes;
+	public Funcoes getFuncoes() {
+		return funcoes;
 	}
-	public void setAcoes(Acoes acoes) {
-		this.acoes = acoes;
+	public void setFuncoes(Funcoes funcoes) {
+		this.funcoes = funcoes;
 	}	
-
 }
