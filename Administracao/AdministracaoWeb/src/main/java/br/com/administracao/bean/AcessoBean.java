@@ -1,0 +1,335 @@
+package br.com.administracao.bean;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+
+import org.primefaces.event.TransferEvent;
+import org.primefaces.model.DualListModel;
+
+import br.com.administracao.client.ModuloService;
+import br.com.administracao.client.ProjetoService;
+import br.com.administracao.client.TelaService;
+import br.com.administracao.execao.ServiceException;
+import br.com.administracao.model.Acesso;
+import br.com.administracao.model.Funcoes;
+import br.com.administracao.model.Modulo;
+import br.com.administracao.model.Permissoes;
+import br.com.administracao.model.Projeto;
+import br.com.administracao.model.Tela;
+import br.com.administracao.model.Usuario;
+import br.com.administracao.util.WebUtil;
+
+@SuppressWarnings("serial")
+@ManagedBean(name = "MBAcesso")
+@ViewScoped
+public class AcessoBean implements Serializable {
+	/* PICKLIST */
+	private DualListModel<Funcoes> funcoes;
+	List<Funcoes> funcoesDisponiveis = new ArrayList<Funcoes>();
+	List<Funcoes> funcoesSelecionadas = new ArrayList<Funcoes>();
+	private Integer quantidadeFuncoesSelecionadas;
+	int count = 0;
+
+	/* CAMPOS DE BUSCA */
+	private String textoBuscaUser = "";
+	private String textoBuscaTela = "";
+	private Long nroProjetoBusca = 0L;
+	private Long nroModuloBusca = 0L;
+	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
+	private List<Modulo> listaModulos = new ArrayList<Modulo>();
+	private List<Tela> listaTelas = new ArrayList<Tela>();
+
+	/* DOMAIN */
+	private Usuario usuario;
+	private Tela tela;
+	private Acesso acesso;
+
+	private List<Permissoes> permissoes;
+
+	/* RENDERED */
+	private boolean existeFuncoes = false;
+
+	public void pesquisarTelas() {
+
+		if (!"".equals(textoBuscaTela) && nroProjetoBusca != 0
+				&& nroModuloBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			Modulo modulo = new Modulo();
+			projeto.setNro(nroProjetoBusca);
+			modulo.setNro(nroModuloBusca);
+
+			// Pesquisar pelo texto digitado, número do projeto e número do
+			// módulo
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, modulo, textoBuscaTela);
+
+		} else if (!"".equals(textoBuscaTela) && nroProjetoBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			projeto.setNro(nroProjetoBusca);
+
+			// Pesquisar pelo texto digitado e número do projeto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, null, textoBuscaTela);
+
+		} else if (nroProjetoBusca != 0 && nroModuloBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			Modulo modulo = new Modulo();
+			projeto.setNro(nroProjetoBusca);
+			modulo.setNro(nroModuloBusca);
+
+			// Pesquisar pelo número do projeto e número do
+			// módulo
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, modulo, null);
+
+		} else if (!"".equals(textoBuscaTela)) {
+			// Pesquisar pelo texto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(null, null, textoBuscaTela);
+
+		} else if (nroProjetoBusca != 0) {
+
+			Projeto projeto = new Projeto();
+			projeto.setNro(nroProjetoBusca);
+
+			// Pesquisar pelo número do projeto
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(projeto, null, null);
+
+		} else {
+
+			// Pesquisar todas as telas
+			TelaService service = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = service.listar(0, 0);
+		}
+
+	}
+
+	public void prepararAdicionaTela() {
+		tela = new Tela();
+
+		funcoes = new DualListModel<Funcoes>(funcoesDisponiveis,
+				funcoesSelecionadas);
+
+		setExisteFuncoes(false);
+	}
+
+	public void buscarFuncoes(ActionEvent event) {
+		quantidadeFuncoesSelecionadas = 0;
+		count = 0;
+		
+		tela = (Tela) event.getComponent().getAttributes()
+				.get("telaSelecionada");
+
+		funcoesDisponiveis = tela.getListaFuncoes();
+
+		if (funcoesDisponiveis.size() > 0)
+			setExisteFuncoes(true);
+
+		funcoes = new DualListModel<Funcoes>(funcoesDisponiveis,
+				funcoesSelecionadas);
+	}
+
+	public void prepararBuscaTela() {
+		try {
+			/* Popula combo de projetos */
+			ProjetoService serviceProjeto = (ProjetoService) WebUtil
+					.getNamedObject(ProjetoService.NAME);
+			listaProjetos = serviceProjeto.listar(0, 0);
+
+			/* Mostra todas as telas */
+			TelaService serviceTela = (TelaService) WebUtil
+					.getNamedObject(TelaService.NAME);
+			listaTelas = serviceTela.listar(0, 0);
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
+	}
+
+	public void buscarModulos() {
+		try {
+			ModuloService service = (ModuloService) WebUtil
+					.getNamedObject(ModuloService.NAME);
+			listaModulos = service.listar(null, nroProjetoBusca);
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		}
+	}
+
+	public void limparCamposBuscaTela() {
+		textoBuscaTela = "";
+		nroModuloBusca = 0L;
+		nroProjetoBusca = 0L;
+		pesquisarTelas();
+	}
+
+	public void limparCamposAdicionarTela() {
+		quantidadeFuncoesSelecionadas = 0;
+		tela = new Tela();
+		count = 0;
+	}
+
+	/* PickList */
+	public void onTransfer(TransferEvent event) {
+		StringBuilder builder = new StringBuilder();
+		for (Object item : event.getItems()) {
+			builder.append(((Funcoes) item).getAcoes().getNome()).append(
+					"<br />");
+		}
+
+		if (event.isAdd()) {
+
+			count += event.getItems().size();
+
+			FacesMessage msg = new FacesMessage();
+			msg.setSeverity(FacesMessage.SEVERITY_INFO);
+			msg.setSummary(String.valueOf(event.getItems().size())
+					+ " função(ões) adicionada(s).");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+
+		} else if (event.isRemove()) {
+
+			count -= event.getItems().size();
+
+			FacesMessage msg = new FacesMessage();
+			msg.setSeverity(FacesMessage.SEVERITY_INFO);
+			msg.setSummary(String.valueOf(event.getItems().size())
+					+ " função(ões) removida(s).");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+
+		quantidadeFuncoesSelecionadas = count;
+	}
+
+	public DualListModel<Funcoes> getFuncoes() {
+		return funcoes;
+	}
+
+	public void setFuncoes(DualListModel<Funcoes> funcoes) {
+		this.funcoes = funcoes;
+	}
+
+	public Integer getQuantidadeFuncoesSelecionadas() {
+		return quantidadeFuncoesSelecionadas;
+	}
+
+	public void setQuantidadeFuncoesSelecionadas(
+			Integer quantidadeFuncoesSelecionadas) {
+		this.quantidadeFuncoesSelecionadas = quantidadeFuncoesSelecionadas;
+	}
+
+	public String getTextoBuscaUser() {
+		return textoBuscaUser;
+	}
+
+	public void setTextoBuscaUser(String textoBuscaUser) {
+		this.textoBuscaUser = textoBuscaUser;
+	}
+
+	public String getTextoBuscaTela() {
+		return textoBuscaTela;
+	}
+
+	public void setTextoBuscaTela(String textoBuscaTela) {
+		this.textoBuscaTela = textoBuscaTela;
+	}
+
+	public Long getNroProjetoBusca() {
+		return nroProjetoBusca;
+	}
+
+	public void setNroProjetoBusca(Long nroProjetoBusca) {
+		this.nroProjetoBusca = nroProjetoBusca;
+	}
+
+	public Long getNroModuloBusca() {
+		return nroModuloBusca;
+	}
+
+	public void setNroModuloBusca(Long nroModuloBusca) {
+		this.nroModuloBusca = nroModuloBusca;
+	}
+
+	public List<Projeto> getListaProjetos() {
+		return listaProjetos;
+	}
+
+	public void setListaProjetos(List<Projeto> listaProjetos) {
+		this.listaProjetos = listaProjetos;
+	}
+
+	public List<Modulo> getListaModulos() {
+		return listaModulos;
+	}
+
+	public void setListaModulos(List<Modulo> listaModulos) {
+		this.listaModulos = listaModulos;
+	}
+
+	public List<Tela> getListaTelas() {
+		return listaTelas;
+	}
+
+	public void setListaTelas(List<Tela> listaTelas) {
+		this.listaTelas = listaTelas;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public Tela getTela() {
+		return tela;
+	}
+
+	public void setTela(Tela tela) {
+		this.tela = tela;
+	}
+
+	public Acesso getAcesso() {
+		return acesso;
+	}
+
+	public void setAcesso(Acesso acesso) {
+		this.acesso = acesso;
+	}
+
+	public List<Permissoes> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(List<Permissoes> permissoes) {
+		this.permissoes = permissoes;
+	}
+
+	public boolean isExisteFuncoes() {
+		return existeFuncoes;
+	}
+
+	public void setExisteFuncoes(boolean existeFuncoes) {
+		this.existeFuncoes = existeFuncoes;
+	}
+
+}

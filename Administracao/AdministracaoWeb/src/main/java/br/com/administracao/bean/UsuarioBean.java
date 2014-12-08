@@ -31,7 +31,7 @@ public class UsuarioBean implements Serializable {
 	private List<Usuario> listaUsuarios = new ArrayList<Usuario>();
 	private Integer caracteresMinimos = 3;
 	private String textoBusca = "";
-	private String tipoBusca;
+	private String tipoBusca = "S";
 	private String cpf;
 
 	@PostConstruct
@@ -39,7 +39,7 @@ public class UsuarioBean implements Serializable {
 		try {
 			UsuarioService service = (UsuarioService) WebUtil
 					.getNamedObject(UsuarioService.NAME);
-			listaUsuarios = service.listar(0, 0, null, "S");
+			listaUsuarios = service.listar(0, 0, null, tipoBusca);
 
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
@@ -139,7 +139,7 @@ public class UsuarioBean implements Serializable {
 							cpf = usuario.getPessoa().getCpf();
 
 							/*
-							 * É preciso setar o flgAtivo manualmente, pois isso
+							 * É preciso setar o flgAtivo, pois isso
 							 * não é feito pelo usuário durante o cadastro
 							 */
 							usuario.setFlgAtivo(true);

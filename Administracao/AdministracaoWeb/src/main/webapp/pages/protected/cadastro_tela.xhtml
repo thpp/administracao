@@ -111,11 +111,10 @@
 											</p:commandButton>
 										</p:column>
 										<p:column style="width:32px;text-align: center">
-											<p:commandButton icon="ui-icon-pencil"
-												oncomplete="PF('dlgEdicao').show();" title="Editar Tela"
-												update=":form1:guiaTelas:msgConsulta, :formEdicao:pnlEdicao">
-												<f:setPropertyActionListener value="#{t}"
-													target="#{MBTela.tela}" />
+											<p:commandButton icon="ui-icon-pencil" title="Editar Tela"
+												actionListener="#{MBTela.prepararEditar}" update=":form1"
+												process="@all">
+												<f:attribute value="#{t}" name="telaSelecionada" />
 											</p:commandButton>
 										</p:column>
 										<p:column style="width:32px;text-align: center">
@@ -195,12 +194,18 @@
 										</div>
 
 										<div align="center" style="margin-top: 20px;">
-											<p:commandButton style="width: 150px" value="Salvar"
-												actionListener="#{MBTela.validarSalvar}" process="@parent"
-												update=":form1:guiaTelas:msgCadastro, :form1">
-												<p:confirm header="Atenção!"
-													message="Deseja realmente salvar?" icon="ui-icon-alert" />
-											</p:commandButton>
+											<p:panelGrid columns="2">
+												<p:commandButton style="width: 150px" value="Salvar"
+													actionListener="#{MBTela.validarSalvar}" process="@parent"
+													update=":form1:guiaTelas:msgCadastro, :form1">
+													<p:confirm header="Atenção!"
+														message="Deseja realmente salvar?" icon="ui-icon-alert" />
+												</p:commandButton>
+												<p:commandButton value="Cancelar" style="width: 150px;"
+													actionListener="#{MBTela.cancelarCadastro}"
+													update=":form1:guiaTelas:msgCadastro, :form1">
+												</p:commandButton>
+											</p:panelGrid>
 										</div>
 
 									</p:panel>

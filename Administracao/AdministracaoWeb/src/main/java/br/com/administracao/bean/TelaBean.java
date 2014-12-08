@@ -9,6 +9,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
@@ -259,7 +260,11 @@ public class TelaBean implements Serializable {
 
 	}
 
-	public void prepararEditar() {
+	public void prepararEditar(ActionEvent event) {
+
+		tela = (Tela) event.getComponent().getAttributes()
+				.get("telaSelecionada");
+
 		tabView.setActiveIndex(1);
 		activeTabIndex = tabView.getActiveIndex();
 
@@ -299,6 +304,13 @@ public class TelaBean implements Serializable {
 
 		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesTela);
 
+	}
+
+	public void cancelarCadastro() {
+		tabView.setActiveIndex(0);
+		activeTabIndex = tabView.getActiveIndex();
+
+		limparCamposBusca();
 	}
 
 	public void excluir() {

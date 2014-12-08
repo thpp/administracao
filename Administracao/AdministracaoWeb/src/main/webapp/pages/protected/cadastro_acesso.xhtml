@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<body>
+	<ui:composition template="template.xhtml">
+
+		<ui:define name="titulo">
+            Cadastro de Acesso
+        </ui:define>
+
+		<ui:define name="content">
+			<p:panel style="background-color: buttonface">
+				<h:form id="form1">
+					<p:defaultCommand target="btnBuscarUsuario" />
+
+					<p:panel header="Cadastro de Acesso" style="margin-bottom: 30px;">
+						<p:messages id="msgs" showDetail="false">
+							<p:effect type="pulsate" event="load" delay="100" />
+						</p:messages>
+						<p:growl id="msgDialog" showDetail="false" life="3000" />
+						<h:panelGrid id="busca" columns="3"
+							style="margin-top:20px;margin-bottom:20px;">
+							<p:inputMask id="buscaUsuario" mask="999.999.999-99" size="45" />
+							<p:watermark for="buscaUsuario" value="CPF do Usuário" />
+							<p:commandButton value="Buscar" id="btnBuscarUsuario"
+								style="width: 120px;" update="form1" />
+						</h:panelGrid>
+						<h:outputText value="Nenhum usuário selecionado"
+							style="text-transform:uppercase;font-weight: bold;font-size: 125%;" />
+					</p:panel>
+					<p:panel header="Telas Autorizadas" style="margin-bottom: 30px;">
+						<p:dataTable style="margin-top: 5px;margin-bottom: 15px;"
+							emptyMessage="Nenhum Registro Encontrado">
+							<p:column headerText="Nome da Tela" style="text-align: center">
+							</p:column>
+							<p:column style="width:32px;text-align: center">
+								<p:commandButton icon="ui-icon-plus"></p:commandButton>
+							</p:column>
+							<p:column style="width:32px;text-align: center">
+								<p:commandButton icon="ui-icon-trash"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<p:panelGrid columns="2">
+							<p:commandButton value="Adicionar Tela"
+								oncomplete="PF('dlgAddTela').show();"
+								actionListener="#{MBAcesso.prepararAdicionaTela}"
+								update=":frmAddTela">
+							</p:commandButton>
+							<p:commandButton value="Adicionar Módulo">
+							</p:commandButton>
+						</p:panelGrid>
+					</p:panel>
+
+					<p:confirmDialog global="true" showEffect="fade">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+
+				</h:form>
+			</p:panel>
+			<p:dialog widgetVar="dlgAddTela" header="Adicionar Tela" modal="true"
+				appendTo="@(body)" closable="true" draggable="false"
+				resizable="false" width="700" position="350, 100">
+
+				<h:form id="frmAddTela">
+
+					<div align="center">
+
+						<p:panelGrid id="pnlAddTela" columns="3" style="width: 90%;">
+							<p:inputText id="buscaTela" value="#{MBAcesso.tela.nome}"
+								readonly="true" style="text-transform:uppercase;" size="60" />
+							<p:watermark for="buscaTela" value="Clique no botão buscar"/>
+							<p:commandButton value="Buscar" id="btnBuscarTela"
+								actionListener="#{MBAcesso.prepararBuscaTela}"
+								oncomplete="PF('dlgBuscarTela').show();" style="width: 120px;"
+								update=":frmBuscarTela" />
+						</p:panelGrid>
+
+						<h:panelGroup rendered="#{MBAcesso.existeFuncoes}">
+							<p:pickList id="pickListFuncao" value="#{MBAcesso.funcoes}"
+								var="funcao" itemValue="#{funcao}"
+								itemLabel="#{funcao.acoes.nome}" showCheckbox="true"
+								showSourceFilter="true" showTargetFilter="true"
+								filterMatchMode="contains" converter="funcaoConverter"
+								addLabel="Adicionar" addAllLabel="Adicionar Todos"
+								removeLabel="Remover" removeAllLabel="Remover Todos"
+								style="margin-top: 40px;">
+
+								<p:ajax event="transfer" listener="#{MBAcesso.onTransfer}"
+									update=":form1:msgDialog totalFuncoes" />
+
+								<f:facet name="sourceCaption">Disponíveis</f:facet>
+								<f:facet name="targetCaption">Autorizadas</f:facet>
+
+								<p:column style="width:85%;">
+									<h:outputText value="#{funcao.acoes.nome}" />
+								</p:column>
+							</p:pickList>
+
+							<p:panelGrid id="pngTotal" columns="2" style="margin-top: 20px;">
+								<h:outputText value="Quantidade de ações autorizadas:"
+									style="font-size: 16px; " />
+								<h:outputText id="totalFuncoes"
+									value="#{MBAcesso.quantidadeFuncoesSelecionadas}"
+									style="font-weight: bold; font-size: 16px;" />
+							</p:panelGrid>
+						</h:panelGroup>
+					</div>
+
+					<div align="center" style="margin-top: 20px;">
+						<p:panelGrid columns="2" rendered="#{MBAcesso.existeFuncoes}">
+							<p:commandButton value="Salvar" style="width: 150px;">
+								<p:confirm header="Atenção!" message="Deseja realmente salvar?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton value="Cancelar" style="width: 150px;"
+								process="@this" onclick="PF('dlgAddTela').hide();">
+								<p:resetInput target=":frmAddTela" />
+							</p:commandButton>
+						</p:panelGrid>
+					</div>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog widgetVar="dlgBuscarTela" header="Busca de Telas"
+				modal="true" appendTo="@(body)" closable="true" draggable="false"
+				resizable="false" width="850">
+
+				<h:form id="frmBuscarTela">
+					<p:defaultCommand target="btnBuscar" />
+
+					<h:panelGrid columns="3">
+
+						<p:inputText id="buscaTela" value="#{MBAcesso.textoBuscaTela}"
+							style="text-transform:uppercase" size="45" maxlength="60" />
+						<p:watermark for="buscaTela" value="Nome da tela" />
+
+						<h:panelGrid id="pnlFiltroConsulta" columns="3">
+
+							<p:outputLabel value="Filtrar: " />
+							<p:selectOneMenu id="comboProjetosBusca"
+								value="#{MBAcesso.nroProjetoBusca}" filter="true"
+								filterMatchMode="contains">
+								<f:ajax event="change" listener="#{MBAcesso.buscarModulos}"
+									render="pnlFiltroConsulta" />
+								<f:selectItem itemValue="" itemLabel="Selecione um projeto..." />
+								<f:selectItems value="#{MBAcesso.listaProjetos}" var="p"
+									itemValue="#{p.nro}" itemLabel="#{p.nome}" />
+							</p:selectOneMenu>
+							<p:selectOneMenu id="comboModulosBusca"
+								rendered="#{MBAcesso.nroProjetoBusca != '0'}"
+								value="#{MBAcesso.nroModuloBusca}" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="" itemLabel="Selecione um módulo..." />
+								<f:selectItems value="#{MBAcesso.listaModulos}" var="m"
+									itemValue="#{m.nro}" itemLabel="#{m.nome}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" style="margin-top:10px;">
+						<p:commandButton value="Limpar Busca"
+							actionListener="#{MBAcesso.limparCamposBuscaTela}"
+							update="frmBuscarTela" style="margin-left: 5px;" />
+						<p:commandButton id="btnBuscar"
+							actionListener="#{MBAcesso.pesquisarTelas}" value="Buscar"
+							update="tabelaTelas" style="width: 146px" />
+					</h:panelGrid>
+
+					<p:dataTable id="tabelaTelas" var="t"
+						value="#{MBAcesso.listaTelas}" style="margin-top: 20px;"
+						emptyMessage="Nenhum Registro Encontrado">
+						<p:column headerText="Nome da Tela" style="text-align: center">
+							<h:outputText value="#{t.nome}" />
+						</p:column>
+						<p:column headerText="Nome do Módulo" style="text-align: center">
+							<h:outputText value="#{t.modulo.nome}" />
+						</p:column>
+						<p:column headerText="Nome do Projeto" style="text-align: center">
+							<h:outputText value="#{t.modulo.projeto.nome}" />
+						</p:column>
+						<p:column style="width:100px;text-align: center">
+							<p:commandButton value="Selecionar"
+								oncomplete="PF('dlgBuscarTela').hide();"
+								actionListener="#{MBAcesso.buscarFuncoes}" update=":frmAddTela">
+								<f:attribute value="#{t}" name="telaSelecionada" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</h:form>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+
+</body>
+</html>
