@@ -352,8 +352,10 @@ public class TelaBean implements Serializable {
 
 			FacesMessage msg = new FacesMessage();
 			msg.setSeverity(FacesMessage.SEVERITY_INFO);
-			msg.setSummary(String.valueOf(event.getItems().size())
-					+ " ação(ões) adicionada(s).");
+			int quantidadeItens = event.getItems().size();
+			msg.setSummary(String.valueOf(quantidadeItens)
+					+ ((quantidadeItens == 1) ? " ação adicionada."
+							: " ações adicionadas."));
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 
 		} else if (event.isRemove()) {
@@ -362,8 +364,10 @@ public class TelaBean implements Serializable {
 
 			FacesMessage msg = new FacesMessage();
 			msg.setSeverity(FacesMessage.SEVERITY_INFO);
-			msg.setSummary(String.valueOf(event.getItems().size())
-					+ " ação(ões) removida(s).");
+			int quantidadeItens = event.getItems().size();
+			msg.setSummary(String.valueOf(quantidadeItens)
+					+ ((quantidadeItens == 1) ? " ação removida."
+							: " ações removidas."));
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 

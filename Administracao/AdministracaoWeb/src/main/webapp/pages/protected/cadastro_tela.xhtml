@@ -192,11 +192,10 @@
 													style="font-weight: bold; font-size: 16px;" />
 											</p:panelGrid>
 										</div>
-
 										<div align="center" style="margin-top: 20px;">
 											<p:panelGrid columns="2">
 												<p:commandButton style="width: 150px" value="Salvar"
-													actionListener="#{MBTela.validarSalvar}" process="@parent"
+													actionListener="#{MBTela.validarSalvar}" process="cadastro"
 													update=":form1:guiaTelas:msgCadastro, :form1">
 													<p:confirm header="Atenção!"
 														message="Deseja realmente salvar?" icon="ui-icon-alert" />

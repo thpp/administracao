@@ -23,19 +23,26 @@
 						<p:messages id="msgs" showDetail="false">
 							<p:effect type="pulsate" event="load" delay="100" />
 						</p:messages>
-						<p:growl id="msgDialog" showDetail="false" life="3000" />
-						<h:panelGrid id="busca" columns="3"
+
+						<h:panelGrid id="busca" columns="4"
 							style="margin-top:20px;margin-bottom:20px;">
-							<p:inputMask id="buscaUsuario" mask="999.999.999-99" size="45" />
+							<p:inputMask id="buscaUsuario" value="#{MBAcesso.textoBuscaUser}"
+								mask="999.999.999-99" size="45" />
 							<p:watermark for="buscaUsuario" value="CPF do Usuário" />
 							<p:commandButton value="Buscar" id="btnBuscarUsuario"
-								style="width: 120px;" update="form1" />
+								actionListener="#{MBAcesso.buscarUsuario}" style="width: 120px;"
+								update="form1" />
+							<p:commandButton value="Limpar Busca"
+								actionListener="#{MBAcesso.limparCamposBuscaUser}"
+								update="form1" style="margin-left: 5px;" />
 						</h:panelGrid>
-						<h:outputText value="Nenhum usuário selecionado"
+						<h:outputText value="#{MBAcesso.labelUsuarioSelecionado}"
 							style="text-transform:uppercase;font-weight: bold;font-size: 125%;" />
 					</p:panel>
-					<p:panel header="Telas Autorizadas" style="margin-bottom: 30px;">
-						<p:dataTable style="margin-top: 5px;margin-bottom: 15px;"
+					<p:panel rendered="#{MBAcesso.usuario != null}"
+						header="Telas Autorizadas" style="margin-bottom: 30px;">
+						<p:dataTable id="tabelaTelasAutorizadas"
+							style="margin-top: 5px;margin-bottom: 15px;"
 							emptyMessage="Nenhum Registro Encontrado">
 							<p:column headerText="Nome da Tela" style="text-align: center">
 							</p:column>
@@ -71,13 +78,14 @@
 				resizable="false" width="700" position="350, 100">
 
 				<h:form id="frmAddTela">
+					<p:growl id="msgDialog" showDetail="false" life="3000" />
 
 					<div align="center">
 
 						<p:panelGrid id="pnlAddTela" columns="3" style="width: 90%;">
 							<p:inputText id="buscaTela" value="#{MBAcesso.tela.nome}"
 								readonly="true" style="text-transform:uppercase;" size="60" />
-							<p:watermark for="buscaTela" value="Clique no botão buscar"/>
+							<p:watermark for="buscaTela" value="Clique no botão buscar" />
 							<p:commandButton value="Buscar" id="btnBuscarTela"
 								actionListener="#{MBAcesso.prepararBuscaTela}"
 								oncomplete="PF('dlgBuscarTela').show();" style="width: 120px;"
@@ -95,7 +103,7 @@
 								style="margin-top: 40px;">
 
 								<p:ajax event="transfer" listener="#{MBAcesso.onTransfer}"
-									update=":form1:msgDialog totalFuncoes" />
+									update="msgDialog totalFuncoes" />
 
 								<f:facet name="sourceCaption">Disponíveis</f:facet>
 								<f:facet name="targetCaption">Autorizadas</f:facet>
@@ -117,7 +125,9 @@
 
 					<div align="center" style="margin-top: 20px;">
 						<p:panelGrid columns="2" rendered="#{MBAcesso.existeFuncoes}">
-							<p:commandButton value="Salvar" style="width: 150px;">
+							<p:commandButton value="Salvar"
+								actionListener="#{MBAcesso.salvar}" style="width: 150px;"
+								update=":form1:tabelaTelasAutorizadas, msgDialog">
 								<p:confirm header="Atenção!" message="Deseja realmente salvar?"
 									icon="ui-icon-alert" />
 							</p:commandButton>

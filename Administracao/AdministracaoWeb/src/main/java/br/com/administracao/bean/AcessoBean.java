@@ -10,12 +10,15 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
+import br.com.administracao.client.AcessoService;
 import br.com.administracao.client.ModuloService;
 import br.com.administracao.client.ProjetoService;
 import br.com.administracao.client.TelaService;
+import br.com.administracao.client.UsuarioService;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Acesso;
 import br.com.administracao.model.Funcoes;
@@ -24,12 +27,17 @@ import br.com.administracao.model.Permissoes;
 import br.com.administracao.model.Projeto;
 import br.com.administracao.model.Tela;
 import br.com.administracao.model.Usuario;
+import br.com.administracao.util.CpfValidator;
 import br.com.administracao.util.WebUtil;
 
-@SuppressWarnings("serial")
 @ManagedBean(name = "MBAcesso")
 @ViewScoped
 public class AcessoBean implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8843326651714475272L;
+
 	/* PICKLIST */
 	private DualListModel<Funcoes> funcoes;
 	List<Funcoes> funcoesDisponiveis = new ArrayList<Funcoes>();
@@ -45,16 +53,66 @@ public class AcessoBean implements Serializable {
 	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
 	private List<Modulo> listaModulos = new ArrayList<Modulo>();
 	private List<Tela> listaTelas = new ArrayList<Tela>();
+	private List<Usuario> listaUsuarios = new ArrayList<Usuario>();
+
+	/* EXIBIÇÃO */
+	private String labelUsuarioSelecionado;
 
 	/* DOMAIN */
 	private Usuario usuario;
 	private Tela tela;
-	private Acesso acesso;
+	private Acesso acesso = new Acesso();
 
-	private List<Permissoes> permissoes;
+	private List<Permissoes> permissoes = new ArrayList<Permissoes>();
 
 	/* RENDERED */
 	private boolean existeFuncoes = false;
+
+	public AcessoBean() {
+		setLabelUsuarioSelecionado("Nenhum usuário selecionado");
+		usuario = null;
+	}
+
+	public void limparCamposBuscaUser() {
+		setTextoBuscaUser("");
+		setLabelUsuarioSelecionado("Nenhum usuário selecionado");
+		usuario = null;
+	}
+
+	public void buscarUsuario() {
+		usuario = null;
+
+		if (!"".equals(textoBuscaUser)) {
+			String cpf = textoBuscaUser.replaceAll("\\/", "")
+					.replaceAll("\\.", "").replaceAll("-", "").trim();
+
+			if (CpfValidator.validaCPF(cpf)) {
+
+				UsuarioService service = (UsuarioService) WebUtil
+						.getNamedObject(UsuarioService.NAME);
+				listaUsuarios = service.listar(cpf);
+
+				if (listaUsuarios.size() == 1) {
+					usuario = listaUsuarios.get(0);
+					acesso.setUsuario(usuario);
+					setLabelUsuarioSelecionado(usuario.getPessoa().getNome()
+							+ " - Usuário: " + usuario.getUsuario());
+
+				} else if (listaUsuarios.size() == 0) {
+					setLabelUsuarioSelecionado("Não existe usuário com o cpf informado");
+				} else {
+					// Se por algum motivo houver o mesmo cpf para duas pessoas
+					setLabelUsuarioSelecionado("Erro ao buscar cpf");
+				}
+			} else {
+				setLabelUsuarioSelecionado("Cpf inválido");
+			}
+
+		} else {
+			setLabelUsuarioSelecionado("Preencha o campo cpf");
+		}
+
+	}
 
 	public void pesquisarTelas() {
 
@@ -133,9 +191,11 @@ public class AcessoBean implements Serializable {
 	public void buscarFuncoes(ActionEvent event) {
 		quantidadeFuncoesSelecionadas = 0;
 		count = 0;
-		
+
 		tela = (Tela) event.getComponent().getAttributes()
 				.get("telaSelecionada");
+
+		acesso.setTela(tela);
 
 		funcoesDisponiveis = tela.getListaFuncoes();
 
@@ -187,6 +247,45 @@ public class AcessoBean implements Serializable {
 		count = 0;
 	}
 
+	public void salvar() {
+		if (funcoes.getTarget().size() > 0) {
+
+			try {
+				for (Funcoes funcao : funcoes.getTarget()) {
+					Permissoes p = new Permissoes();
+					p.setFuncoes(funcao);
+					p.setAcesso(acesso);
+					permissoes.add(p);
+				}
+				acesso.setListaPermicoes(permissoes);
+
+				AcessoService service = (AcessoService) WebUtil
+						.getNamedObject(AcessoService.NAME);
+				service.inserir(acesso);
+				WebUtil.adicionarMensagemSucesso("Acesso salvo com sucesso");
+
+				// Fecha o diálogo
+				org.primefaces.context.RequestContext.getCurrentInstance()
+						.execute("PF('dlgAddTela').hide();");
+
+			} catch (Exception ex) {
+				String mensagem = ex.getMessage();
+				String[] mensagemSeparada = mensagem.split(":");
+				System.out.println("Tamanho mensagem: "
+						+ mensagemSeparada.length);
+				int tamanhoMensagem = mensagemSeparada.length;
+
+				WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
+						+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
+
+				RequestContext.getCurrentInstance().update("msgValorInvalido");
+			}
+
+		} else {
+			WebUtil.adicionarMensagemAviso("Selecione pelo menos uma permissão");
+		}
+	}
+
 	/* PickList */
 	public void onTransfer(TransferEvent event) {
 		StringBuilder builder = new StringBuilder();
@@ -201,8 +300,10 @@ public class AcessoBean implements Serializable {
 
 			FacesMessage msg = new FacesMessage();
 			msg.setSeverity(FacesMessage.SEVERITY_INFO);
-			msg.setSummary(String.valueOf(event.getItems().size())
-					+ " função(ões) adicionada(s).");
+			int quantidadeItens = event.getItems().size();
+			msg.setSummary(String.valueOf(quantidadeItens)
+					+ ((quantidadeItens == 1) ? " permissão adicionada."
+							: " permissões adicionadas."));
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 
 		} else if (event.isRemove()) {
@@ -211,8 +312,10 @@ public class AcessoBean implements Serializable {
 
 			FacesMessage msg = new FacesMessage();
 			msg.setSeverity(FacesMessage.SEVERITY_INFO);
-			msg.setSummary(String.valueOf(event.getItems().size())
-					+ " função(ões) removida(s).");
+			int quantidadeItens = event.getItems().size();
+			msg.setSummary(String.valueOf(quantidadeItens)
+					+ ((quantidadeItens == 1) ? " permissão removida."
+							: " permissões removidas."));
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 
@@ -332,4 +435,19 @@ public class AcessoBean implements Serializable {
 		this.existeFuncoes = existeFuncoes;
 	}
 
+	public String getLabelUsuarioSelecionado() {
+		return labelUsuarioSelecionado;
+	}
+
+	public void setLabelUsuarioSelecionado(String labelUsuarioSelecionado) {
+		this.labelUsuarioSelecionado = labelUsuarioSelecionado;
+	}
+
+	public List<Usuario> getListaUsuarios() {
+		return listaUsuarios;
+	}
+
+	public void setListaUsuarios(List<Usuario> listaUsuarios) {
+		this.listaUsuarios = listaUsuarios;
+	}
 }
