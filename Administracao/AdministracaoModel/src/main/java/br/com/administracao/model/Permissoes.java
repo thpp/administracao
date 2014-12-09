@@ -1,6 +1,9 @@
 package br.com.administracao.model;
 
-public class Permissoes {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Permissoes implements Serializable {
 	
 	private Acesso acesso;
 	private Funcoes funcoes;

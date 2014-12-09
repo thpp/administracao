@@ -1,8 +1,10 @@
 package br.com.administracao.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Acesso {
+@SuppressWarnings("serial")
+public class Acesso implements Serializable {
 	
 	private Usuario usuario;
 	private Tela tela;
