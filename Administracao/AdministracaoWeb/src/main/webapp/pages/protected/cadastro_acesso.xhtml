@@ -42,12 +42,22 @@
 					<p:panel rendered="#{MBAcesso.usuario != null}"
 						header="Telas Autorizadas" style="margin-bottom: 30px;">
 						<p:dataTable id="tabelaTelasAutorizadas"
+							value="#{MBAcesso.listaAcessos}" var="a"
 							style="margin-top: 5px;margin-bottom: 15px;"
 							emptyMessage="Nenhum Registro Encontrado">
 							<p:column headerText="Nome da Tela" style="text-align: center">
+								<h:outputText value="#{a.tela.nome}" />
+							</p:column>
+							<p:column headerText="Nome do Módulo" style="text-align: center">
+								<h:outputText value="#{a.tela.modulo.nome}" />
 							</p:column>
 							<p:column style="width:32px;text-align: center">
-								<p:commandButton icon="ui-icon-plus"></p:commandButton>
+								<p:commandButton icon="ui-icon-plus"
+									actionListener="#{MBAcesso.buscarPermissoes}"
+									oncomplete="PF('dlgPermissoes').show();" title="Ver Permissões"
+									update=":formPermissoes">
+									<f:attribute value="#{a}" name="acessoSelecionado" />
+								</p:commandButton>
 							</p:column>
 							<p:column style="width:32px;text-align: center">
 								<p:commandButton icon="ui-icon-trash"></p:commandButton>
@@ -210,6 +220,44 @@
 
 				</h:form>
 			</p:dialog>
+
+			<p:dialog id="dialogoPermissoes" widgetVar="dlgPermissoes"
+				modal="true" appendTo="@(body)" closable="true" draggable="false"
+				resizable="false" header="Permissões">
+				<h:form id="formPermissoes" style="width: 600px;">
+					<div align="center" style="margin-top: 5px;">
+						<h:outputText
+							value="Permissões do Usuário - #{MBAcesso.acessoSelecionado.usuario.usuario}"
+							style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
+						<p:dataTable id="tabelaPermissoes" var="p"
+							value="#{MBAcesso.permissoes}" style="margin-top: 10px;margin-bottom: 35px;"
+							emptyMessage="Nenhum Registro Encontrado">
+							<p:column headerText="Permissões Adicionadas"
+								style="text-align: center">
+								<h:outputText value="#{p.funcoes.acoes.nome}" />
+							</p:column>
+							<p:column style="width:100px;text-align: center">
+								<p:commandButton value="Excluir" />
+							</p:column>
+						</p:dataTable>
+						<h:outputText
+							value="Permissões Disponíveis da Tela - #{MBAcesso.acessoSelecionado.tela.nome}"
+							style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
+						<p:dataTable id="tabelaPermissoesDisponiveis" var="pd"
+							value="#{MBAcesso.permissoes}" style="margin-top: 10px;"
+							emptyMessage="Nenhum Registro Encontrado">
+							<p:column headerText="Permissões Disponíveis"
+								style="text-align: center">
+								<h:outputText value="#{pd.funcoes.acoes.nome}" />
+							</p:column>
+							<p:column style="width:100px;text-align: center">
+								<p:commandButton value="Adicionar" />
+							</p:column>
+						</p:dataTable>
+					</div>
+				</h:form>
+			</p:dialog>
+
 		</ui:define>
 	</ui:composition>
 

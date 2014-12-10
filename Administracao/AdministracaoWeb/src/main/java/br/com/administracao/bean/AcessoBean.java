@@ -62,7 +62,8 @@ public class AcessoBean implements Serializable {
 	private Usuario usuario;
 	private Tela tela;
 	private Acesso acesso = new Acesso();
-
+	private Acesso acessoSelecionado;
+	private List<Acesso> listaAcessos = new ArrayList<Acesso>();
 	private List<Permissoes> permissoes = new ArrayList<Permissoes>();
 
 	/* RENDERED */
@@ -98,6 +99,8 @@ public class AcessoBean implements Serializable {
 					setLabelUsuarioSelecionado(usuario.getPessoa().getNome()
 							+ " - Usuário: " + usuario.getUsuario());
 
+					buscarAcessos();
+
 				} else if (listaUsuarios.size() == 0) {
 					setLabelUsuarioSelecionado("Não existe usuário com o cpf informado");
 				} else {
@@ -112,6 +115,21 @@ public class AcessoBean implements Serializable {
 			setLabelUsuarioSelecionado("Preencha o campo cpf");
 		}
 
+	}
+
+	public void buscarAcessos() {
+
+		AcessoService service = (AcessoService) WebUtil
+				.getNamedObject(AcessoService.NAME);
+		listaAcessos = service.listar(usuario);
+
+	}
+
+	public void buscarPermissoes(ActionEvent event) {
+		acessoSelecionado = (Acesso) event.getComponent().getAttributes()
+				.get("acessoSelecionado");
+
+		permissoes = acessoSelecionado.getListaPermissoes();
 	}
 
 	public void pesquisarTelas() {
@@ -248,6 +266,7 @@ public class AcessoBean implements Serializable {
 	}
 
 	public void salvar() {
+
 		if (funcoes.getTarget().size() > 0) {
 
 			try {
@@ -257,7 +276,7 @@ public class AcessoBean implements Serializable {
 					p.setAcesso(acesso);
 					permissoes.add(p);
 				}
-				acesso.setListaPermicoes(permissoes);
+				acesso.setListaPermissoes(permissoes);
 
 				AcessoService service = (AcessoService) WebUtil
 						.getNamedObject(AcessoService.NAME);
@@ -267,6 +286,8 @@ public class AcessoBean implements Serializable {
 				// Fecha o diálogo
 				org.primefaces.context.RequestContext.getCurrentInstance()
 						.execute("PF('dlgAddTela').hide();");
+
+				buscarAcessos();
 
 			} catch (Exception ex) {
 				String mensagem = ex.getMessage();
@@ -279,6 +300,7 @@ public class AcessoBean implements Serializable {
 						+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
 
 				RequestContext.getCurrentInstance().update("msgValorInvalido");
+
 			}
 
 		} else {
@@ -449,5 +471,21 @@ public class AcessoBean implements Serializable {
 
 	public void setListaUsuarios(List<Usuario> listaUsuarios) {
 		this.listaUsuarios = listaUsuarios;
+	}
+
+	public List<Acesso> getListaAcessos() {
+		return listaAcessos;
+	}
+
+	public void setListaAcessos(List<Acesso> listaAcessos) {
+		this.listaAcessos = listaAcessos;
+	}
+
+	public Acesso getAcessoSelecionado() {
+		return acessoSelecionado;
+	}
+
+	public void setAcessoSelecionado(Acesso acessoSelecionado) {
+		this.acessoSelecionado = acessoSelecionado;
 	}
 }
