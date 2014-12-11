@@ -122,6 +122,7 @@ public class AcessoDAOImpl implements AcessoDAO {
 				modulo.setNome(resultado.getString("nomeM"));
 
 				tela.setModulo(modulo);
+				tela.setListaFuncoes(listaFuncoes(tela, conexao));
 
 				acesso.setTela(tela);
 				acesso.setUsuario(usuario);
@@ -173,20 +174,77 @@ public class AcessoDAOImpl implements AcessoDAO {
 			Permissoes permissao = null;
 			Funcoes funcao = null;
 			Acoes acao = null;
+			Tela tela = null;
 
 			while (resultado.next()) {
 				permissao = new Permissoes();
 				funcao = new Funcoes();
 				acao = new Acoes();
+				tela = new Tela();
 
 				acao.setNro(resultado.getLong("nroAC"));
 				acao.setNome(resultado.getString("nomeAC"));
 				funcao.setAcoes(acao);
 
+				tela.setNro(acesso.getTela().getNro());
+				tela.setNome(acesso.getTela().getNome());
+				tela.setModulo(acesso.getTela().getModulo());
+				tela.setListaFuncoes(acesso.getTela().getListaFuncoes());
+
+				funcao.setTela(tela);
+
 				permissao.setAcesso(acesso);
 				permissao.setFuncoes(funcao);
 
 				lista.add(permissao);
+			}
+
+		} catch (SQLException ex) {
+			throw new PSTException(
+					"Ocorreu um erro ao tentar obter a listagem de funções", ex);
+		} finally {
+			PSTUtil.fechar(resultado);
+			PSTUtil.fechar(comando);
+		}
+
+		return lista;
+	}
+
+	public List<Funcoes> listaFuncoes(Tela tela, Connection conexao)
+			throws PSTException {
+
+		StringBuilder sqlFuncao = new StringBuilder();
+		sqlFuncao
+				.append("select f.ACAO_NRO acaoF, f.TELA_NRO telaF, ac.NRO nroAC, ac.NOME nomeAC  ");
+		sqlFuncao.append("from s_funcoes f, s_acoes ac ");
+		sqlFuncao.append("where ac.NRO = f.ACAO_NRO and f.TELA_NRO = ? ");
+
+		ResultSet resultado = null;
+		PreparedStatement comando = null;
+
+		List<Funcoes> lista = new ArrayList<Funcoes>();
+
+		try {
+
+			comando = conexao.prepareStatement(sqlFuncao.toString());
+			comando.setLong(1, tela.getNro());
+
+			resultado = comando.executeQuery();
+
+			Funcoes funcao = null;
+			Acoes acao = null;
+
+			while (resultado.next()) {
+				funcao = new Funcoes();
+				acao = new Acoes();
+
+				acao.setNro(resultado.getLong("nroAC"));
+				acao.setNome(resultado.getString("nomeAC"));
+
+				funcao.setTela(tela);
+				funcao.setAcoes(acao);
+
+				lista.add(funcao);
 			}
 
 		} catch (SQLException ex) {

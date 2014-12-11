@@ -30,12 +30,15 @@ import br.com.administracao.model.Usuario;
 import br.com.administracao.util.CpfValidator;
 import br.com.administracao.util.WebUtil;
 
+/**
+ * 
+ * @author Leticia Alves
+ *
+ */
 @ManagedBean(name = "MBAcesso")
 @ViewScoped
 public class AcessoBean implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8843326651714475272L;
 
 	/* PICKLIST */
@@ -62,7 +65,7 @@ public class AcessoBean implements Serializable {
 	private Usuario usuario;
 	private Tela tela;
 	private Acesso acesso = new Acesso();
-	private Acesso acessoSelecionado;
+	private Acesso acessoSelecionado = null;
 	private List<Acesso> listaAcessos = new ArrayList<Acesso>();
 	private List<Permissoes> permissoes = new ArrayList<Permissoes>();
 
@@ -123,13 +126,41 @@ public class AcessoBean implements Serializable {
 				.getNamedObject(AcessoService.NAME);
 		listaAcessos = service.listar(usuario);
 
+		funcoes = new DualListModel<>(funcoesDisponiveis, funcoesSelecionadas);
+
 	}
 
-	public void buscarPermissoes(ActionEvent event) {
+	public void prepararEditar(ActionEvent event) {
 		acessoSelecionado = (Acesso) event.getComponent().getAttributes()
 				.get("acessoSelecionado");
 
-		permissoes = acessoSelecionado.getListaPermissoes();
+		// Todas as funções da tela
+		List<Funcoes> disponiveis = new ArrayList<Funcoes>();
+		disponiveis.addAll(acessoSelecionado.getTela().getListaFuncoes());
+
+		// Todas as funções que o usuário acessa
+		List<Funcoes> funcoesUsuario = new ArrayList<Funcoes>();
+		for (Permissoes permissao : acessoSelecionado.getListaPermissoes()) {
+			funcoesUsuario.add(permissao.getFuncoes());
+		}
+
+		for (Funcoes funcaoTela : acessoSelecionado.getTela().getListaFuncoes()) {
+			for (Funcoes funcaoUsuario : funcoesUsuario) {
+				if (funcaoTela.equals(funcaoUsuario)) {
+					disponiveis.remove(funcaoTela);
+				}
+			}
+		}
+
+		count = funcoesUsuario.size();
+		quantidadeFuncoesSelecionadas = count;
+
+		// Carrego o PickList
+		funcoes = new DualListModel<>(disponiveis, funcoesUsuario);
+
+		// Renderiza o PickList
+		if (acessoSelecionado.getTela().getListaFuncoes().size() > 0)
+			setExisteFuncoes(true);
 	}
 
 	public void pesquisarTelas() {
@@ -256,13 +287,8 @@ public class AcessoBean implements Serializable {
 		textoBuscaTela = "";
 		nroModuloBusca = 0L;
 		nroProjetoBusca = 0L;
+		setExisteFuncoes(false);
 		pesquisarTelas();
-	}
-
-	public void limparCamposAdicionarTela() {
-		quantidadeFuncoesSelecionadas = 0;
-		tela = new Tela();
-		count = 0;
 	}
 
 	public void salvar() {
@@ -270,24 +296,26 @@ public class AcessoBean implements Serializable {
 		if (funcoes.getTarget().size() > 0) {
 
 			try {
+				permissoes = new ArrayList<Permissoes>();
+
 				for (Funcoes funcao : funcoes.getTarget()) {
 					Permissoes p = new Permissoes();
 					p.setFuncoes(funcao);
 					p.setAcesso(acesso);
 					permissoes.add(p);
 				}
+
 				acesso.setListaPermissoes(permissoes);
 
 				AcessoService service = (AcessoService) WebUtil
 						.getNamedObject(AcessoService.NAME);
+
 				service.inserir(acesso);
 				WebUtil.adicionarMensagemSucesso("Acesso salvo com sucesso");
 
 				// Fecha o diálogo
 				org.primefaces.context.RequestContext.getCurrentInstance()
 						.execute("PF('dlgAddTela').hide();");
-
-				buscarAcessos();
 
 			} catch (Exception ex) {
 				String mensagem = ex.getMessage();
@@ -301,6 +329,58 @@ public class AcessoBean implements Serializable {
 
 				RequestContext.getCurrentInstance().update("msgValorInvalido");
 
+			} finally {
+				buscarAcessos();
+			}
+
+		} else {
+			WebUtil.adicionarMensagemAviso("Selecione pelo menos uma permissão");
+		}
+
+	}
+
+	public void editar() {
+
+		if (funcoes.getTarget().size() > 0) {
+
+			try {
+				permissoes = new ArrayList<Permissoes>();
+
+				for (Funcoes funcao : funcoes.getTarget()) {
+					Permissoes p = new Permissoes();
+					p.setFuncoes(funcao);
+					p.setAcesso(acesso);
+					permissoes.add(p);
+				}
+
+				acessoSelecionado.setListaPermissoes(permissoes);
+
+				AcessoService service = (AcessoService) WebUtil
+						.getNamedObject(AcessoService.NAME);
+
+				// service.editar(acessoSelecionado);
+				WebUtil.adicionarMensagemSucesso("Acesso editado com sucesso");
+
+				// Fecha o diálogo
+				org.primefaces.context.RequestContext.getCurrentInstance()
+						.execute("PF('dlgEdicao').hide();");
+
+				acessoSelecionado = null;
+
+			} catch (Exception ex) {
+				String mensagem = ex.getMessage();
+				String[] mensagemSeparada = mensagem.split(":");
+				System.out.println("Tamanho mensagem: "
+						+ mensagemSeparada.length);
+				int tamanhoMensagem = mensagemSeparada.length;
+
+				WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
+						+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
+
+				RequestContext.getCurrentInstance().update("msgValorInvalido");
+
+			} finally {
+				buscarAcessos();
 			}
 
 		} else {

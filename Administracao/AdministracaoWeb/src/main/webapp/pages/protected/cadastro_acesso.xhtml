@@ -52,10 +52,10 @@
 								<h:outputText value="#{a.tela.modulo.nome}" />
 							</p:column>
 							<p:column style="width:32px;text-align: center">
-								<p:commandButton icon="ui-icon-plus"
-									actionListener="#{MBAcesso.buscarPermissoes}"
-									oncomplete="PF('dlgPermissoes').show();" title="Ver Permissões"
-									update=":formPermissoes">
+								<p:commandButton icon="ui-icon-pencil"
+									actionListener="#{MBAcesso.prepararEditar}"
+									oncomplete="PF('dlgEdicao').show();" title="Editar Acesso"
+									update=":formEdicao">
 									<f:attribute value="#{a}" name="acessoSelecionado" />
 								</p:commandButton>
 							</p:column>
@@ -85,7 +85,8 @@
 			</p:panel>
 			<p:dialog widgetVar="dlgAddTela" header="Adicionar Tela" modal="true"
 				appendTo="@(body)" closable="true" draggable="false"
-				resizable="false" width="700" position="350, 100">
+				resizable="false" width="700" position="350, 100"
+				style="position: absolute">
 
 				<h:form id="frmAddTela">
 					<p:growl id="msgDialog" showDetail="false" life="3000" />
@@ -221,39 +222,63 @@
 				</h:form>
 			</p:dialog>
 
-			<p:dialog id="dialogoPermissoes" widgetVar="dlgPermissoes"
-				modal="true" appendTo="@(body)" closable="true" draggable="false"
-				resizable="false" header="Permissões">
-				<h:form id="formPermissoes" style="width: 600px;">
+			<p:dialog id="dialogoEdicao" widgetVar="dlgEdicao" modal="true"
+				appendTo="@(body)" closable="true" draggable="false"
+				resizable="false" header="Editar Acesso">
+				<h:form id="formEdicao" style="width: 600px;">
+					<p:growl id="msgDialog" showDetail="false" life="3000" />
 					<div align="center" style="margin-top: 5px;">
-						<h:outputText
-							value="Permissões do Usuário - #{MBAcesso.acessoSelecionado.usuario.usuario}"
-							style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
-						<p:dataTable id="tabelaPermissoes" var="p"
-							value="#{MBAcesso.permissoes}" style="margin-top: 10px;margin-bottom: 35px;"
-							emptyMessage="Nenhum Registro Encontrado">
-							<p:column headerText="Permissões Adicionadas"
-								style="text-align: center">
-								<h:outputText value="#{p.funcoes.acoes.nome}" />
-							</p:column>
-							<p:column style="width:100px;text-align: center">
-								<p:commandButton value="Excluir" />
-							</p:column>
-						</p:dataTable>
-						<h:outputText
-							value="Permissões Disponíveis da Tela - #{MBAcesso.acessoSelecionado.tela.nome}"
-							style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
-						<p:dataTable id="tabelaPermissoesDisponiveis" var="pd"
-							value="#{MBAcesso.permissoes}" style="margin-top: 10px;"
-							emptyMessage="Nenhum Registro Encontrado">
-							<p:column headerText="Permissões Disponíveis"
-								style="text-align: center">
-								<h:outputText value="#{pd.funcoes.acoes.nome}" />
-							</p:column>
-							<p:column style="width:100px;text-align: center">
-								<p:commandButton value="Adicionar" />
-							</p:column>
-						</p:dataTable>
+						<p:panelGrid columns="1">
+							<h:outputText
+								value="Usuário: #{MBAcesso.acessoSelecionado.usuario.usuario}"
+								style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
+							<h:outputText
+								value="Tela: #{MBAcesso.acessoSelecionado.tela.nome}"
+								style="text-transform:uppercase;font-weight: bold;font-size: 110%;" />
+						</p:panelGrid>
+						<h:panelGroup rendered="#{MBAcesso.existeFuncoes}">
+							<p:pickList id="pickListFuncao" value="#{MBAcesso.funcoes}"
+								var="funcao" itemValue="#{funcao}"
+								itemLabel="#{funcao.acoes.nome}" showCheckbox="true"
+								showSourceFilter="true" showTargetFilter="true"
+								filterMatchMode="contains" converter="funcaoConverter"
+								addLabel="Adicionar" addAllLabel="Adicionar Todos"
+								removeLabel="Remover" removeAllLabel="Remover Todos"
+								style="margin-top: 25px;">
+
+								<p:ajax event="transfer" listener="#{MBAcesso.onTransfer}"
+									update="msgDialog totalFuncoes" />
+
+								<f:facet name="sourceCaption">Disponíveis</f:facet>
+								<f:facet name="targetCaption">Autorizadas</f:facet>
+
+								<p:column style="width:85%;">
+									<h:outputText value="#{funcao.acoes.nome}" />
+								</p:column>
+							</p:pickList>
+
+							<p:panelGrid id="pngTotal" columns="2" style="margin-top: 20px;">
+								<h:outputText value="Quantidade de ações autorizadas:"
+									style="font-size: 16px; " />
+								<h:outputText id="totalFuncoes"
+									value="#{MBAcesso.quantidadeFuncoesSelecionadas}"
+									style="font-weight: bold; font-size: 16px;" />
+							</p:panelGrid>
+						</h:panelGroup>
+					</div>
+					<div align="center" style="margin-top: 20px;">
+						<p:panelGrid columns="2" rendered="#{MBAcesso.existeFuncoes}">
+							<p:commandButton value="Salvar"
+								actionListener="#{MBAcesso.editar}" style="width: 150px;"
+								update=":form1:tabelaTelasAutorizadas, msgDialog">
+								<p:confirm header="Atenção!" message="Deseja realmente salvar?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton value="Cancelar" style="width: 150px;"
+								process="@this" onclick="PF('dlgEdicao').hide();">
+								<p:resetInput target=":formEdicao" />
+							</p:commandButton>
+						</p:panelGrid>
 					</div>
 				</h:form>
 			</p:dialog>

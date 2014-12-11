@@ -170,6 +170,7 @@ public class TelaBean implements Serializable {
 		nroProjetoBusca = 0L;
 		quantidadeAcoesSelecionadas = 0;
 		count = 0;
+		setExisteAcoes(false);
 		buscarLista();
 	}
 
@@ -190,7 +191,7 @@ public class TelaBean implements Serializable {
 		buscarProjetos();
 
 		if (acoesDisponiveis.size() > 0)
-			existeAcoes = true;
+			setExisteAcoes(true);
 	}
 
 	public void novo() {
@@ -280,7 +281,7 @@ public class TelaBean implements Serializable {
 		List<Acoes> todasAcoes = service.listar();
 
 		if (todasAcoes.size() > 0)
-			existeAcoes = true;
+			setExisteAcoes(true);
 
 		List<Acoes> acoesTela = new ArrayList<Acoes>();
 		acoesDisponiveis = service.listar();
