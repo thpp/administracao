@@ -12,7 +12,7 @@ public interface AcessoDAO {
 
 	public void editar(Acesso acesso) throws PSTException;
 
-	public void excluir(Long codigo) throws PSTException;
+	public void excluir(Acesso acesso) throws PSTException;
 	
 	public List<Acesso> listar(Usuario usuario) throws PSTException;
 

@@ -76,8 +76,54 @@ public class AcessoDAOImpl implements AcessoDAO {
 	}
 
 	@Override
-	public void excluir(Long codigo) throws PSTException {
-		// TODO Auto-generated method stub
+	public void excluir(Acesso acesso) throws PSTException {
+		StringBuilder sqlDeletaPermissao = new StringBuilder();
+		sqlDeletaPermissao.append("DELETE FROM s_permissoes ");
+		sqlDeletaPermissao.append("WHERE aces_tela_nro = ? ");
+		sqlDeletaPermissao.append("AND aces_usu_nro = ? ");
+		sqlDeletaPermissao.append("AND funcao_tela_nro = ? ");
+
+		StringBuilder sqlDeletaAcesso = new StringBuilder();
+		sqlDeletaAcesso.append("DELETE FROM s_acesso ");
+		sqlDeletaAcesso.append("WHERE tela_nro = ? ");
+		sqlDeletaAcesso.append("AND usu_nro = ? ");
+
+		Connection conexao = null;
+		PreparedStatement comandoDeletaAcesso = null;
+		PreparedStatement comandoDeletaPermissao = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();
+			conexao.setAutoCommit(false);
+
+			comandoDeletaPermissao = conexao
+					.prepareStatement(sqlDeletaPermissao.toString());
+			comandoDeletaPermissao.setLong(1, acesso.getTela().getNro());
+			comandoDeletaPermissao.setLong(2, acesso.getUsuario().getNro());
+			comandoDeletaPermissao.setLong(3, acesso.getTela().getNro());
+			comandoDeletaPermissao.executeUpdate();
+
+			comandoDeletaAcesso = conexao.prepareStatement(sqlDeletaAcesso
+					.toString());
+			comandoDeletaAcesso.setLong(1, acesso.getTela().getNro());
+			comandoDeletaAcesso.setLong(2, acesso.getUsuario().getNro());
+			comandoDeletaAcesso.executeUpdate();
+
+			conexao.commit();
+
+			logger.info("Acesso excluído com sucesso");
+		} catch (SQLException ex) {
+			try {
+				conexao.rollback();
+			} catch (SQLException e) {
+				throw new PSTException(
+						"Ocorreu um erro ao tentar excluir o Acesso", ex);
+			}
+		} finally {
+			PSTUtil.fechar(comandoDeletaPermissao);
+			PSTUtil.fechar(comandoDeletaAcesso);
+			PSTUtil.fechar(conexao);
+		}
 
 	}
 
@@ -370,41 +416,60 @@ public class AcessoDAOImpl implements AcessoDAO {
 		// e.printStackTrace();
 		// }
 
-		AcessoDAOImpl dao = new AcessoDAOImpl();
-		UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
+		// AcessoDAOImpl dao = new AcessoDAOImpl();
+		// UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
+		//
+		// try {
+		//
+		// List<Usuario> listausuario = daoUsuario.listar("40998069876");
+		// Usuario usuario = listausuario.get(0);
+		//
+		// System.out.println("Nome: " + usuario.getPessoa().getNome());
+		//
+		// List<Acesso> lista = dao.listar(usuario);
+		//
+		// for (Acesso acesso : lista) {
+		// System.out.println("Nome da Tela: "
+		// + acesso.getTela().getNome());
+		// System.out.println("Nome do Módulo: "
+		// + acesso.getTela().getModulo().getNome());
+		//
+		// List<Permissoes> listaPermissoes = acesso.getListaPermissoes();
+		//
+		// System.out.println("Permissões dessa tela: ");
+		//
+		// for (Permissoes permissoes : listaPermissoes) {
+		// System.out.println("Nro da Ação: "
+		// + permissoes.getFuncoes().getAcoes().getNro());
+		// System.out.println("Nome da Ação: "
+		// + permissoes.getFuncoes().getAcoes().getNome());
+		// }
+		// System.out.println("=====================================");
+		// }
+		//
+		// } catch (PSTException e) {
+		// System.out.println("ERRO.... " + e.getMessage());
+		// e.printStackTrace();
+		// }
 
 		try {
+			AcessoDAOImpl dao = new AcessoDAOImpl();
+			Tela tela = new Tela();
+			Usuario usuario = new Usuario();
 
-			List<Usuario> listausuario = daoUsuario.listar("40998069876");
-			Usuario usuario = listausuario.get(0);
+			tela.setNro(3L);
+			usuario.setNro(2L);
 
-			System.out.println("Nome: " + usuario.getPessoa().getNome());
+			Acesso acesso = new Acesso();
 
-			List<Acesso> lista = dao.listar(usuario);
+			acesso.setTela(tela);
+			acesso.setUsuario(usuario);
+			dao.excluir(acesso);
 
-			for (Acesso acesso : lista) {
-				System.out.println("Nome da Tela: "
-						+ acesso.getTela().getNome());
-				System.out.println("Nome do Módulo: "
-						+ acesso.getTela().getModulo().getNome());
-
-				List<Permissoes> listaPermissoes = acesso.getListaPermissoes();
-
-				System.out.println("Permissões dessa tela: ");
-
-				for (Permissoes permissoes : listaPermissoes) {
-					System.out.println("Nro da Ação: "
-							+ permissoes.getFuncoes().getAcoes().getNro());
-					System.out.println("Nome da Ação: "
-							+ permissoes.getFuncoes().getAcoes().getNome());
-				}
-				System.out.println("=====================================");
-			}
-
+			System.out.println("Excluído com sucesso");
 		} catch (PSTException e) {
 			System.out.println("ERRO.... " + e.getMessage());
 			e.printStackTrace();
 		}
-
 	}
 }

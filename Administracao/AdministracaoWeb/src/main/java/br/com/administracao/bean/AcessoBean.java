@@ -143,7 +143,9 @@ public class AcessoBean implements Serializable {
 		for (Permissoes permissao : acessoSelecionado.getListaPermissoes()) {
 			funcoesUsuario.add(permissao.getFuncoes());
 		}
-
+		
+		
+		// Funções disponíveis
 		for (Funcoes funcaoTela : acessoSelecionado.getTela().getListaFuncoes()) {
 			for (Funcoes funcaoUsuario : funcoesUsuario) {
 				if (funcaoTela.equals(funcaoUsuario)) {
