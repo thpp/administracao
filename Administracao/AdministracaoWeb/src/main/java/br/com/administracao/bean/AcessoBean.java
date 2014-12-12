@@ -10,7 +10,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
@@ -145,13 +144,7 @@ public class AcessoBean implements Serializable {
 		}
 
 		// Funções disponíveis
-		for (Funcoes funcaoTela : acessoSelecionado.getTela().getListaFuncoes()) {
-			for (Funcoes funcaoUsuario : funcoesUsuario) {
-				if (funcaoTela.equals(funcaoUsuario)) {
-					disponiveis.remove(funcaoTela);
-				}
-			}
-		}
+		disponiveis.removeAll(funcoesUsuario);
 
 		count = funcoesUsuario.size();
 		quantidadeFuncoesSelecionadas = count;
@@ -328,8 +321,6 @@ public class AcessoBean implements Serializable {
 				WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
 						+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
 
-				RequestContext.getCurrentInstance().update("msgValorInvalido");
-
 			} finally {
 				buscarAcessos();
 			}
@@ -378,8 +369,6 @@ public class AcessoBean implements Serializable {
 				WebUtil.adicionarMensagemErro(mensagemSeparada[tamanhoMensagem - 2]
 						+ " : " + mensagemSeparada[tamanhoMensagem - 1]);
 
-				RequestContext.getCurrentInstance().update("msgValorInvalido");
-
 			} finally {
 				buscarAcessos();
 			}
@@ -394,7 +383,7 @@ public class AcessoBean implements Serializable {
 			AcessoService service = (AcessoService) WebUtil
 					.getNamedObject(AcessoService.NAME);
 			service.excluir(acessoSelecionado);
-			
+
 			WebUtil.adicionarMensagemSucesso("Acesso excluído com sucesso");
 
 		} catch (ServiceException ex) {
