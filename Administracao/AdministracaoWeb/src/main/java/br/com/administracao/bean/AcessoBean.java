@@ -143,8 +143,7 @@ public class AcessoBean implements Serializable {
 		for (Permissoes permissao : acessoSelecionado.getListaPermissoes()) {
 			funcoesUsuario.add(permissao.getFuncoes());
 		}
-		
-		
+
 		// Funções disponíveis
 		for (Funcoes funcaoTela : acessoSelecionado.getTela().getListaFuncoes()) {
 			for (Funcoes funcaoUsuario : funcoesUsuario) {
@@ -387,6 +386,21 @@ public class AcessoBean implements Serializable {
 
 		} else {
 			WebUtil.adicionarMensagemAviso("Selecione pelo menos uma permissão");
+		}
+	}
+
+	public void excluir() {
+		try {
+			AcessoService service = (AcessoService) WebUtil
+					.getNamedObject(AcessoService.NAME);
+			service.excluir(acessoSelecionado);
+			
+			WebUtil.adicionarMensagemSucesso("Acesso excluído com sucesso");
+
+		} catch (ServiceException ex) {
+			WebUtil.adicionarMensagemErro(ex.getMessage());
+		} finally {
+			buscarAcessos();
 		}
 	}
 

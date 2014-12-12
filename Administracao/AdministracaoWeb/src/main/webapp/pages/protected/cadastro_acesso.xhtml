@@ -60,7 +60,12 @@
 								</p:commandButton>
 							</p:column>
 							<p:column style="width:32px;text-align: center">
-								<p:commandButton icon="ui-icon-trash"></p:commandButton>
+								<p:commandButton icon="ui-icon-trash"
+									oncomplete="PF('dlgExclusao').show();" title="Excluir Acesso"
+									update=":form1:msgs, :formExclusao:pnlExclusao">
+									<f:setPropertyActionListener value="#{a}"
+										target="#{MBAcesso.acessoSelecionado}" />
+								</p:commandButton>
 							</p:column>
 						</p:dataTable>
 						<p:panelGrid columns="2">
@@ -157,6 +162,8 @@
 				resizable="false" width="850">
 
 				<h:form id="frmBuscarTela">
+					<p:growl id="msgDialog" showDetail="false" life="3000" />
+
 					<p:defaultCommand target="btnBuscar" />
 
 					<h:panelGrid columns="3">
@@ -280,6 +287,30 @@
 							</p:commandButton>
 						</p:panelGrid>
 					</div>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="dialogoExclusao" widgetVar="dlgExclusao" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="Exclusão de Acesso">
+				<h:form id="formExclusao" style="width: 350px;">
+					<p:growl id="msgDialog" showDetail="false" life="3000" />
+					<p:panelGrid id="pnlExclusao" columns="1">
+						<p:outputLabel
+							value="Excluir o acesso do usuário a seguinte tela: " />
+						<h:outputText value="#{MBAcesso.acessoSelecionado.tela.nome}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:commandButton actionListener="#{MBAcesso.excluir}"
+							oncomplete="PF('dlgExclusao').hide();" value="Excluir"
+							update=":form1:tabelaTelasAutorizadas, msgDialog">
+							<p:confirm header="Atenção!"
+								message="Deseja realmente excluir o acesso?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Cancelar" process="@this"
+							oncomplete="PF('dlgExclusao').hide();" />
+					</p:panelGrid>
 				</h:form>
 			</p:dialog>
 
