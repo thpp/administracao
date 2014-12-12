@@ -351,7 +351,7 @@ public class AcessoBean implements Serializable {
 				for (Funcoes funcao : funcoes.getTarget()) {
 					Permissoes p = new Permissoes();
 					p.setFuncoes(funcao);
-					p.setAcesso(acesso);
+					p.setAcesso(acessoSelecionado);
 					permissoes.add(p);
 				}
 
@@ -360,7 +360,7 @@ public class AcessoBean implements Serializable {
 				AcessoService service = (AcessoService) WebUtil
 						.getNamedObject(AcessoService.NAME);
 
-				// service.editar(acessoSelecionado);
+				service.editar(acessoSelecionado);
 				WebUtil.adicionarMensagemSucesso("Acesso editado com sucesso");
 
 				// Fecha o diálogo
