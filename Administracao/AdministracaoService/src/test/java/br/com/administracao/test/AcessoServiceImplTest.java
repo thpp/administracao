@@ -11,6 +11,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.administracao.client.AcessoService;
+import br.com.administracao.dao.impl.AcessoDAOImpl;
+import br.com.administracao.execao.PSTException;
 import br.com.administracao.model.Acesso;
 import br.com.administracao.model.Acoes;
 import br.com.administracao.model.Funcoes;
@@ -83,6 +85,7 @@ public class AcessoServiceImplTest {
 	}
 
 	@Test
+	@Ignore
 	public void listar() throws NamingException, ServiceException {
 		AcessoService service = (AcessoService) ejbContainer.getContext()
 				.lookup("java:global/AdministracaoService/AcessoServiceImpl");
@@ -114,12 +117,87 @@ public class AcessoServiceImplTest {
 	@Test
 	@Ignore
 	public void excluir() throws NamingException, ServiceException {
+		try {
+			AcessoDAOImpl dao = new AcessoDAOImpl();
+			Tela tela = new Tela();
+			Usuario usuario = new Usuario();
 
+			tela.setNro(3L);
+			usuario.setNro(2L);
+
+			Acesso acesso = new Acesso();
+
+			acesso.setTela(tela);
+			acesso.setUsuario(usuario);
+			dao.excluir(acesso);
+
+			System.out.println("Excluído com sucesso");
+		} catch (PSTException e) {
+			System.out.println("ERRO.... " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void editar() throws NamingException, ServiceException {
+		try {
+			AcessoDAOImpl dao = new AcessoDAOImpl();
+			Tela tela = new Tela();
+			Usuario usuario = new Usuario();
+			Acesso acesso = new Acesso();
+			List<Permissoes> listaPermissoes = new ArrayList<Permissoes>();
 
+			tela.setNro(3L);
+			usuario.setNro(2L);
+
+			Funcoes f1 = new Funcoes();
+			Funcoes f2 = new Funcoes();
+			Funcoes f3 = new Funcoes();
+
+			Acoes ac1 = new Acoes();
+			Acoes ac2 = new Acoes();
+			Acoes ac3 = new Acoes();
+
+			Permissoes p1 = new Permissoes();
+			Permissoes p2 = new Permissoes();
+			Permissoes p3 = new Permissoes();
+
+			ac1.setNro(1L);
+			ac2.setNro(2L);
+			ac3.setNro(3L);
+
+			f1.setTela(tela);
+			f2.setTela(tela);
+			f3.setTela(tela);
+
+			f1.setAcoes(ac1);
+			f2.setAcoes(ac2);
+			f3.setAcoes(ac3);
+
+			p1.setAcesso(acesso);
+			p1.setFuncoes(f1);
+
+			p2.setAcesso(acesso);
+			p2.setFuncoes(f2);
+
+			p3.setAcesso(acesso);
+			p3.setFuncoes(f3);
+
+			listaPermissoes.add(p1);
+			listaPermissoes.add(p2);
+			listaPermissoes.add(p3);
+
+			acesso.setListaPermissoes(listaPermissoes);
+
+			acesso.setTela(tela);
+			acesso.setUsuario(usuario);
+			dao.editar(acesso);
+
+			System.out.println("Editado com sucesso");
+		} catch (PSTException e) {
+			System.out.println("ERRO.... " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }

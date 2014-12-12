@@ -71,8 +71,66 @@ public class AcessoDAOImpl implements AcessoDAO {
 
 	@Override
 	public void editar(Acesso acesso) throws PSTException {
-		// TODO Auto-generated method stub
 
+		StringBuilder sqlDeletaPermissao = new StringBuilder();
+		sqlDeletaPermissao.append("DELETE FROM s_permissoes ");
+		sqlDeletaPermissao.append("WHERE aces_tela_nro = ? ");
+		sqlDeletaPermissao.append("AND aces_usu_nro = ? ");
+		sqlDeletaPermissao.append("AND funcao_tela_nro = ? ");
+
+		StringBuilder sqlInserePermissao = new StringBuilder();
+		sqlInserePermissao.append(" INSERT INTO s_permissoes ");
+		sqlInserePermissao
+				.append("(aces_tela_nro, aces_usu_nro, funcao_acao_nro, funcao_tela_nro) ");
+		sqlInserePermissao.append("VALUES (?, ?, ?, ?) ");
+
+		Connection conexao = null;
+		PreparedStatement comandoDeletaPermissao = null;
+		PreparedStatement comandoInserePermissao = null;
+
+		try {
+			conexao = ConnectionFactory.getConnection();
+			conexao.setAutoCommit(false);
+
+			comandoDeletaPermissao = conexao
+					.prepareStatement(sqlDeletaPermissao.toString());
+			comandoDeletaPermissao.setLong(1, acesso.getTela().getNro());
+			comandoDeletaPermissao.setLong(2, acesso.getUsuario().getNro());
+			comandoDeletaPermissao.setLong(3, acesso.getTela().getNro());
+			comandoDeletaPermissao.executeUpdate();
+
+			comandoInserePermissao = conexao
+					.prepareStatement(sqlInserePermissao.toString());
+
+			for (Permissoes permissoes : acesso.getListaPermissoes()) {
+
+				comandoInserePermissao.setLong(1, permissoes.getAcesso()
+						.getTela().getNro());
+				comandoInserePermissao.setLong(2, permissoes.getAcesso()
+						.getUsuario().getNro());
+				comandoInserePermissao.setLong(3, permissoes.getFuncoes()
+						.getAcoes().getNro());
+				comandoInserePermissao.setLong(4, permissoes.getFuncoes()
+						.getTela().getNro());
+				comandoInserePermissao.executeUpdate();
+			}
+
+			conexao.commit();
+
+			logger.info("Acesso editado com sucesso");
+
+		} catch (SQLException ex) {
+			try {
+				conexao.rollback();
+			} catch (SQLException e) {
+				throw new PSTException(
+						"Ocorreu um erro ao tentar editar o Acesso", ex);
+			} finally {
+				PSTUtil.fechar(comandoDeletaPermissao);
+				PSTUtil.fechar(comandoInserePermissao);
+				PSTUtil.fechar(conexao);
+			}
+		}
 	}
 
 	@Override
@@ -452,21 +510,80 @@ public class AcessoDAOImpl implements AcessoDAO {
 		// e.printStackTrace();
 		// }
 
+		// try {
+		// AcessoDAOImpl dao = new AcessoDAOImpl();
+		// Tela tela = new Tela();
+		// Usuario usuario = new Usuario();
+		//
+		// tela.setNro(3L);
+		// usuario.setNro(2L);
+		//
+		// Acesso acesso = new Acesso();
+		//
+		// acesso.setTela(tela);
+		// acesso.setUsuario(usuario);
+		// dao.excluir(acesso);
+		//
+		// System.out.println("Excluído com sucesso");
+		// } catch (PSTException e) {
+		// System.out.println("ERRO.... " + e.getMessage());
+		// e.printStackTrace();
+		// }
+
 		try {
 			AcessoDAOImpl dao = new AcessoDAOImpl();
 			Tela tela = new Tela();
 			Usuario usuario = new Usuario();
+			Acesso acesso = new Acesso();
+			List<Permissoes> listaPermissoes = new ArrayList<Permissoes>();
 
 			tela.setNro(3L);
 			usuario.setNro(2L);
 
-			Acesso acesso = new Acesso();
+			Funcoes f1 = new Funcoes();
+			Funcoes f2 = new Funcoes();
+			Funcoes f3 = new Funcoes();
+
+			Acoes ac1 = new Acoes();
+			Acoes ac2 = new Acoes();
+			Acoes ac3 = new Acoes();
+
+			Permissoes p1 = new Permissoes();
+			Permissoes p2 = new Permissoes();
+			Permissoes p3 = new Permissoes();
+
+			ac1.setNro(1L);
+			ac2.setNro(2L);
+			ac3.setNro(3L);
+
+			f1.setTela(tela);
+			f2.setTela(tela);
+			f3.setTela(tela);
+
+			f1.setAcoes(ac1);
+			f2.setAcoes(ac2);
+			f3.setAcoes(ac3);
+
+			p1.setAcesso(acesso);
+			p1.setFuncoes(f1);
+
+			p2.setAcesso(acesso);
+			p2.setFuncoes(f2);
+
+			p3.setAcesso(acesso);
+			p3.setFuncoes(f3);
+
+			listaPermissoes.add(p1);
+			listaPermissoes.add(p2);
+			listaPermissoes.add(p3);
+
+			acesso.setListaPermissoes(listaPermissoes);
 
 			acesso.setTela(tela);
 			acesso.setUsuario(usuario);
-			dao.excluir(acesso);
+			dao.editar(acesso);
 
-			System.out.println("Excluído com sucesso");
+			System.out.println("Editado com sucesso");
 		} catch (PSTException e) {
 			System.out.println("ERRO.... " + e.getMessage());
 			e.printStackTrace();

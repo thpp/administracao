@@ -44,4 +44,26 @@ public class AcessoServiceImpl implements AcessoService {
 		return lista;
 	}
 
+	@Override
+	public void editar(Acesso acesso) {
+		try {
+			new AcessoDAOImpl().editar(acesso);
+			logger.info("Acesso editado com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+
+	}
+
+	@Override
+	public void excluir(Acesso acesso) {
+		try {
+			new AcessoDAOImpl().excluir(acesso);
+			logger.info("Acesso excluído com sucesso");
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+
+	}
+
 }

@@ -15,4 +15,7 @@ public interface AcessoService {
 
 	public List<Acesso> listar(Usuario usuario);
 
+	public void editar(Acesso acesso);
+
+	public void excluir(Acesso acesso);
 }
