@@ -12,9 +12,11 @@ import java.util.logging.Logger;
 import br.com.administracao.dao.interf.TelaDAO;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.factory.ConnectionFactory;
+import br.com.administracao.model.Acesso;
 import br.com.administracao.model.Acoes;
 import br.com.administracao.model.Funcoes;
 import br.com.administracao.model.Modulo;
+import br.com.administracao.model.Permissoes;
 import br.com.administracao.model.Projeto;
 import br.com.administracao.model.Tela;
 import br.com.administracao.util.PSTUtil;
@@ -111,8 +113,6 @@ public class TelaDAOImpl implements TelaDAO {
 		sqlDeletaPermissao.append("AND funcao_acao_nro = ? ");
 		sqlDeletaPermissao.append("AND funcao_tela_nro = ? ");
 
-		StringBuilder sqlApagaAcessoSemPermissao = new StringBuilder();
-
 		Connection conexao = null;
 		PreparedStatement comandoAtualizaTela = null;
 		PreparedStatement comandoDeletaFuncao = null;
@@ -160,16 +160,6 @@ public class TelaDAOImpl implements TelaDAO {
 				}
 			}
 
-			System.out.println("========= Inserir =========");
-			for (Funcoes funcoes : listaInserir) {
-				System.out.println(funcoes.getAcoes().getNome());
-			}
-
-			System.out.println("========= Excluir =========");
-			for (Funcoes funcoes : listaExcluir) {
-				System.out.println(funcoes.getAcoes().getNome());
-			}
-
 			comandoAtualizaTela = conexao.prepareStatement(sqlAtualizaTela
 					.toString());
 			comandoAtualizaTela.setString(1, tela.getNome());
@@ -200,6 +190,10 @@ public class TelaDAOImpl implements TelaDAO {
 				comandoInsereFuncao.setLong(1, funcoes.getAcoes().getNro());
 				comandoInsereFuncao.setLong(2, tela.getNro());
 				comandoInsereFuncao.executeUpdate();
+			}
+
+			if (listaExcluir.size() > 0) {
+				excluirAcessoSemPermissao(conexao);
 			}
 
 			conexao.commit();
@@ -266,6 +260,40 @@ public class TelaDAOImpl implements TelaDAO {
 			PSTUtil.fechar(conexao);
 		}
 
+	}
+
+	public void excluirAcessoSemPermissao(Connection conexao)
+			throws PSTException {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM s_acesso ac WHERE concat(ac.tela_nro, ac.usu_nro) IN ");
+		sql.append("(SELECT concat(acd.tela_nro, acd.usu_nro) FROM (SELECT * FROM s_acesso ac ");
+		sql.append("LEFT JOIN s_permissoes p ON (ac.tela_nro = p.funcao_tela_nro) ");
+		sql.append("WHERE p.funcao_tela_nro IS NULL) acd) ");
+
+		PreparedStatement comando = null;
+
+		try {
+
+			comando = conexao.prepareStatement(sql.toString());
+			comando.executeUpdate();
+
+			logger.info("Acessos sem permissões excluídos com sucesso");
+
+		} catch (SQLException ex) {
+
+			try {
+				conexao.rollback();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new PSTException(
+						"Ocorreu um erro no rollback de exclusão de acessos sem permissões "
+								+ ex.getMessage(), ex);
+			}
+
+		} finally {
+			PSTUtil.fechar(comando);
+		}
 	}
 
 	@Override
