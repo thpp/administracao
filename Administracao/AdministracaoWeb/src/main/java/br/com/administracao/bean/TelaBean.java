@@ -321,7 +321,30 @@ public class TelaBean implements Serializable {
 		if (quantidadeAcessos > 0) {
 			// Abre o diálogo de aviso
 			org.primefaces.context.RequestContext.getCurrentInstance().execute(
-					"PF('dlgAvisoTelaAcesso').show();");
+					"PF('dlgAvisoTelaAcessoEdicao').show();");
+		}
+	}
+
+	public void prepararExcluir(ActionEvent event) {
+		tela = (Tela) event.getComponent().getAttributes()
+				.get("telaSelecionada");
+
+		// Verifica se a tela tem acessos relacionados
+		AcessoService serviceAcesso = (AcessoService) WebUtil
+				.getNamedObject(AcessoService.NAME);
+
+		List<Acesso> acessos = serviceAcesso.listar(tela);
+
+		quantidadeAcessos = acessos.size();
+
+		if (quantidadeAcessos > 0) {
+			// Abre o diálogo de aviso
+			org.primefaces.context.RequestContext.getCurrentInstance().execute(
+					"PF('dlgAvisoTelaAcessoExclusao').show();");
+		} else {
+			// Abre o diálogo padrão
+			org.primefaces.context.RequestContext.getCurrentInstance().execute(
+					"PF('dlgExclusao').show();");
 		}
 	}
 

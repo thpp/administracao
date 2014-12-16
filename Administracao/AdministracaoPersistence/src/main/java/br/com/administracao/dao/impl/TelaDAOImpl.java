@@ -219,21 +219,43 @@ public class TelaDAOImpl implements TelaDAO {
 	@Override
 	public void excluir(Long codigo) throws PSTException {
 
+		StringBuilder sqlDeletaPermissao = new StringBuilder();
+		sqlDeletaPermissao.append("DELETE FROM s_permissoes ");
+		sqlDeletaPermissao.append("WHERE aces_tela_nro = ? ");
+		sqlDeletaPermissao.append("AND funcao_tela_nro = ? ");
+
+		StringBuilder sqlDeletaAcesso = new StringBuilder();
+		sqlDeletaAcesso.append("DELETE FROM s_acesso ");
+		sqlDeletaAcesso.append("WHERE tela_nro = ? ");
+
 		StringBuilder sqlDeletaFuncao = new StringBuilder();
-		sqlDeletaFuncao.append("DELETE FROM S_FUNCOES ");
-		sqlDeletaFuncao.append("WHERE TELA_NRO = ? ");
+		sqlDeletaFuncao.append("DELETE FROM s_funcoes ");
+		sqlDeletaFuncao.append("WHERE tela_nro = ? ");
 
 		StringBuilder sqlDeletaTela = new StringBuilder();
-		sqlDeletaTela.append("DELETE FROM S_TELAS ");
-		sqlDeletaTela.append("WHERE NRO = ? ");
+		sqlDeletaTela.append("DELETE FROM s_telas ");
+		sqlDeletaTela.append("WHERE nro = ? ");
 
 		Connection conexao = null;
+		PreparedStatement comandoDeletaPermissao = null;
+		PreparedStatement comandoDeletaAcesso = null;
 		PreparedStatement comandoDeletaTela = null;
 		PreparedStatement comandoDeletaFuncao = null;
 
 		try {
 			conexao = ConnectionFactory.getConnection();
 			conexao.setAutoCommit(false);
+
+			comandoDeletaPermissao = conexao
+					.prepareStatement(sqlDeletaPermissao.toString());
+			comandoDeletaPermissao.setLong(1, codigo);
+			comandoDeletaPermissao.setLong(2, codigo);
+			comandoDeletaPermissao.executeUpdate();
+
+			comandoDeletaAcesso = conexao.prepareStatement(sqlDeletaAcesso
+					.toString());
+			comandoDeletaAcesso.setLong(1, codigo);
+			comandoDeletaAcesso.executeUpdate();
 
 			comandoDeletaFuncao = conexao.prepareStatement(sqlDeletaFuncao
 					.toString());
@@ -256,6 +278,8 @@ public class TelaDAOImpl implements TelaDAO {
 						"Ocorreu um erro ao tentar excluir a tela", ex);
 			}
 		} finally {
+			PSTUtil.fechar(comandoDeletaPermissao);
+			PSTUtil.fechar(comandoDeletaAcesso);
 			PSTUtil.fechar(comandoDeletaFuncao);
 			PSTUtil.fechar(comandoDeletaTela);
 			PSTUtil.fechar(conexao);
