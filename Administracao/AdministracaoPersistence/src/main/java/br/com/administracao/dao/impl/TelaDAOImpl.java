@@ -193,7 +193,8 @@ public class TelaDAOImpl implements TelaDAO {
 			// Se excluiu alguma função, executa a rotina que deleta acessos sem
 			// permissão
 			if (listaExcluir.size() > 0) {
-				excluirAcessoSemPermissao(conexao);
+				AcessoDAOImpl daoAcesso = new AcessoDAOImpl();
+				daoAcesso.excluirAcessoSemPermissao(conexao);
 			}
 
 			conexao.commit();
@@ -287,40 +288,6 @@ public class TelaDAOImpl implements TelaDAO {
 
 	}
 
-	private void excluirAcessoSemPermissao(Connection conexao)
-			throws PSTException {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM s_acesso ac WHERE concat(ac.tela_nro, ac.usu_nro) IN ");
-		sql.append("(SELECT concat(acd.tela_nro, acd.usu_nro) FROM (SELECT * FROM s_acesso ac ");
-		sql.append("LEFT JOIN s_permissoes p ON (ac.tela_nro = p.funcao_tela_nro) ");
-		sql.append("WHERE p.funcao_tela_nro IS NULL) acd) ");
-
-		PreparedStatement comando = null;
-
-		try {
-
-			comando = conexao.prepareStatement(sql.toString());
-			comando.executeUpdate();
-
-			logger.info("Acessos sem permissões excluídos com sucesso");
-
-		} catch (SQLException ex) {
-
-			try {
-				conexao.rollback();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				throw new PSTException(
-						"Ocorreu um erro no rollback de exclusão de acessos sem permissões "
-								+ ex.getMessage(), ex);
-			}
-
-		} finally {
-			PSTUtil.fechar(comando);
-		}
-	}
-
 	@Override
 	public List<Tela> listar(int primeiro, int tamanho) throws PSTException {
 
@@ -378,7 +345,7 @@ public class TelaDAOImpl implements TelaDAO {
 		return lista;
 	}
 
-	private List<Funcoes> listarFuncoes(Tela tela, Connection conexao)
+	List<Funcoes> listarFuncoes(Tela tela, Connection conexao)
 			throws PSTException {
 
 		StringBuilder sqlFuncao = new StringBuilder();
