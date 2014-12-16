@@ -16,11 +16,13 @@ import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
+import br.com.administracao.client.AcessoService;
 import br.com.administracao.client.AcoesService;
 import br.com.administracao.client.ModuloService;
 import br.com.administracao.client.ProjetoService;
 import br.com.administracao.client.TelaService;
 import br.com.administracao.execao.ServiceException;
+import br.com.administracao.model.Acesso;
 import br.com.administracao.model.Acoes;
 import br.com.administracao.model.Funcoes;
 import br.com.administracao.model.Modulo;
@@ -63,6 +65,9 @@ public class TelaBean implements Serializable {
 
 	/* RENDERED */
 	private boolean existeAcoes = false;
+
+	/* EXIBIÇÃO */
+	private int quantidadeAcessos = 0;
 
 	@PostConstruct
 	public void buscarLista() {
@@ -304,9 +309,20 @@ public class TelaBean implements Serializable {
 		quantidadeAcoesSelecionadas = count;
 
 		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesTela);
-		
-		//Abrir diálogo de informação (Essa tela contém permissões relacionadas)
 
+		// Verifica se a tela tem acessos relacionados
+		AcessoService serviceAcesso = (AcessoService) WebUtil
+				.getNamedObject(AcessoService.NAME);
+
+		List<Acesso> acessos = serviceAcesso.listar(tela);
+
+		quantidadeAcessos = acessos.size();
+
+		if (quantidadeAcessos > 0) {
+			// Abre o diálogo de aviso
+			org.primefaces.context.RequestContext.getCurrentInstance().execute(
+					"PF('dlgAvisoTelaAcesso').show();");
+		}
 	}
 
 	public void cancelarCadastro() {
@@ -498,4 +514,11 @@ public class TelaBean implements Serializable {
 		this.existeAcoes = existeAcoes;
 	}
 
+	public int getQuantidadeAcessos() {
+		return quantidadeAcessos;
+	}
+
+	public void setQuantidadeAcessos(int quantidadeAcessos) {
+		this.quantidadeAcessos = quantidadeAcessos;
+	}
 }

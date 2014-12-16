@@ -111,8 +111,8 @@
 										</p:column>
 										<p:column style="width:32px;text-align: center">
 											<p:commandButton icon="ui-icon-pencil" title="Editar Tela"
-												actionListener="#{MBTela.prepararEditar}" update=":form1"
-												process="@all">
+												actionListener="#{MBTela.prepararEditar}"
+												update=":form1 :formAviso" process="@all">
 												<f:attribute value="#{t}" name="telaSelecionada" />
 											</p:commandButton>
 										</p:column>
@@ -268,6 +268,40 @@
 							oncomplete="PF('dlgExclusao').hide();" />
 					</p:panelGrid>
 
+				</h:form>
+			</p:dialog>
+
+			<p:dialog widgetVar="dlgAvisoTelaAcesso" modal="true"
+				appendTo="@(body)" closable="false" draggable="false"
+				resizable="false" header="AVISO" width="500">
+				<h:form id="formAviso">
+					<div align="center">
+						<div align="justify"
+							style="margin-top: 10px; margin-bottom: 20px; margin-left: 15px; margin-right: 15px">
+							<h:panelGrid columns="1">
+								<h:outputText style="font-size: 115%;"
+									value="Essa tela possui #{MBTela.quantidadeAcessos} acesso(s) vinculado(s).
+					Excluir funções dessa tela acarreta na exclusão permanente
+					de permissões e/ou acessos,	que não poderão ser recuperados depois.
+					" />
+								<div style="margin-top: 20px;">
+									<h:outputText style="font-size: 115%;"
+										value="Deseja continuar?" />
+								</div>
+							</h:panelGrid>
+						</div>
+						<h:panelGrid columns="2">
+							<p:commandButton style="width: 250px"
+								value="Ok, entendi e desejo continuar"
+								oncomplete="PF('dlgAvisoTelaAcesso').hide();">
+							</p:commandButton>
+							<p:commandButton value="Cancelar" style="width: 150px;"
+								actionListener="#{MBTela.cancelarCadastro}"
+								oncomplete="PF('dlgAvisoTelaAcesso').hide();"
+								update=":form1:guiaTelas:msgCadastro, :form1">
+							</p:commandButton>
+						</h:panelGrid>
+					</div>
 				</h:form>
 			</p:dialog>
 
