@@ -16,8 +16,9 @@ import br.com.administracao.model.Projeto;
 import br.com.administracao.util.PSTUtil;
 
 public class ModuloDAOImpl implements ModuloDAO {
-	
-	private static Logger logger = Logger.getLogger(ModuloDAOImpl.class.getName());
+
+	private static Logger logger = Logger.getLogger(ModuloDAOImpl.class
+			.getName());
 
 	@Override
 	public void inserir(Modulo modulo) throws PSTException {
@@ -38,13 +39,15 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 			comando.executeUpdate();
 
-			logger.info("Modulo inserido com sucesso");
+			logger.info("Módulo inserido com sucesso");
 		} catch (SQLException ex) {
-			throw new PSTException("Ocorreu um erro ao tentar inserir um modulo "+ex.getCause(), ex);
+			throw new PSTException(
+					"Ocorreu um erro ao tentar inserir um módulo "
+							+ ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
-		}		
+		}
 	}
 
 	@Override
@@ -67,14 +70,14 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 			comando.executeUpdate();
 
-			logger.info("Modulo editado com sucesso");
+			logger.info("Módulo editado com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar editar um modulo", ex);
+					"Ocorreu um erro ao tentar editar um módulo", ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
-		}		
+		}
 	}
 
 	@Override
@@ -94,133 +97,130 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 			comando.executeUpdate();
 
-			logger.info("Modulo excluido com sucesso");
+			logger.info("Módulo excluído com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar excluir um modulo", ex);
+					"Ocorreu um erro ao tentar excluir um módulo", ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
-		}		
+		}
 	}
 
 	@Override
-	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {			
-		
+	public List<Modulo> listar(int primeiro, int tamanho) throws PSTException {
+
 		StringBuilder sqlTela = new StringBuilder();
 		sqlTela.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
 		sqlTela.append("FROM s_modulo m, S_PROJETO p ");
 		sqlTela.append("where m.PROJ_NRO = p.NRO ");
-		
-		
+
 		Connection conexao = null;
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
 		List<Modulo> lista = new ArrayList<Modulo>();
-		
-		try {
-			
-		conexao = ConnectionFactory.getConnection();		
-		comando = conexao.prepareStatement(sqlTela.toString());		
-		resultado = comando.executeQuery();
-		
-		Modulo modulo;
-		Projeto projeto;
-		
-		while (resultado.next()) {
-			modulo = new Modulo();
-			projeto = new Projeto();
-			modulo.setNro(resultado.getLong("nroM"));
-			modulo.setNome(resultado.getString("nomeM"));
-			
-			projeto = new Projeto();
-			projeto.setNro(resultado.getLong("nroP"));
-			projeto.setNome(resultado.getString("nomeP"));
-			
-			modulo.setProjeto(projeto);
 
-			lista.add(modulo);
-		}
-		
+		try {
+
+			conexao = ConnectionFactory.getConnection();
+			comando = conexao.prepareStatement(sqlTela.toString());
+			resultado = comando.executeQuery();
+
+			Modulo modulo;
+			Projeto projeto;
+
+			while (resultado.next()) {
+				modulo = new Modulo();
+				projeto = new Projeto();
+				modulo.setNro(resultado.getLong("nroM"));
+				modulo.setNome(resultado.getString("nomeM"));
+
+				projeto = new Projeto();
+				projeto.setNro(resultado.getLong("nroP"));
+				projeto.setNome(resultado.getString("nomeP"));
+
+				modulo.setProjeto(projeto);
+
+				lista.add(modulo);
+			}
+
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+					"Ocorreu um erro ao tentar obter a listagem de módulos", ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 		return lista;
 	}
 
 	@Override
-	public List<Modulo> listar(String nome, Long nroProjeto) throws PSTException {
+	public List<Modulo> listar(String nome, Long nroProjeto)
+			throws PSTException {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT m.nro nroM, m.nome nomeM, m.proj_nro nroP, p.NOME nomeP  ");
 		sql.append("FROM s_modulo m, S_PROJETO p ");
 		sql.append("where m.PROJ_NRO = p.NRO ");
-		
-		if(nome != null){
+
+		if (nome != null) {
 			sql.append("and m.nome like UPPER(?) ");
 		}
-		
-		if(nroProjeto != null){
+
+		if (nroProjeto != null) {
 			sql.append("and m.PROJ_NRO =  ? ");
 		}
-		
-		
+
 		Connection conexao = null;
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
 		List<Modulo> lista = new ArrayList<Modulo>();
-		
-		try {
-			
-		conexao = ConnectionFactory.getConnection();		
-		comando = conexao.prepareStatement(sql.toString());
-		
-		if (nome != null && nroProjeto != null) {
-			comando.setString(1, "%"+nome+"%");
-			comando.setLong(2, nroProjeto);
-			
-		}else if(nome != null){
-			comando.setString(1, "%"+nome+"%");
-		}else if(nroProjeto != null){
-			comando.setLong(1, nroProjeto);
-		}
-		
-		resultado = comando.executeQuery();
-		
-		
-		
-		Modulo modulo;
-		Projeto projeto;
-		
-		while (resultado.next()) {
-			modulo = new Modulo();
-			projeto = new Projeto();
-			modulo.setNro(resultado.getLong("nroM"));
-			modulo.setNome(resultado.getString("nomeM"));
-			
-			projeto = new Projeto();
-			projeto.setNro(resultado.getLong("nroP"));
-			projeto.setNome(resultado.getString("nomeP"));
-			
-			modulo.setProjeto(projeto);
 
-			lista.add(modulo);
-		}
-		
+		try {
+
+			conexao = ConnectionFactory.getConnection();
+			comando = conexao.prepareStatement(sql.toString());
+
+			if (nome != null && nroProjeto != null) {
+				comando.setString(1, "%" + nome + "%");
+				comando.setLong(2, nroProjeto);
+
+			} else if (nome != null) {
+				comando.setString(1, "%" + nome + "%");
+			} else if (nroProjeto != null) {
+				comando.setLong(1, nroProjeto);
+			}
+
+			resultado = comando.executeQuery();
+
+			Modulo modulo;
+			Projeto projeto;
+
+			while (resultado.next()) {
+				modulo = new Modulo();
+				projeto = new Projeto();
+				modulo.setNro(resultado.getLong("nroM"));
+				modulo.setNome(resultado.getString("nomeM"));
+
+				projeto = new Projeto();
+				projeto.setNro(resultado.getLong("nroP"));
+				projeto.setNome(resultado.getString("nomeP"));
+
+				modulo.setProjeto(projeto);
+
+				lista.add(modulo);
+			}
+
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+					"Ocorreu um erro ao tentar obter a listagem de módulos", ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 		return lista;
 	}
 
@@ -228,5 +228,5 @@ public class ModuloDAOImpl implements ModuloDAO {
 	public int contar() throws PSTException {
 		// TODO Auto-generated method stub
 		return 0;
-	}	
+	}
 }

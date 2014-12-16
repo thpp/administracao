@@ -1,16 +1,14 @@
 package br.com.administracao.factory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
-
 public class ConnectionFactory {
-	
+
 	private static Logger logger = Logger.getLogger(ConnectionFactory.class
 			.getName());
 	private static DataSource dataSource;
@@ -52,15 +50,15 @@ public class ConnectionFactory {
 		logger.info("Conexão obtida com sucesso");
 
 		return conexao;
-	}	
-		
+	}
+
 	public static void main(String[] args) {
-		try {			
+		try {
 			@SuppressWarnings("unused")
 			Connection con = ConnectionFactory.getConnection();
-			System.out.print("conexao obtida");
+			System.out.print("conexão obtida");
 		} catch (Exception e) {
-			System.out.print("ERRO ao conecatr");
-		}		
+			System.out.print("ERRO ao conectar");
+		}
 	}
 }

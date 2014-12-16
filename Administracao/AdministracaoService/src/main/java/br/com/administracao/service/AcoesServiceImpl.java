@@ -13,24 +13,23 @@ import br.com.administracao.model.Acoes;
 
 @Stateless
 public class AcoesServiceImpl implements AcoesService {
-	
-	private static Logger logger = Logger.getLogger(AcoesServiceImpl.class.getName());
+
+	private static Logger logger = Logger.getLogger(AcoesServiceImpl.class
+			.getName());
 
 	@Override
 	public List<Acoes> listar() {
-		
+
 		List<Acoes> lista = null;
-		
+
 		try {
 			lista = new AcoesDAOImpl().listar();
 			logger.info("Lista de Ações obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}		
-					 
+		}
+
 		return lista;
 	}
-	
-	
 
 }

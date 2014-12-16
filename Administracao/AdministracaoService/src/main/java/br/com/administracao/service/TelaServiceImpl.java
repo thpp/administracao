@@ -16,17 +16,18 @@ import br.com.administracao.model.Tela;
 
 @Stateless
 public class TelaServiceImpl implements TelaService {
-	
-	private static Logger logger = Logger.getLogger(TelaServiceImpl.class.getName());
-	
+
+	private static Logger logger = Logger.getLogger(TelaServiceImpl.class
+			.getName());
+
 	@Override
 	public void inserir(Tela tela) {
-		try {			
+		try {
 			new TelaDAOImpl().inserir(tela);
-			logger.info("Tela inserido com sucesso");
+			logger.info("Tela inserida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}			
+		}
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class TelaServiceImpl implements TelaService {
 
 	@Override
 	public List<Tela> listar(int primeiro, int tamanho) {
-		
+
 		List<Tela> lista = new ArrayList<Tela>();
 		try {
 			lista = new TelaDAOImpl().listar(primeiro, tamanho);
@@ -45,7 +46,7 @@ public class TelaServiceImpl implements TelaService {
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-		
+
 		return lista;
 	}
 
@@ -58,15 +59,15 @@ public class TelaServiceImpl implements TelaService {
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-		
+
 		return lista;
 	}
 
 	@Override
 	public void editar(Tela tela) {
-		try {			
+		try {
 			new TelaDAOImpl().editar(tela);
-			logger.info("Tela editado com sucesso");
+			logger.info("Tela editada com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
@@ -74,9 +75,9 @@ public class TelaServiceImpl implements TelaService {
 
 	@Override
 	public void excluir(Long codigo) {
-		try {			
+		try {
 			new TelaDAOImpl().excluir(codigo);
-			logger.info("Tela excluido com sucesso");
+			logger.info("Tela excluída com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}

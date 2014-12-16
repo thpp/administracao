@@ -14,9 +14,8 @@ import br.com.administracao.factory.ConnectionFactory;
 import br.com.administracao.model.Projeto;
 import br.com.administracao.util.PSTUtil;
 
-
 public class ProjetoDAOImpl implements ProjetoDAO {
-	
+
 	private static Logger logger = Logger.getLogger(ProjetoDAOImpl.class
 			.getName());
 
@@ -38,14 +37,16 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 
 			comando.executeUpdate();
 
-			logger.info("Produto inserido com sucesso");
+			logger.info("Projeto inserido com sucesso");
 		} catch (SQLException ex) {
-			throw new PSTException("Ocorreu um erro ao tentar inserir um produto "+ex.getCause(), ex);
+			throw new PSTException(
+					"Ocorreu um erro ao tentar inserir um projeto "
+							+ ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 
 			comando.executeUpdate();
 
-			logger.info("Projeto excluido com sucesso");
+			logger.info("Projeto excluído com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
 					"Ocorreu um erro ao tentar excluir um projeto", ex);
@@ -103,7 +104,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 	}
 
 	@Override
@@ -111,88 +112,86 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT p.nro, p.nome ");
 		sql.append("FROM s_projeto p ");
-		//sql.append("ORDER BY p.descricao ");
-		
-		
+
 		Connection conexao = null;
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
 		List<Projeto> lista = new ArrayList<Projeto>();
-		
+
 		try {
-		conexao = ConnectionFactory.getConnection();
-		
-		comando = conexao.prepareStatement(sql.toString());
-		
-		resultado = comando.executeQuery();
+			conexao = ConnectionFactory.getConnection();
 
-		while (resultado.next()) {
-			Projeto produto = new Projeto();
-			produto.setNro(resultado.getLong("nro"));
-			produto.setNome(resultado.getString("nome"));
+			comando = conexao.prepareStatement(sql.toString());
 
-			lista.add(produto);
-		}
-		
+			resultado = comando.executeQuery();
+
+			while (resultado.next()) {
+				Projeto produto = new Projeto();
+				produto.setNro(resultado.getLong("nro"));
+				produto.setNome(resultado.getString("nome"));
+
+				lista.add(produto);
+			}
+
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+					"Ocorreu um erro ao tentar obter a listagem de projetos",
+					ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 		return lista;
 	}
-	
+
 	@Override
 	public List<Projeto> listar(String nome) throws PSTException {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT p.nro, p.nome ");
 		sql.append("FROM s_projeto p ");
 		sql.append("WHERE p.nome LIKE UPPER(?)");
-		
-		
+
 		Connection conexao = null;
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
 		List<Projeto> lista = new ArrayList<Projeto>();
-		
+
 		try {
-		conexao = ConnectionFactory.getConnection();
-		
-		comando = conexao.prepareStatement(sql.toString());
-		
-		comando.setString(1, "%"+nome+"%");
-		
-		resultado = comando.executeQuery();
+			conexao = ConnectionFactory.getConnection();
 
-		while (resultado.next()) {
-			Projeto produto = new Projeto();
-			produto.setNro(resultado.getLong("nro"));
-			produto.setNome(resultado.getString("nome"));
+			comando = conexao.prepareStatement(sql.toString());
 
-			lista.add(produto);
-		}
-		
+			comando.setString(1, "%" + nome + "%");
+
+			resultado = comando.executeQuery();
+
+			while (resultado.next()) {
+				Projeto produto = new Projeto();
+				produto.setNro(resultado.getLong("nro"));
+				produto.setNome(resultado.getString("nome"));
+
+				lista.add(produto);
+			}
+
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de projetos", ex);
+					"Ocorreu um erro ao tentar obter a listagem de projetos",
+					ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
 		}
-		
+
 		return lista;
-	}	
+	}
 
 	@Override
 	public int contar() throws PSTException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 
 }

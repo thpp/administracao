@@ -21,14 +21,15 @@ public class ProjetoBean implements Serializable {
 	private Projeto projeto = new Projeto();
 	private List<Projeto> listaProjetos = new ArrayList<Projeto>();
 	private Integer caracteresMinimos = 3;
-	
-	public ProjetoBean(){
+
+	public ProjetoBean() {
 		buscaLista();
 	}
 
 	public void buscaLista() {
 		try {
-			ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
+			ProjetoService service = (ProjetoService) WebUtil
+					.getNamedObject(ProjetoService.NAME);
 			listaProjetos = service.listar(0, 0);
 		} catch (ServiceException ex) {
 			WebUtil.adicionarMensagemErro(ex.getMessage());
@@ -40,13 +41,15 @@ public class ProjetoBean implements Serializable {
 
 			if (projeto.getNome().length() > caracteresMinimos) {
 				if (projeto.getNro() == null) {
-					ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
+					ProjetoService service = (ProjetoService) WebUtil
+							.getNamedObject(ProjetoService.NAME);
 					service.inserir(projeto);
-					WebUtil.adicionarMensagemSucesso("Produto salvo com sucesso");
+					WebUtil.adicionarMensagemSucesso("Projeto salvo com sucesso");
 				} else {
-					ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
+					ProjetoService service = (ProjetoService) WebUtil
+							.getNamedObject(ProjetoService.NAME);
 					service.editar(projeto);
-					WebUtil.adicionarMensagemSucesso("Produto salvo com sucesso");
+					WebUtil.adicionarMensagemSucesso("Projeto editado com sucesso");
 				}
 				buscaLista();
 				novo();
@@ -66,9 +69,10 @@ public class ProjetoBean implements Serializable {
 	public void excluir() {
 		try {
 			if (projeto.getNro() != null) {
-				ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
+				ProjetoService service = (ProjetoService) WebUtil
+						.getNamedObject(ProjetoService.NAME);
 				service.excluir(projeto.getNro());
-				WebUtil.adicionarMensagemSucesso("Projeto excluido com sucesso");
+				WebUtil.adicionarMensagemSucesso("Projeto excluído com sucesso");
 			} else {
 				WebUtil.adicionarMensagemAviso("Selecione um projeto antes de excluir");
 			}
@@ -82,15 +86,12 @@ public class ProjetoBean implements Serializable {
 	public void buscarPorNome() {
 		try {
 
-			if (!projeto.getNome().equals("")) {				
-				ProjetoService service = (ProjetoService) WebUtil.getNamedObject(ProjetoService.NAME);
+			if (!projeto.getNome().equals("")) {
+				ProjetoService service = (ProjetoService) WebUtil
+						.getNamedObject(ProjetoService.NAME);
 				listaProjetos = service.listar(projeto.getNome());
-				System.out.println("Tamanho lista retorno: "+listaProjetos.size());
-				for (Projeto projeto : listaProjetos) {
-					System.out.println("Progeto: "+projeto.getNome());
-				}				
 			} else {
-				buscaLista();							
+				buscaLista();
 			}
 
 		} catch (ServiceException ex) {
@@ -102,7 +103,7 @@ public class ProjetoBean implements Serializable {
 		return projeto;
 	}
 
-	public void setProjeto(Projeto projeto) {		
+	public void setProjeto(Projeto projeto) {
 		this.projeto = projeto;
 	}
 

@@ -6,7 +6,7 @@ import javax.ejb.Remote;
 import br.com.administracao.model.Modulo;
 
 @Remote
-public interface ModuloService {		
+public interface ModuloService {
 	public static final String NAME = "global/AdministracaoService/ModuloServiceImpl!br.com.administracao.client.ModuloService";
 
 	public void inserir(Modulo modulo);
@@ -14,11 +14,11 @@ public interface ModuloService {
 	public Integer contar();
 
 	public List<Modulo> listar(int primeiro, int tamanho);
-	
-	public List<Modulo> listar(String nome, Long nroProjeto);	
+
+	public List<Modulo> listar(String nome, Long nroProjeto);
 
 	public void editar(Modulo modulo);
 
 	public void excluir(Long codigo);
-	
+
 }

@@ -82,7 +82,7 @@ public class Helper {
                 str_cnpj = str_cnpj.replace('/', ' ');
                 str_cnpj = str_cnpj.replace('-', ' ');
                 str_cnpj = str_cnpj.replaceAll(" ", "");
-                int soma = 0, aux, dig;
+                int soma = 0, dig;
                 String cnpj_calc = str_cnpj.substring(0, 12);
 
                 if (str_cnpj.length() != 14) {
@@ -132,7 +132,6 @@ public class Helper {
     public boolean validacpf(String strCpf) { // formato XXX.XXX.XXX-XX  
         if (!strCpf.substring(0, 1).equals("")) {
             try {
-                boolean validado = true;
                 int d1, d2;
                 int digito1, digito2, resto;
                 int digitoCPF;

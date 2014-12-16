@@ -14,20 +14,21 @@ import br.com.administracao.model.Usuario;
 
 @Stateless
 public class UsuarioServiceImpl implements UsuarioService {
-	
-	private static Logger logger = Logger.getLogger(UsuarioServiceImpl.class.getName());
-	
-	//retorna true quando a pessoa foi incluida na tabela pessoa
+
+	private static Logger logger = Logger.getLogger(UsuarioServiceImpl.class
+			.getName());
+
+	// retorna true quando a pessoa foi incluída na tabela pessoa
 	@Override
 	public Usuario inserir(Usuario usuario) {
 		Usuario usuarioRetorno = null;
-		try {			
+		try {
 			usuarioRetorno = new UsuarioDAOImpl().inserir(usuario);
-			 logger.info("Usuario inserido com sucesso");
+			logger.info("Usuário inserido com sucesso");
 			return usuarioRetorno;
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}	
+		}
 	}
 
 	@Override
@@ -37,48 +38,50 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public List<Usuario> listar(int primeiro, int tamanho, String nome, String flgAtivo) {
+	public List<Usuario> listar(int primeiro, int tamanho, String nome,
+			String flgAtivo) {
 		List<Usuario> lista = new ArrayList<Usuario>();
-		
+
 		try {
-			lista = new UsuarioDAOImpl().listar(primeiro, tamanho, nome, flgAtivo);
-			logger.info("Lista de usuarios obtida com sucesso");
+			lista = new UsuarioDAOImpl().listar(primeiro, tamanho, nome,
+					flgAtivo);
+			logger.info("Lista de usuários obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-				
+
 		return lista;
 	}
-	
+
 	@Override
 	public List<Usuario> listar(String cpf) {
 		List<Usuario> lista = new ArrayList<Usuario>();
-		
+
 		try {
 			lista = new UsuarioDAOImpl().listar(cpf);
-			logger.info("Lista de usuarios obtida com sucesso");
+			logger.info("Lista de usuários obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-				
+
 		return lista;
 	}
 
 	@Override
 	public void editar(Usuario usuario) {
-		try {			
+		try {
 			new UsuarioDAOImpl().editar(usuario);
-			logger.info("Usuario editado com sucesso");
+			logger.info("Usuário editado com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}		
+		}
 	}
 
 	@Override
 	public void excluir(Long codigo) {
-		try {			
+		try {
 			new UsuarioDAOImpl().excluir(codigo);
-			logger.info("Usuario excluido com sucesso");
+			logger.info("Usuário excluído com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}

@@ -14,17 +14,18 @@ import br.com.administracao.model.Modulo;
 
 @Stateless
 public class ModuloServiceImpl implements ModuloService {
-	
-	private static Logger logger = Logger.getLogger(ModuloServiceImpl.class.getName());
+
+	private static Logger logger = Logger.getLogger(ModuloServiceImpl.class
+			.getName());
 
 	@Override
 	public void inserir(Modulo modulo) {
-		try {			
+		try {
 			new ModuloDAOImpl().inserir(modulo);
-			logger.info("Modulo inserido com sucesso");
+			logger.info("Módulo inserido com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}		
+		}
 	}
 
 	@Override
@@ -35,11 +36,11 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public List<Modulo> listar(int primeiro, int tamanho) {
-		
+
 		List<Modulo> lista = new ArrayList<Modulo>();
 		try {
 			lista = new ModuloDAOImpl().listar(primeiro, tamanho);
-			logger.info("Lista de modulos obtida com sucesso");
+			logger.info("Lista de módulos obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
@@ -48,11 +49,11 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public List<Modulo> listar(String nome, Long nroProjeto) {
-		
+
 		List<Modulo> lista = new ArrayList<Modulo>();
 		try {
 			lista = new ModuloDAOImpl().listar(nome, nroProjeto);
-			logger.info("Lista de modulos obtida com sucesso");
+			logger.info("Lista de módulos obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
@@ -61,24 +62,24 @@ public class ModuloServiceImpl implements ModuloService {
 
 	@Override
 	public void editar(Modulo modulo) {
-		try {			
+		try {
 			new ModuloDAOImpl().editar(modulo);
-			logger.info("Modulo editado com sucesso");
+			logger.info("Módulo editado com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}	
-		
+		}
+
 	}
 
 	@Override
 	public void excluir(Long codigo) {
 		try {
 			new ModuloDAOImpl().excluir(codigo);
-			logger.info("Modulo excluido com sucesso");
+			logger.info("Módulo excluído com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-		
+
 	}
 
 }

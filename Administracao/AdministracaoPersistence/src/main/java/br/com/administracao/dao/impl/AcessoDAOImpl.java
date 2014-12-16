@@ -46,7 +46,7 @@ public class AcessoDAOImpl implements AcessoDAO {
 
 			comando.executeUpdate();
 
-			incluiPermissoes(acesso.getListaPermissoes(), conexao);
+			incluirPermissoes(acesso.getListaPermissoes(), conexao);
 
 			conexao.commit();
 
@@ -186,7 +186,7 @@ public class AcessoDAOImpl implements AcessoDAO {
 
 	}
 
-	public List<Permissoes> listaPermissoes(Acesso acesso, Connection conexao)
+	private List<Permissoes> listarPermissoes(Acesso acesso, Connection conexao)
 			throws PSTException {
 
 		StringBuilder sqlFuncao = new StringBuilder();
@@ -253,7 +253,7 @@ public class AcessoDAOImpl implements AcessoDAO {
 		return lista;
 	}
 
-	public List<Funcoes> listaFuncoes(Tela tela, Connection conexao)
+	private List<Funcoes> listarFuncoes(Tela tela, Connection conexao)
 			throws PSTException {
 
 		StringBuilder sqlFuncao = new StringBuilder();
@@ -301,7 +301,7 @@ public class AcessoDAOImpl implements AcessoDAO {
 		return lista;
 	}
 
-	private void incluiPermissoes(List<Permissoes> listaPermissoes,
+	private void incluirPermissoes(List<Permissoes> listaPermissoes,
 			Connection conexao) throws PSTException {
 
 		StringBuilder sql = new StringBuilder();
@@ -392,11 +392,11 @@ public class AcessoDAOImpl implements AcessoDAO {
 				modulo.setNome(resultado.getString("nomeM"));
 
 				tela.setModulo(modulo);
-				tela.setListaFuncoes(listaFuncoes(tela, conexao));
+				tela.setListaFuncoes(listarFuncoes(tela, conexao));
 
 				acesso.setTela(tela);
 				acesso.setUsuario(usuario);
-				acesso.setListaPermissoes(listaPermissoes(acesso, conexao));
+				acesso.setListaPermissoes(listarPermissoes(acesso, conexao));
 
 				lista.add(acesso);
 			}

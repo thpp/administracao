@@ -69,7 +69,7 @@ public class TelaDAOImpl implements TelaDAO {
 
 			conexao.commit();
 
-			logger.info("Tela inserido com sucesso");
+			logger.info("Tela inserida com sucesso");
 		} catch (SQLException ex) {
 			try {
 				conexao.rollback();
@@ -78,7 +78,7 @@ public class TelaDAOImpl implements TelaDAO {
 						"Ocorreu um erro ao tentar dar rollback em tela "
 								+ ex.getCause(), ex);
 			}
-			throw new PSTException("Ocorreu um erro ao tentar inserir um tela "
+			throw new PSTException("Ocorreu um erro ao tentar inserir a tela "
 					+ ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(call);
@@ -122,7 +122,7 @@ public class TelaDAOImpl implements TelaDAO {
 			conexao.setAutoCommit(false);
 
 			List<Funcoes> funcoesBean = tela.getListaFuncoes();
-			List<Funcoes> funcoesBanco = listaFuncoes(tela, conexao);
+			List<Funcoes> funcoesBanco = listarFuncoes(tela, conexao);
 
 			List<Acoes> acoesBean = new ArrayList<Acoes>();
 			for (Funcoes funcao : funcoesBean) {
@@ -149,7 +149,7 @@ public class TelaDAOImpl implements TelaDAO {
 				}
 			}
 
-			// Tira da lista de exclusão os que já constam no bean
+			// Tira da lista de exclusão os que constam no bean
 			for (Funcoes funcao : funcoesBanco) {
 				for (Acoes acao : acoesBean) {
 					if (funcao.getAcoes().getNro().equals(acao.getNro())) {
@@ -190,6 +190,8 @@ public class TelaDAOImpl implements TelaDAO {
 				comandoInsereFuncao.executeUpdate();
 			}
 
+			// Se excluiu alguma função, executa a rotina que deleta acessos sem
+			// permissão
 			if (listaExcluir.size() > 0) {
 				excluirAcessoSemPermissao(conexao);
 			}
@@ -202,10 +204,11 @@ public class TelaDAOImpl implements TelaDAO {
 				conexao.rollback();
 			} catch (SQLException e) {
 				throw new PSTException(
-						"Ocorreu um erro ao tentar editar um Tela", ex);
+						"Ocorreu um erro ao tentar editar a tela", ex);
 			}
 		} finally {
 			PSTUtil.fechar(comandoAtualizaTela);
+			PSTUtil.fechar(comandoDeletaPermissao);
 			PSTUtil.fechar(comandoDeletaFuncao);
 			PSTUtil.fechar(comandoInsereFuncao);
 			PSTUtil.fechar(conexao);
@@ -244,13 +247,13 @@ public class TelaDAOImpl implements TelaDAO {
 
 			conexao.commit();
 
-			logger.info("Tela excluido com sucesso");
+			logger.info("Tela excluída com sucesso");
 		} catch (SQLException ex) {
 			try {
 				conexao.rollback();
 			} catch (SQLException e) {
 				throw new PSTException(
-						"Ocorreu um erro ao tentar excluido uma Tela", ex);
+						"Ocorreu um erro ao tentar excluir a tela", ex);
 			}
 		} finally {
 			PSTUtil.fechar(comandoDeletaFuncao);
@@ -260,7 +263,7 @@ public class TelaDAOImpl implements TelaDAO {
 
 	}
 
-	public void excluirAcessoSemPermissao(Connection conexao)
+	private void excluirAcessoSemPermissao(Connection conexao)
 			throws PSTException {
 
 		StringBuilder sql = new StringBuilder();
@@ -334,14 +337,14 @@ public class TelaDAOImpl implements TelaDAO {
 				modelo.setProjeto(projeto);
 
 				tela.setModulo(modelo);
-				tela.setListaFuncoes(listaFuncoes(tela, conexao));
+				tela.setListaFuncoes(listarFuncoes(tela, conexao));
 
 				lista.add(tela);
 			}
 
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de tela", ex);
+					"Ocorreu um erro ao tentar obter a listagem de telas", ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
@@ -351,7 +354,7 @@ public class TelaDAOImpl implements TelaDAO {
 		return lista;
 	}
 
-	public List<Funcoes> listaFuncoes(Tela tela, Connection conexao)
+	private List<Funcoes> listarFuncoes(Tela tela, Connection conexao)
 			throws PSTException {
 
 		StringBuilder sqlFuncao = new StringBuilder();
@@ -473,14 +476,14 @@ public class TelaDAOImpl implements TelaDAO {
 				modelo.setProjeto(projeto);
 
 				tela.setModulo(modelo);
-				tela.setListaFuncoes(listaFuncoes(tela, conexao));
+				tela.setListaFuncoes(listarFuncoes(tela, conexao));
 
 				lista.add(tela);
 			}
 
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar obter a listagem de tela", ex);
+					"Ocorreu um erro ao tentar obter a listagem de telas", ex);
 		} finally {
 			PSTUtil.fechar(resultado);
 			PSTUtil.fechar(comando);
@@ -500,28 +503,7 @@ public class TelaDAOImpl implements TelaDAO {
 
 		TelaDAOImpl dao = new TelaDAOImpl();
 
-		// Projeto projeto = new Projeto();
-		// Modulo modulo = new Modulo();
-		//
-		// projeto.setNro(11L);
-		// modulo.setNro(8L);
-
 		try {
-			/*
-			 * List<Tela> lista = dao.listar(null, null, "8"); for (Tela tela :
-			 * lista) { System.out.println("Tela nro: " + tela.getNro());
-			 * System.out.println("Tela nome: " + tela.getNome());
-			 * System.out.println("Modelo: " + tela.getModulo().getNome());
-			 * System.out.println("Projeto: " +
-			 * tela.getModulo().getProjeto().getNome());
-			 * System.out.println("Funções");
-			 * 
-			 * for (Funcoes f : tela.getListaFuncoes()) {
-			 * System.out.println(f.getAcoes().getNome()); }
-			 * 
-			 * System.out.println(".........................");
-			 * System.out.println("");
-			 */
 
 			Modulo modulo = new Modulo();
 			modulo.setNro(8L);

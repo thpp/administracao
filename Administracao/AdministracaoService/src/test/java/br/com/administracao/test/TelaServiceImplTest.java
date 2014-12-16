@@ -54,17 +54,18 @@ public class TelaServiceImplTest {
 		t.setModulo(m);
 		t.setListaFuncoes(lista);
 
-		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
+		TelaService service = (TelaService) ejbContainer.getContext().lookup(
+				"java:global/AdministracaoService/TelaServiceImpl");
 		service.inserir(t);
 	}
-	
+
 	@Test
 	@Ignore
 	public void editar() throws NamingException, ServiceException {
 
 		Tela t = new Tela();
 		Modulo m = new Modulo();
-		//Projeto p = new Projeto();
+		// Projeto p = new Projeto();
 
 		Acoes ac1 = new Acoes();
 		ac1.setNro(3L);
@@ -74,7 +75,7 @@ public class TelaServiceImplTest {
 
 		Funcoes f1 = new Funcoes();
 		Funcoes f2 = new Funcoes();
-				
+
 		f1.setAcoes(ac1);
 		f2.setAcoes(ac2);
 
@@ -83,59 +84,61 @@ public class TelaServiceImplTest {
 		lista.add(f1);
 		lista.add(f2);
 
-		//p.setNro(15L);
+		// p.setNro(15L);
 		m.setNro(10L);
-		//m.setProjeto(p);
-		
+		// m.setProjeto(p);
+
 		t.setNro(10L);
 		t.setNome("Alteração!!..");
 		t.setModulo(m);
 		t.setListaFuncoes(lista);
 
-		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
+		TelaService service = (TelaService) ejbContainer.getContext().lookup(
+				"java:global/AdministracaoService/TelaServiceImpl");
 		service.editar(t);
 
 	}
-	
+
 	@Test
 	@Ignore
 	public void excluir() throws NamingException, ServiceException {
 
-		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
+		TelaService service = (TelaService) ejbContainer.getContext().lookup(
+				"java:global/AdministracaoService/TelaServiceImpl");
 		service.excluir(14L);
 
 	}
-	
 
 	@Test
 	@Ignore
 	public void lista() throws NamingException, ServiceException {
 
-		TelaService service = (TelaService) ejbContainer.getContext().lookup("java:global/AdministracaoService/TelaServiceImpl");
-		
+		TelaService service = (TelaService) ejbContainer.getContext().lookup(
+				"java:global/AdministracaoService/TelaServiceImpl");
+
 		Projeto projeto = new Projeto();
 		Modulo modulo = new Modulo();
-		
+
 		projeto.setNro(11L);
 		modulo.setNro(8L);
-		
-		
-		List<Tela> lista = service.listar(projeto, modulo, null);			
-		
+
+		List<Tela> lista = service.listar(projeto, modulo, null);
+
 		for (Tela tela : lista) {
 			System.out.println("Tela nro: " + tela.getNro());
 			System.out.println("Tela nome: " + tela.getNome());
 			System.out.println("Modelo: " + tela.getModulo().getNome());
-			System.out.println("Projeto: "+ tela.getModulo().getProjeto().getNome());
+			System.out.println("Projeto: "
+					+ tela.getModulo().getProjeto().getNome());
 			System.out.println("Funções:");
-			
-			for(Funcoes f : tela.getListaFuncoes()){
+
+			for (Funcoes f : tela.getListaFuncoes()) {
 				System.out.println(f.getAcoes().getNome());
 			}
-			
+
 			System.out.println(".........................");
 			System.out.println("");
-			
+
 		}
 	}
 }

@@ -14,18 +14,20 @@ import br.com.administracao.client.AcoesService;
 import br.com.administracao.model.Acoes;
 
 public class AcoesServiceImplTest {
-	private final static EJBContainer ejbContainer = EJBContainer.createEJBContainer();
-	
+	private final static EJBContainer ejbContainer = EJBContainer
+			.createEJBContainer();
+
 	@Test
 	@Ignore
-	public void listar() throws NamingException, ServiceException{
+	public void listar() throws NamingException, ServiceException {
 		List<Acoes> lista = new ArrayList<Acoes>();
-		
-		AcoesService service = (AcoesService) ejbContainer.getContext().lookup("java:global/AdministracaoService/AcoesServiceImpl");
+
+		AcoesService service = (AcoesService) ejbContainer.getContext().lookup(
+				"java:global/AdministracaoService/AcoesServiceImpl");
 		lista = service.listar();
-		
+
 		for (Acoes acoes : lista) {
-			System.out.println("Ação: "+acoes.getNome());
+			System.out.println("Ação: " + acoes.getNome());
 		}
-	}	
+	}
 }

@@ -11,13 +11,13 @@ import br.com.administracao.model.Tela;
 @Remote
 public interface TelaService {
 	public static final String NAME = "global/AdministracaoService/TelaServiceImpl!br.com.administracao.client.TelaService";
-	
+
 	public void inserir(Tela tela);
 
 	public Integer contar();
 
 	public List<Tela> listar(int primeiro, int tamanho);
-	
+
 	public List<Tela> listar(Projeto projeto, Modulo modulo, String nome);
 
 	public void editar(Tela tela);

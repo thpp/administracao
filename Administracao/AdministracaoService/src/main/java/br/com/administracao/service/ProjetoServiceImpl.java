@@ -12,7 +12,6 @@ import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Projeto;
 
-
 @Stateless
 public class ProjetoServiceImpl implements ProjetoService {
 	private static Logger logger = Logger.getLogger(ProjetoServiceImpl.class
@@ -22,10 +21,10 @@ public class ProjetoServiceImpl implements ProjetoService {
 	public void inserir(Projeto projeto) {
 		try {
 			new ProjetoDAOImpl().inserir(projeto);
-			logger.info("Produto inserido com sucesso");
+			logger.info("Projeto inserido com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
-		}		
+		}
 	}
 
 	@Override
@@ -36,11 +35,11 @@ public class ProjetoServiceImpl implements ProjetoService {
 
 	@Override
 	public List<Projeto> listar(int primeiro, int tamanho) {
-		
+
 		List<Projeto> lista = new ArrayList<Projeto>();
 		try {
 			lista = new ProjetoDAOImpl().listar(primeiro, tamanho);
-			logger.info("Lista de produto obtida com sucesso");
+			logger.info("Lista de projetos obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
@@ -51,22 +50,22 @@ public class ProjetoServiceImpl implements ProjetoService {
 	public void editar(Projeto projeto) {
 		try {
 			new ProjetoDAOImpl().editar(projeto);
-			logger.info("Produto editado com sucesso");
+			logger.info("Projeto editado com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-		
+
 	}
 
 	@Override
 	public void excluir(Long codigo) {
 		try {
 			new ProjetoDAOImpl().excluir(codigo);
-			logger.info("Produto excluido com sucesso");
+			logger.info("Projeto excluído com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
-		
+
 	}
 
 	@Override
@@ -74,7 +73,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 		List<Projeto> lista = new ArrayList<Projeto>();
 		try {
 			lista = new ProjetoDAOImpl().listar(nome);
-			logger.info("Lista de produto obtida com sucesso por nome");
+			logger.info("Lista de projetos por nome obtida com sucesso");
 		} catch (PSTException ex) {
 			throw new ServiceException(ex);
 		}
