@@ -304,6 +304,8 @@ public class TelaBean implements Serializable {
 		quantidadeAcoesSelecionadas = count;
 
 		acoes = new DualListModel<Acoes>(acoesDisponiveis, acoesTela);
+		
+		//Abrir diálogo de informação (Essa tela contém permissões relacionadas)
 
 	}
 

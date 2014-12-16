@@ -11,6 +11,7 @@ import br.com.administracao.dao.impl.AcessoDAOImpl;
 import br.com.administracao.execao.PSTException;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Acesso;
+import br.com.administracao.model.Tela;
 import br.com.administracao.model.Usuario;
 
 @Stateless
@@ -28,20 +29,6 @@ public class AcessoServiceImpl implements AcessoService {
 			throw new ServiceException(ex);
 		}
 
-	}
-
-	@Override
-	public List<Acesso> listar(Usuario usuario) {
-
-		List<Acesso> lista = new ArrayList<Acesso>();
-		try {
-			lista = new AcessoDAOImpl().listar(usuario);
-			logger.info("Lista de acessos obtida com sucesso");
-
-		} catch (PSTException ex) {
-			throw new ServiceException(ex);
-		}
-		return lista;
 	}
 
 	@Override
@@ -64,6 +51,32 @@ public class AcessoServiceImpl implements AcessoService {
 			throw new ServiceException(ex);
 		}
 
+	}
+
+	@Override
+	public List<Acesso> listar(Usuario usuario) {
+		List<Acesso> lista = new ArrayList<Acesso>();
+		try {
+			lista = new AcessoDAOImpl().listar(usuario);
+			logger.info("Lista de acessos obtida com sucesso");
+
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+		return lista;
+	}
+
+	@Override
+	public List<Acesso> listar(Tela tela) {
+		List<Acesso> lista = new ArrayList<Acesso>();
+		try {
+			lista = new AcessoDAOImpl().listar(tela);
+			logger.info("Lista de acessos obtida com sucesso");
+
+		} catch (PSTException ex) {
+			throw new ServiceException(ex);
+		}
+		return lista;
 	}
 
 }

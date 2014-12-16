@@ -86,7 +86,7 @@ public class AcessoServiceImplTest {
 
 	@Test
 	@Ignore
-	public void listar() throws NamingException, ServiceException {
+	public void listarPorUsuario() throws NamingException, ServiceException {
 		AcessoService service = (AcessoService) ejbContainer.getContext()
 				.lookup("java:global/AdministracaoService/AcessoServiceImpl");
 
@@ -115,6 +115,25 @@ public class AcessoServiceImplTest {
 	}
 
 	@Test
+	// @Ignore
+	public void listarPorTela() throws NamingException, ServiceException {
+		AcessoService service = (AcessoService) ejbContainer.getContext()
+				.lookup("java:global/AdministracaoService/AcessoServiceImpl");
+
+		Tela tela = new Tela();
+		tela.setNro(7L);
+
+		List<Acesso> lista = service.listar(tela);
+
+		System.out.println("Tela acessada pelas seguintes pessoas: ");
+
+		for (Acesso acesso : lista) {
+			System.out.println(acesso.getUsuario().getPessoa().getNome());
+		}
+		System.out.println("======================================");
+	}
+
+	@Test
 	@Ignore
 	public void excluir() throws NamingException, ServiceException {
 		try {
@@ -139,7 +158,7 @@ public class AcessoServiceImplTest {
 	}
 
 	@Test
-	//@Ignore
+	@Ignore
 	public void editar() throws NamingException, ServiceException {
 		try {
 			AcessoDAOImpl dao = new AcessoDAOImpl();
