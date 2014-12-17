@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import br.com.administracao.client.ProjetoService;
 import br.com.administracao.execao.ServiceException;
 import br.com.administracao.model.Projeto;
+import br.com.administracao.util.ExcecaoUtil;
 import br.com.administracao.util.WebUtil;
 
 @ManagedBean(name = "MBProjeto")
@@ -78,8 +80,8 @@ public class ProjetoBean implements Serializable {
 			}
 			buscaLista();
 			novo();
-		} catch (ServiceException ex) {
-			WebUtil.adicionarMensagemErro(ex.getMessage());
+		} catch (EJBException ex) {
+			WebUtil.adicionarMensagemErro(ExcecaoUtil.getCause(ex).getMessage());
 		}
 	}
 

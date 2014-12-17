@@ -40,7 +40,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 			logger.info("Projeto inserido com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar inserir um projeto "
+					"Ocorreu um erro ao tentar inserir o projeto "
 							+ ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(comando);
@@ -71,7 +71,7 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 			logger.info("Projeto editado com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar editar um projeto", ex);
+					"Ocorreu um erro ao tentar editar o projeto", ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
@@ -98,8 +98,15 @@ public class ProjetoDAOImpl implements ProjetoDAO {
 
 			logger.info("Projeto excluído com sucesso");
 		} catch (SQLException ex) {
-			throw new PSTException(
-					"Ocorreu um erro ao tentar excluir um projeto", ex);
+
+			if (ex.getMessage().contains("ORA-02292")) {
+				throw new PSTException(
+						"Este projeto possui registros filhos e não pode ser excluído");
+			} else {
+				throw new PSTException(
+						"Ocorreu um erro ao tentar excluir o projeto", ex);
+			}
+
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);

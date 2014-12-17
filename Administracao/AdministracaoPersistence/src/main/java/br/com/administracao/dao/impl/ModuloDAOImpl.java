@@ -42,7 +42,7 @@ public class ModuloDAOImpl implements ModuloDAO {
 			logger.info("Módulo inserido com sucesso");
 		} catch (SQLException ex) {
 			throw new PSTException(
-					"Ocorreu um erro ao tentar inserir um módulo "
+					"Ocorreu um erro ao tentar inserir o módulo "
 							+ ex.getCause(), ex);
 		} finally {
 			PSTUtil.fechar(comando);
@@ -72,8 +72,8 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 			logger.info("Módulo editado com sucesso");
 		} catch (SQLException ex) {
-			throw new PSTException(
-					"Ocorreu um erro ao tentar editar um módulo", ex);
+			throw new PSTException("Ocorreu um erro ao tentar editar o módulo",
+					ex);
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
@@ -99,8 +99,13 @@ public class ModuloDAOImpl implements ModuloDAO {
 
 			logger.info("Módulo excluído com sucesso");
 		} catch (SQLException ex) {
-			throw new PSTException(
-					"Ocorreu um erro ao tentar excluir um módulo", ex);
+			if (ex.getMessage().contains("ORA-02292")) {
+				throw new PSTException(
+						"Este módulo possui registros filhos e não pode ser excluído");
+			} else {
+				throw new PSTException(
+						"Ocorreu um erro ao tentar excluir o módulo", ex);
+			}
 		} finally {
 			PSTUtil.fechar(comando);
 			PSTUtil.fechar(conexao);
